@@ -1,0 +1,257 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { useAuth } from '@/contexts/auth-context'
+import { ApiError } from '@/lib/api'
+
+export default function RegisterPage() {
+  const router = useRouter()
+  const { registerClient } = useAuth()
+
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    if (!name || !email || !password) {
+      setError('Name, email, and password are required')
+      return
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters')
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await registerClient({
+        name,
+        email,
+        password,
+        phone: phone || undefined,
+      })
+      router.push('/dashboard')
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setError(err.message)
+      } else {
+        setError('Something went wrong. Please try again.')
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex flex-col">
+      {/* Header */}
+      <header className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
+          <Link href="/" className="inline-block">
+            <Image
+              src="/logo.svg"
+              alt="Fixes"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+              priority
+            />
+          </Link>
+        </div>
+      </header>
+
+      {/* Main */}
+      <main className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md">
+          {/* Card */}
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+            <h1 className="text-2xl font-bold text-[var(--upwork-navy)] text-center mb-2">
+              Create your account
+            </h1>
+            <p className="text-sm text-[var(--upwork-gray)] text-center mb-8">
+              Sign up to post jobs and hire trusted tradies.
+            </p>
+
+            {error && (
+              <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg mb-6">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name */}
+              <div>
+                <label
+                  htmlFor="register-name"
+                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="register-name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Smith"
+                  autoComplete="name"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label
+                  htmlFor="register-email"
+                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                >
+                  Email
+                </label>
+                <input
+                  id="register-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label
+                  htmlFor="register-phone"
+                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                >
+                  Phone <span className="text-gray-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  id="register-phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="04XX XXX XXX"
+                  autoComplete="tel"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label
+                  htmlFor="register-password"
+                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                >
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="register-password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Minimum 8 characters"
+                    autoComplete="new-password"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <label
+                  htmlFor="register-confirm-password"
+                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                >
+                  Confirm Password
+                </label>
+                <input
+                  id="register-confirm-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter your password"
+                  autoComplete="new-password"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                />
+              </div>
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </form>
+
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6">
+              <div className="flex-1 h-px bg-gray-200" />
+              <span className="text-sm text-gray-400">or</span>
+              <div className="flex-1 h-px bg-gray-200" />
+            </div>
+
+            {/* Login link */}
+            <p className="text-center text-sm text-[var(--upwork-gray)]">
+              Already have an account?{' '}
+              <Link
+                href="/login"
+                className="text-[var(--upwork-green)] font-medium hover:underline"
+              >
+                Log in
+              </Link>
+            </p>
+          </div>
+
+          {/* Tradie note */}
+          <p className="text-center text-xs text-gray-400 mt-6">
+            Are you a tradie?{' '}
+            <Link href="/register/tradie" className="text-[var(--upwork-green)] hover:underline">
+              Join as a tradie
+            </Link>
+          </p>
+        </div>
+      </main>
+    </div>
+  )
+}

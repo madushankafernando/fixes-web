@@ -62,15 +62,19 @@ export function Header() {
 
             {/* Auth Buttons */}
             <div className="hidden md:flex items-center gap-3">
-              <Button
-                variant="ghost"
-                className="text-[var(--upwork-green)] hover:text-[var(--upwork-green-dark)] font-medium"
-              >
-                Log In
-              </Button>
-              <Button className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-5">
-                Sign Up
-              </Button>
+              <Link href="/login">
+                <Button
+                  variant="ghost"
+                  className="text-[var(--upwork-green)] hover:text-[var(--upwork-green-dark)] font-medium"
+                >
+                  Log In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-5">
+                  Sign Up
+                </Button>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -103,15 +107,19 @@ export function Header() {
             ))}
           </nav>
           <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-200">
-            <Button
-              variant="outline"
-              className="w-full border-[var(--upwork-green)] text-[var(--upwork-green)]"
-            >
-              Log In
-            </Button>
-            <Button className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white">
-              Sign Up
-            </Button>
+            <Link href="/login">
+              <Button
+                variant="outline"
+                className="w-full border-[var(--upwork-green)] text-[var(--upwork-green)]"
+              >
+                Log In
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white">
+                Sign Up
+              </Button>
+            </Link>
           </div>
         </div>
       )}

@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation"
 import { Search, ArrowRight, ChevronRight } from "lucide-react"
 
 const categoryTags = [
-  "Electrician",
-  "Plumber",
-  "Carpenter",
-  "HVAC Technician",
+  { label: "Electrician", value: "electrical" },
+  { label: "Plumber", value: "plumbing" },
+  { label: "Carpenter", value: "carpentry" },
+  { label: "HVAC Technician", value: "hvac" },
 ]
 
 export function HeroSection() {
@@ -28,8 +28,8 @@ export function HeroSection() {
     }
   }
   
-  const handleTagClick = (tag: string) => {
-    router.push(`/post-job?q=${encodeURIComponent(tag)}`)
+  const handleTagClick = (categoryValue: string) => {
+    router.push(`/post-job?category=${categoryValue}`)
   }
 
   return (
@@ -130,11 +130,11 @@ export function HeroSection() {
               <div className="flex flex-wrap gap-3">
                 {categoryTags.map((tag) => (
                   <button
-                    key={tag}
-                    onClick={() => handleTagClick(tag)}
+                    key={tag.value}
+                    onClick={() => handleTagClick(tag.value)}
                     className="flex items-center gap-1 px-4 py-2 bg-transparent border border-white/50 rounded-full text-sm font-medium text-white hover:bg-white/10 transition-colors"
                   >
-                    {tag}
+                    {tag.label}
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 ))}

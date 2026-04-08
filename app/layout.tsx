@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { AuthProvider } from '@/contexts/auth-context'
 import './globals.css'
 
 const nunitoSans = Nunito_Sans({ 
@@ -10,9 +11,8 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Upwork | Hire Top Freelance Talent with Confidence',
-  description: 'Access skilled freelancers ready to help you build and scale — without the full-time commitment',
-  generator: 'v0.app',
+  title: 'Fixes | Hire Trusted Tradies Instantly',
+  description: 'Access skilled, verified tradies ready to help you build and fix — matched instantly via AI-powered quoting.',
   icons: {
     icon: [
       {
@@ -40,7 +40,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${nunitoSans.variable} font-sans antialiased`}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
         <Analytics />
       </body>
     </html>
