@@ -49,7 +49,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
@@ -71,10 +71,10 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-            <h1 className="text-2xl font-bold text-[var(--upwork-navy)] text-center mb-2">
+            <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
               Log in to Fixes
             </h1>
-            <p className="text-sm text-[var(--upwork-gray)] text-center mb-8">
+            <p className="text-sm text-(--upwork-gray) text-center mb-8">
               Welcome back! Enter your credentials to continue.
             </p>
 
@@ -89,7 +89,7 @@ export default function LoginPage() {
               <div>
                 <label
                   htmlFor="login-email"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Email
                 </label>
@@ -100,7 +100,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   autoComplete="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -109,13 +109,13 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between mb-1.5">
                   <label
                     htmlFor="login-password"
-                    className="block text-sm font-medium text-[var(--upwork-navy)]"
+                    className="block text-sm font-medium text-(--upwork-navy)"
                   >
                     Password
                   </label>
                   <Link
                     href="/forgot-password"
-                    className="text-sm text-[var(--upwork-green)] hover:underline"
+                    className="text-sm text-(--upwork-green) hover:underline"
                   >
                     Forgot password?
                   </Link>
@@ -128,7 +128,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     autoComplete="current-password"
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                   />
                   <button
                     type="button"
@@ -149,7 +149,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -170,11 +170,11 @@ export default function LoginPage() {
             </div>
 
             {/* Register link */}
-            <p className="text-center text-sm text-[var(--upwork-gray)]">
+            <p className="text-center text-sm text-(--upwork-gray)">
               Don&apos;t have an account?{' '}
               <Link
                 href="/register"
-                className="text-[var(--upwork-green)] font-medium hover:underline"
+                className="text-(--upwork-green) font-medium hover:underline"
               >
                 Sign up
               </Link>
@@ -184,7 +184,7 @@ export default function LoginPage() {
           {/* Tradie note */}
           <p className="text-center text-xs text-gray-400 mt-6">
             Are you a tradie?{' '}
-            <Link href="/register/tradie" className="text-[var(--upwork-green)] hover:underline">
+            <Link href="/register/tradie" className="text-(--upwork-green) hover:underline">
               Join as a tradie
             </Link>
           </p>

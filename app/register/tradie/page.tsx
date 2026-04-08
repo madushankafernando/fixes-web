@@ -76,7 +76,7 @@ export default function RegisterTradiePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
@@ -98,7 +98,7 @@ export default function RegisterTradiePage() {
         <div className="w-full max-w-lg">
           {/* Temporary notice */}
           <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6">
-            <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-700">
               Tradie registration will move to the <strong>Fixes mobile app</strong> soon.
               This is a temporary web registration.
@@ -107,10 +107,10 @@ export default function RegisterTradiePage() {
 
           {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-            <h1 className="text-2xl font-bold text-[var(--upwork-navy)] text-center mb-2">
+            <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
               Join as a Tradie
             </h1>
-            <p className="text-sm text-[var(--upwork-gray)] text-center mb-8">
+            <p className="text-sm text-(--upwork-gray) text-center mb-8">
               Create your account and start receiving job offers.
             </p>
 
@@ -125,7 +125,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-name"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Full Name
                 </label>
@@ -136,7 +136,7 @@ export default function RegisterTradiePage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Smith"
                   autoComplete="name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -144,7 +144,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-email"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Email
                 </label>
@@ -155,7 +155,7 @@ export default function RegisterTradiePage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   autoComplete="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -163,7 +163,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-phone"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Phone <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
@@ -174,7 +174,7 @@ export default function RegisterTradiePage() {
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="04XX XXX XXX"
                   autoComplete="tel"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -182,7 +182,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-category"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Primary Trade Category
                 </label>
@@ -190,7 +190,7 @@ export default function RegisterTradiePage() {
                   id="tradie-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value as TradieCategory)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) bg-white focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 >
                   <option value="" disabled>
                     Select your trade...
@@ -207,7 +207,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-skills"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Skills <span className="text-gray-400 font-normal">(comma-separated, optional)</span>
                 </label>
@@ -217,7 +217,7 @@ export default function RegisterTradiePage() {
                   value={skills}
                   onChange={(e) => setSkills(e.target.value)}
                   placeholder="Rewiring, Switchboard, LED Installation"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -225,7 +225,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-bio"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Bio <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
@@ -236,7 +236,7 @@ export default function RegisterTradiePage() {
                   placeholder="Tell clients about your experience and expertise..."
                   maxLength={1000}
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow resize-none"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow resize-none"
                 />
                 <p className="text-xs text-gray-400 mt-1 text-right">
                   {bio.length}/1000
@@ -247,7 +247,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-password"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Password
                 </label>
@@ -259,7 +259,7 @@ export default function RegisterTradiePage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimum 8 characters"
                     autoComplete="new-password"
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                   />
                   <button
                     type="button"
@@ -280,7 +280,7 @@ export default function RegisterTradiePage() {
               <div>
                 <label
                   htmlFor="tradie-confirm-password"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Confirm Password
                 </label>
@@ -291,7 +291,7 @@ export default function RegisterTradiePage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter your password"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -299,7 +299,7 @@ export default function RegisterTradiePage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -320,20 +320,20 @@ export default function RegisterTradiePage() {
             </div>
 
             {/* Links */}
-            <p className="text-center text-sm text-[var(--upwork-gray)]">
+            <p className="text-center text-sm text-(--upwork-gray)">
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="text-[var(--upwork-green)] font-medium hover:underline"
+                className="text-(--upwork-green) font-medium hover:underline"
               >
                 Log in
               </Link>
             </p>
-            <p className="text-center text-sm text-[var(--upwork-gray)] mt-2">
+            <p className="text-center text-sm text-(--upwork-gray) mt-2">
               Looking to hire?{' '}
               <Link
                 href="/register"
-                className="text-[var(--upwork-green)] font-medium hover:underline"
+                className="text-(--upwork-green) font-medium hover:underline"
               >
                 Sign up as a client
               </Link>

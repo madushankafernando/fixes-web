@@ -48,7 +48,7 @@ export default function DashboardLayout({
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#f2f7f2] flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-[var(--upwork-green)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-3 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -86,12 +86,12 @@ export default function DashboardLayout({
           {/* Right: user info */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:block text-right">
-              <p className="text-sm font-medium text-[var(--upwork-navy)] leading-tight">
+              <p className="text-sm font-medium text-(--upwork-navy) leading-tight">
                 {user?.name}
               </p>
               <p className="text-xs text-gray-400">{user?.fixId}</p>
             </div>
-            <div className="w-9 h-9 rounded-full bg-[var(--upwork-green)] flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
+            <div className="w-9 h-9 rounded-full bg-(--upwork-green) flex items-center justify-center text-white text-sm font-semibold overflow-hidden">
               {user?.avatarUrl ? (
                 <Image
                   src={user.avatarUrl}
@@ -121,8 +121,8 @@ export default function DashboardLayout({
                   href={link.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     active
-                      ? 'bg-green-50 text-[var(--upwork-green)]'
-                      : 'text-[var(--upwork-gray)] hover:bg-gray-50 hover:text-[var(--upwork-navy)]'
+                      ? 'bg-green-50 text-(--upwork-green)'
+                      : 'text-(--upwork-gray) hover:bg-gray-50 hover:text-(--upwork-navy)'
                   }`}
                 >
                   <Icon className="w-4.5 h-4.5" />
@@ -148,7 +148,7 @@ export default function DashboardLayout({
               className="lg:hidden fixed inset-0 bg-black/30 z-40"
               onClick={() => setSidebarOpen(false)}
             />
-            <aside className="lg:hidden fixed left-0 top-[57px] bottom-0 w-64 bg-white border-r border-gray-200 py-4 px-3 z-50 flex flex-col">
+            <aside className="lg:hidden fixed left-0 top-14.25 bottom-0 w-64 bg-white border-r border-gray-200 py-4 px-3 z-50 flex flex-col">
               <nav className="flex flex-col gap-1 flex-1">
                 {sidebarLinks.map((link) => {
                   const Icon = link.icon
@@ -160,8 +160,8 @@ export default function DashboardLayout({
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                         active
-                          ? 'bg-green-50 text-[var(--upwork-green)]'
-                          : 'text-[var(--upwork-gray)] hover:bg-gray-50 hover:text-[var(--upwork-navy)]'
+                          ? 'bg-green-50 text-(--upwork-green)'
+                          : 'text-(--upwork-gray) hover:bg-gray-50 hover:text-(--upwork-navy)'
                       }`}
                     >
                       <Icon className="w-4.5 h-4.5" />

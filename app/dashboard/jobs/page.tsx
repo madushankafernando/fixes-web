@@ -41,10 +41,10 @@ export default function MyJobsPage() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-[var(--upwork-navy)]">My Jobs</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-(--upwork-navy)">My Jobs</h1>
         <Link
           href="/post-job"
-          className="inline-flex items-center gap-1.5 bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white font-medium text-sm py-2.5 px-5 rounded-xl transition-colors"
+          className="inline-flex items-center gap-1.5 bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white font-medium text-sm py-2.5 px-5 rounded-xl transition-colors"
         >
           <PlusCircle className="w-4 h-4" />
           Post a Job
@@ -53,15 +53,15 @@ export default function MyJobsPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-        <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        <Filter className="w-4 h-4 text-gray-400 shrink-0" />
         {STATUS_FILTERS.map((f) => (
           <button
             key={f.value}
             onClick={() => setStatusFilter(f.value)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
               statusFilter === f.value
-                ? 'bg-[var(--upwork-navy)] text-white'
-                : 'bg-gray-100 text-[var(--upwork-gray)] hover:bg-gray-200'
+                ? 'bg-(--upwork-navy) text-white'
+                : 'bg-gray-100 text-(--upwork-gray) hover:bg-gray-200'
             }`}
           >
             {f.label}
@@ -73,17 +73,17 @@ export default function MyJobsPage() {
       <div className="bg-white rounded-xl border border-gray-200">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-[var(--upwork-green)] border-t-transparent rounded-full animate-spin" />
+            <div className="w-6 h-6 border-2 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
           </div>
         ) : jobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <Briefcase className="w-8 h-8 text-gray-300" />
             </div>
-            <p className="text-[var(--upwork-navy)] font-medium mb-1">
+            <p className="text-(--upwork-navy) font-medium mb-1">
               {statusFilter === 'all' ? 'No jobs yet' : 'No jobs with this status'}
             </p>
-            <p className="text-sm text-[var(--upwork-gray)] text-center">
+            <p className="text-sm text-(--upwork-gray) text-center">
               {statusFilter === 'all'
                 ? 'Post your first job to get started.'
                 : 'Try a different filter.'}
@@ -105,7 +105,7 @@ export default function MyJobsPage() {
                 >
                   <div className="flex-1 min-w-0 mr-4">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                      <h3 className="text-xs sm:text-sm font-medium text-[var(--upwork-navy)] truncate group-hover:text-[var(--upwork-green)] transition-colors">
+                      <h3 className="text-xs sm:text-sm font-medium text-(--upwork-navy) truncate group-hover:text-(--upwork-green) transition-colors">
                         {job.title}
                       </h3>
                       <span
@@ -121,7 +121,7 @@ export default function MyJobsPage() {
                       {assignedTradie && (
                         <>
                           <span>•</span>
-                          <span className="text-[var(--upwork-navy)]">{assignedTradie.name}</span>
+                          <span className="text-(--upwork-navy)">{assignedTradie.name}</span>
                         </>
                       )}
                     </div>

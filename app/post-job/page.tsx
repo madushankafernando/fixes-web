@@ -19,7 +19,7 @@ function PostJobContent() {
 
 export default function PostJobPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white" />}>
+    <Suspense fallback={<div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white" />}>
       <PostJobContent />
     </Suspense>
   )

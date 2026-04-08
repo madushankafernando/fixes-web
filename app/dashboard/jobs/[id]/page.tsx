@@ -67,20 +67,20 @@ function StatusTimeline({ currentStatus }: { currentStatus: JobStatus }) {
         const isCurrent = index === currentIndex
 
         return (
-          <div key={step.status} className="flex items-center flex-shrink-0">
+          <div key={step.status} className="flex items-center shrink-0">
             <div className="flex flex-col items-center">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
                   isCompleted
-                    ? 'bg-[var(--upwork-green)] text-white'
+                    ? 'bg-(--upwork-green) text-white'
                     : 'bg-gray-100 text-gray-400'
-                } ${isCurrent ? 'ring-2 ring-[var(--upwork-green)] ring-offset-2' : ''}`}
+                } ${isCurrent ? 'ring-2 ring-(--upwork-green) ring-offset-2' : ''}`}
               >
                 <Icon className="w-4 h-4" />
               </div>
               <span
                 className={`text-[10px] mt-1 font-medium whitespace-nowrap ${
-                  isCompleted ? 'text-[var(--upwork-navy)]' : 'text-gray-400'
+                  isCompleted ? 'text-(--upwork-navy)' : 'text-gray-400'
                 }`}
               >
                 {step.label}
@@ -88,8 +88,8 @@ function StatusTimeline({ currentStatus }: { currentStatus: JobStatus }) {
             </div>
             {index < STATUS_STEPS.length - 1 && (
               <div
-                className={`w-6 sm:w-10 h-0.5 mx-1 mt-[-14px] ${
-                  index < currentIndex ? 'bg-[var(--upwork-green)]' : 'bg-gray-200'
+                className={`w-6 sm:w-10 h-0.5 mx-1 -mt-3.5 ${
+                  index < currentIndex ? 'bg-(--upwork-green)' : 'bg-gray-200'
                 }`}
               />
             )}
@@ -193,9 +193,9 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl flex flex-col h-[300px] sm:h-[400px]">
+    <div className="bg-white border border-gray-200 rounded-xl flex flex-col h-75 sm:h-100">
       <div className="px-4 py-3 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-[var(--upwork-navy)]">Chat</h3>
+        <h3 className="text-sm font-semibold text-(--upwork-navy)">Chat</h3>
       </div>
 
       {/* Messages */}
@@ -224,8 +224,8 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
                 <div
                   className={`max-w-[75%] rounded-xl px-3 py-2 ${
                     isOwn
-                      ? 'bg-[var(--upwork-green)] text-white'
-                      : 'bg-gray-100 text-[var(--upwork-navy)]'
+                      ? 'bg-(--upwork-green) text-white'
+                      : 'bg-gray-100 text-(--upwork-navy)'
                   }`}
                 >
                   {!isOwn && (
@@ -260,12 +260,12 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
-          className="flex-1 text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[var(--upwork-green)] text-[var(--upwork-navy)] placeholder:text-gray-400"
+          className="flex-1 text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-(--upwork-green) text-(--upwork-navy) placeholder:text-gray-400"
         />
         <button
           onClick={handleSend}
           disabled={!newMessage.trim() || isSending}
-          className="w-9 h-9 rounded-lg bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 text-white flex items-center justify-center transition-colors flex-shrink-0"
+          className="w-9 h-9 rounded-lg bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-40 text-white flex items-center justify-center transition-colors shrink-0"
         >
           <Send className="w-4 h-4" />
         </button>
@@ -306,11 +306,11 @@ function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => 
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5">
-      <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-4">Leave a Review</h3>
+      <h3 className="text-sm font-semibold text-(--upwork-navy) mb-4">Leave a Review</h3>
 
       {error && (
         <div className="flex items-start gap-2 bg-red-50 text-red-600 text-xs px-3 py-2 rounded-lg mb-4">
-          <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+          <AlertCircle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
           {error}
         </div>
       )}
@@ -341,13 +341,13 @@ function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => 
         placeholder="Share your experience (optional)..."
         rows={3}
         maxLength={500}
-        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-[var(--upwork-green)] resize-none mb-3"
+        className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-(--upwork-green) resize-none mb-3"
       />
 
       <button
         onClick={handleSubmit}
         disabled={isSubmitting || rating === 0}
-        className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 text-white text-sm font-medium py-2 px-5 rounded-lg transition-colors flex items-center gap-2"
+        className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-40 text-white text-sm font-medium py-2 px-5 rounded-lg transition-colors flex items-center gap-2"
       >
         {isSubmitting ? (
           <>
@@ -416,7 +416,7 @@ export default function JobDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-[var(--upwork-green)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -425,10 +425,10 @@ export default function JobDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4">
         <XCircle className="w-12 h-12 text-gray-300 mb-4" />
-        <p className="text-[var(--upwork-navy)] font-medium mb-1">Job not found</p>
+        <p className="text-(--upwork-navy) font-medium mb-1">Job not found</p>
         <button
           onClick={() => router.push('/dashboard')}
-          className="text-sm text-[var(--upwork-green)] hover:underline mt-2"
+          className="text-sm text-(--upwork-green) hover:underline mt-2"
         >
           Back to dashboard
         </button>
@@ -449,13 +449,13 @@ export default function JobDetailPage() {
       <div className="mb-6">
         <button
           onClick={() => router.push('/dashboard/jobs')}
-          className="flex items-center gap-1.5 text-sm text-[var(--upwork-gray)] hover:text-[var(--upwork-navy)] transition-colors mb-3"
+          className="flex items-center gap-1.5 text-sm text-(--upwork-gray) hover:text-(--upwork-navy) transition-colors mb-3"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to jobs
         </button>
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-lg sm:text-xl font-bold text-[var(--upwork-navy)]">{job.title}</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-(--upwork-navy)">{job.title}</h1>
           <span
             className={`text-xs px-2.5 py-1 rounded-full font-medium ${JOB_STATUS_COLORS[job.status]}`}
           >
@@ -478,8 +478,8 @@ export default function JobDetailPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
-            <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3">Description</h3>
-            <p className="text-xs sm:text-sm text-[var(--upwork-gray)] leading-relaxed whitespace-pre-wrap">
+            <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Description</h3>
+            <p className="text-xs sm:text-sm text-(--upwork-gray) leading-relaxed whitespace-pre-wrap">
               {job.description}
             </p>
           </div>
@@ -487,7 +487,7 @@ export default function JobDetailPage() {
           {/* Images */}
           {job.images.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3">Photos</h3>
+              <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Photos</h3>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {job.images.map((img, i) => (
                   <div key={img.publicId} className="aspect-square rounded-lg overflow-hidden relative">
@@ -525,12 +525,12 @@ export default function JobDetailPage() {
         <div className="space-y-6">
           {/* Location */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-gray-400" />
               Location
             </h3>
-            <p className="text-sm text-[var(--upwork-gray)]">{job.location.address}</p>
-            <p className="text-sm text-[var(--upwork-gray)]">
+            <p className="text-sm text-(--upwork-gray)">{job.location.address}</p>
+            <p className="text-sm text-(--upwork-gray)">
               {job.location.suburb}, {job.location.state} {job.location.postcode}
             </p>
           </div>
@@ -538,32 +538,32 @@ export default function JobDetailPage() {
           {/* Quote Details */}
           {quote && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3 flex items-center gap-1.5">
+              <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-1.5">
                 <DollarSign className="w-4 h-4 text-gray-400" />
                 Quote
               </h3>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--upwork-gray)]">Price Range</span>
-                  <span className="font-medium text-[var(--upwork-navy)]">
+                  <span className="text-(--upwork-gray)">Price Range</span>
+                  <span className="font-medium text-(--upwork-navy)">
                     ${quote.price.min} – ${quote.price.max}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--upwork-gray)]">Fixed Price</span>
-                  <span className="font-semibold text-[var(--upwork-green)]">
+                  <span className="text-(--upwork-gray)">Fixed Price</span>
+                  <span className="font-semibold text-(--upwork-green)">
                     ${quote.suggestedFixedPrice}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--upwork-gray)]">Est. Hours</span>
-                  <span className="text-[var(--upwork-navy)]">
+                  <span className="text-(--upwork-gray)">Est. Hours</span>
+                  <span className="text-(--upwork-navy)">
                     {quote.estimatedHours.min}–{quote.estimatedHours.max}h
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--upwork-gray)]">Skill Level</span>
-                  <span className="text-[var(--upwork-navy)] capitalize">
+                  <span className="text-(--upwork-gray)">Skill Level</span>
+                  <span className="text-(--upwork-navy) capitalize">
                     {quote.detectedSkillLevel}
                   </span>
                 </div>
@@ -579,11 +579,11 @@ export default function JobDetailPage() {
           {/* Assigned Tradie */}
           {assignedTradie && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3">
+              <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">
                 Assigned Tradie
               </h3>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[var(--upwork-green)] flex items-center justify-center text-white overflow-hidden flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden shrink-0">
                   {assignedTradie.avatarUrl ? (
                     <Image
                       src={assignedTradie.avatarUrl}
@@ -597,7 +597,7 @@ export default function JobDetailPage() {
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-[var(--upwork-navy)]">
+                  <p className="text-sm font-medium text-(--upwork-navy)">
                     {assignedTradie.name}
                   </p>
                   {assignedTradie.phone && (
@@ -613,11 +613,11 @@ export default function JobDetailPage() {
 
           {/* Preferred Time */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-2 flex items-center gap-1.5">
+            <h3 className="text-sm font-semibold text-(--upwork-navy) mb-2 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-gray-400" />
               Timing
             </h3>
-            <p className="text-sm text-[var(--upwork-gray)] capitalize">
+            <p className="text-sm text-(--upwork-gray) capitalize">
               {job.preferredTime === '1-2weeks' ? 'In 1–2 Weeks' : job.preferredTime === 'no-rush' ? 'No Rush' : 'Now'}
             </p>
           </div>

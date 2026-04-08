@@ -62,7 +62,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex flex-col">
+    <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
@@ -84,10 +84,10 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-            <h1 className="text-2xl font-bold text-[var(--upwork-navy)] text-center mb-2">
+            <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
               Create your account
             </h1>
-            <p className="text-sm text-[var(--upwork-gray)] text-center mb-8">
+            <p className="text-sm text-(--upwork-gray) text-center mb-8">
               Sign up to post jobs and hire trusted tradies.
             </p>
 
@@ -102,7 +102,7 @@ export default function RegisterPage() {
               <div>
                 <label
                   htmlFor="register-name"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Full Name
                 </label>
@@ -113,7 +113,7 @@ export default function RegisterPage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Smith"
                   autoComplete="name"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -121,7 +121,7 @@ export default function RegisterPage() {
               <div>
                 <label
                   htmlFor="register-email"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Email
                 </label>
@@ -132,7 +132,7 @@ export default function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   autoComplete="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -140,7 +140,7 @@ export default function RegisterPage() {
               <div>
                 <label
                   htmlFor="register-phone"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Phone <span className="text-gray-400 font-normal">(optional)</span>
                 </label>
@@ -151,7 +151,7 @@ export default function RegisterPage() {
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="04XX XXX XXX"
                   autoComplete="tel"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -159,7 +159,7 @@ export default function RegisterPage() {
               <div>
                 <label
                   htmlFor="register-password"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Password
                 </label>
@@ -171,7 +171,7 @@ export default function RegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Minimum 8 characters"
                     autoComplete="new-password"
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                   />
                   <button
                     type="button"
@@ -192,7 +192,7 @@ export default function RegisterPage() {
               <div>
                 <label
                   htmlFor="register-confirm-password"
-                  className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5"
+                  className="block text-sm font-medium text-(--upwork-navy) mb-1.5"
                 >
                   Confirm Password
                 </label>
@@ -203,7 +203,7 @@ export default function RegisterPage() {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Re-enter your password"
                   autoComplete="new-password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent transition-shadow"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
                 />
               </div>
 
@@ -211,7 +211,7 @@ export default function RegisterPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <>
@@ -232,11 +232,11 @@ export default function RegisterPage() {
             </div>
 
             {/* Login link */}
-            <p className="text-center text-sm text-[var(--upwork-gray)]">
+            <p className="text-center text-sm text-(--upwork-gray)">
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="text-[var(--upwork-green)] font-medium hover:underline"
+                className="text-(--upwork-green) font-medium hover:underline"
               >
                 Log in
               </Link>
@@ -246,7 +246,7 @@ export default function RegisterPage() {
           {/* Tradie note */}
           <p className="text-center text-xs text-gray-400 mt-6">
             Are you a tradie?{' '}
-            <Link href="/register/tradie" className="text-[var(--upwork-green)] hover:underline">
+            <Link href="/register/tradie" className="text-(--upwork-green) hover:underline">
               Join as a tradie
             </Link>
           </p>

@@ -17,9 +17,9 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FFFCE9] border-b border-[var(--upwork-border)]">
+    <header className="sticky top-0 z-50 bg-[#FFFCE9] border-b border-(--upwork-border)">
       {/* Top Banner */}
-      <div className="bg-[var(--upwork-navy)] text-white py-2 px-4 text-center text-sm">
+      <div className="bg-(--upwork-navy) text-white py-2 px-4 text-center text-sm">
         <span className="font-semibold">Stop doing everything.</span>{" "}
         Hire the top 1% of talent on Business Plus.{" "}
         <Link href="#" className="underline hover:no-underline">
@@ -48,7 +48,7 @@ export function Header() {
               {navItems.map((item) => (
                 <button
                   key={item.label}
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[var(--upwork-navy)] hover:text-[var(--upwork-green)] transition-colors"
+                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-(--upwork-navy) hover:text-(--upwork-green) transition-colors"
                 >
                   {item.label}
                   {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
@@ -65,13 +65,13 @@ export function Header() {
               <Link href="/login">
                 <Button
                   variant="ghost"
-                  className="text-[var(--upwork-green)] hover:text-[var(--upwork-green-dark)] font-medium"
+                  className="text-(--upwork-green) hover:text-(--upwork-green-dark) font-medium"
                 >
                   Log In
                 </Button>
               </Link>
               <Link href="/register">
-                <Button className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-5">
+                <Button className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-5">
                   Sign Up
                 </Button>
               </Link>
@@ -99,7 +99,7 @@ export function Header() {
             {navItems.map((item) => (
               <button
                 key={item.label}
-                className="flex items-center justify-between px-4 py-3 text-sm font-medium text-[var(--upwork-navy)] hover:bg-gray-50 rounded-lg"
+                className="flex items-center justify-between px-4 py-3 text-sm font-medium text-(--upwork-navy) hover:bg-gray-50 rounded-lg"
               >
                 {item.label}
                 {item.hasDropdown && <ChevronDown className="w-4 h-4" />}
@@ -110,13 +110,13 @@ export function Header() {
             <Link href="/login">
               <Button
                 variant="outline"
-                className="w-full border-[var(--upwork-green)] text-[var(--upwork-green)]"
+                className="w-full border-(--upwork-green) text-(--upwork-green)"
               >
                 Log In
               </Button>
             </Link>
             <Link href="/register">
-              <Button className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white">
+              <Button className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white">
                 Sign Up
               </Button>
             </Link>
