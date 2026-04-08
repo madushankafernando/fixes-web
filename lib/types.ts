@@ -342,3 +342,31 @@ export interface MessageNewPayload {
   type: MessageType
   createdAt: string
 }
+
+// ─── Admin Types ────────────────────────────────────────────────────────────────
+
+export interface AdminStats {
+  users: { total: number; clients: number; tradies: number }
+  jobs: { total: number; completed: number; cancelled: number; active: number }
+  tradies: { pendingVerification: number; fullyVerified: number }
+  revenue: {
+    totalRevenue: number
+    platformFee: number
+    tradieEarnings: number
+    completedPayments: number
+  }
+}
+
+export interface AdminUserDetail {
+  user: User
+  profile: TradieProfile | null
+  recentJobs: Job[]
+}
+
+// ─── Review Stats ───────────────────────────────────────────────────────────────
+
+export interface ReviewStats {
+  average: number
+  total: number
+  breakdown: Record<number, number>
+}
