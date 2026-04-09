@@ -125,7 +125,7 @@ export default function DashboardFindTalentPage() {
             return (
               <Link
                 key={tradie._id}
-                href={`/dashboard/find-talent/${user._id}`}
+                href={`/dashboard/find-talent/${user.fixId}`}
                 className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:shadow-md hover:border-gray-300 transition-all group"
               >
                 {/* Header */}
