@@ -13,6 +13,7 @@ import {
   X,
   LogOut,
   ArrowLeft,
+  User,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 
@@ -21,6 +22,7 @@ const sidebarLinks = [
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/jobs', label: 'Jobs', icon: Briefcase },
   { href: '/admin/tradies', label: 'Verification', icon: ShieldCheck },
+  { href: '/admin/profile', label: 'My Profile', icon: User },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

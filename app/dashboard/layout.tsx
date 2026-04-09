@@ -22,6 +22,7 @@ const sidebarLinks = [
   { href: '/dashboard/jobs', label: 'My Jobs', icon: Briefcase },
   { href: '/dashboard/find-talent', label: 'Find Tradies', icon: Search },
   { href: '/post-job', label: 'Post a Job', icon: PlusCircle },
+  { href: '/dashboard/profile', label: 'My Profile', icon: User },
 ]
 
 export default function DashboardLayout({
