@@ -537,7 +537,7 @@ function StepQuote({
 
 export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizardProps) {
   const router = useRouter()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
 
   // If category is preselected from landing page, skip step 1
   const hasPreselectedCategory = VALID_CATEGORIES.includes(preselectedCategory as TradieCategory)
@@ -568,6 +568,40 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
   // Accept
   const [isAccepting, setIsAccepting] = useState(false)
+
+  // Email verification gate — clients must verify before posting
+  if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
+    return (
+      <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
+        <div className="bg-white border border-amber-200 rounded-2xl p-8 sm:p-10 w-full max-w-md text-center shadow-sm">
+          <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold text-(--upwork-navy) mb-2">Verify your email first</h1>
+          <p className="text-sm text-gray-400 mb-6">
+            You need to verify your email address before you can post a job.
+            Check your inbox for the verification link.
+          </p>
+          <div className="space-y-3">
+            <a
+              href="/dashboard/profile"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
+            >
+              Go to Profile to Resend
+            </a>
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
   const [acceptError, setAcceptError] = useState('')
 
   const progress = Math.min((currentStep / totalSteps) * 100, 100)
