@@ -22,6 +22,7 @@ export default function DashboardProfilePage() {
 
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isSendingVerification, setIsSendingVerification] = useState(false)
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
 
   // Editable fields
@@ -60,6 +61,18 @@ export default function DashboardProfilePage() {
     }
   }
 
+  const handleResendVerification = async () => {
+    setIsSendingVerification(true)
+    try {
+      await api.post('/api/auth/resend-verification', {})
+      showToast('Verification email sent — check your inbox', 'success')
+    } catch {
+      showToast('Failed to send email. Please try again.', 'error')
+    } finally {
+      setIsSendingVerification(false)
+    }
+  }
+
   if (!user) return null
 
   const memberSince = new Date(user.createdAt).toLocaleDateString('en-AU', {
@@ -81,7 +94,7 @@ export default function DashboardProfilePage() {
       )}
 
       <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-[var(--upwork-navy)]">My Profile</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-(--upwork-navy)">My Profile</h1>
         <p className="text-sm text-gray-400 mt-0.5">Manage your account details</p>
       </div>
 
@@ -90,7 +103,7 @@ export default function DashboardProfilePage() {
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 sm:p-6">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-[var(--upwork-green)] flex items-center justify-center text-white overflow-hidden shrink-0">
+              <div className="w-16 h-16 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden shrink-0">
                 {user.avatarUrl ? (
                   <Image src={user.avatarUrl} alt={user.name} width={64} height={64} className="object-cover w-full h-full" />
                 ) : (
@@ -98,9 +111,9 @@ export default function DashboardProfilePage() {
                 )}
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[var(--upwork-navy)]">{user.name}</h2>
+                <h2 className="text-lg font-bold text-(--upwork-navy)">{user.name}</h2>
                 <p className="text-xs text-gray-400 font-mono">{user.fixId}</p>
-                <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium capitalize bg-green-50 text-[var(--upwork-green)]">
+                <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium capitalize bg-green-50 text-(--upwork-green)">
                   {user.role}
                 </span>
               </div>
@@ -126,7 +139,7 @@ export default function DashboardProfilePage() {
                 <button
                   onClick={handleSave}
                   disabled={isSaving}
-                  className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg bg-[var(--upwork-green)] text-white hover:bg-[var(--upwork-green-dark)] transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg bg-(--upwork-green) text-white hover:bg-(--upwork-green-dark) transition-colors disabled:opacity-50"
                 >
                   {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                   Save
@@ -141,12 +154,21 @@ export default function DashboardProfilePage() {
               <Mail className="w-4 h-4 text-gray-400 shrink-0" />
               <div className="flex-1">
                 <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Email</p>
-                <p className="text-[var(--upwork-navy)]">{user.email}</p>
+                <p className="text-(--upwork-navy)">{user.email}</p>
               </div>
-              {user.isEmailVerified && (
+              {user.isEmailVerified ? (
                 <span className="flex items-center gap-1 text-[10px] text-green-600">
                   <CheckCircle2 className="w-3 h-3" />Verified
                 </span>
+              ) : (
+                <button
+                  onClick={handleResendVerification}
+                  disabled={isSendingVerification}
+                  className="flex items-center gap-1 text-[10px] font-medium px-2.5 py-1 rounded-lg bg-amber-50 text-amber-600 border border-amber-200 hover:bg-amber-100 transition-colors disabled:opacity-50 whitespace-nowrap"
+                >
+                  {isSendingVerification ? <Loader2 className="w-3 h-3 animate-spin" /> : <Mail className="w-3 h-3" />}
+                  {isSendingVerification ? 'Sending…' : 'Resend verification'}
+                </button>
               )}
             </div>
 
@@ -160,10 +182,10 @@ export default function DashboardProfilePage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Enter phone number"
-                    className="w-full max-w-xs px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-[var(--upwork-navy)] focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-[var(--upwork-green)]"
+                    className="w-full max-w-xs px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-(--upwork-navy) focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-(--upwork-green)"
                   />
                 ) : (
-                  <p className="text-[var(--upwork-navy)]">{user.phone || '—'}</p>
+                  <p className="text-(--upwork-navy)">{user.phone || '—'}</p>
                 )}
               </div>
             </div>
@@ -172,7 +194,7 @@ export default function DashboardProfilePage() {
               <Calendar className="w-4 h-4 text-gray-400 shrink-0" />
               <div>
                 <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5">Member Since</p>
-                <p className="text-[var(--upwork-navy)]">{memberSince}</p>
+                <p className="text-(--upwork-navy)">{memberSince}</p>
               </div>
             </div>
           </div>
@@ -182,8 +204,8 @@ export default function DashboardProfilePage() {
         <div className="space-y-4">
           {/* Account status */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
-            <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[var(--upwork-green)]" />
+            <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-(--upwork-green)" />
               Account Status
             </h3>
             <div className="space-y-2.5 text-xs">
@@ -201,7 +223,7 @@ export default function DashboardProfilePage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-400">Role</span>
-                <span className="text-[var(--upwork-navy)] capitalize">{user.role}</span>
+                <span className="text-(--upwork-navy) capitalize">{user.role}</span>
               </div>
             </div>
           </div>
@@ -209,7 +231,7 @@ export default function DashboardProfilePage() {
           {/* Tradie-specific info */}
           {profile && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-[var(--upwork-navy)] mb-3">Tradie Info</h3>
+              <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Tradie Info</h3>
               <div className="space-y-2.5 text-xs">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Verified</span>
@@ -219,17 +241,17 @@ export default function DashboardProfilePage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Rating</span>
-                  <span className="text-[var(--upwork-navy)]">
+                  <span className="text-(--upwork-navy)">
                     {profile.rating.average.toFixed(1)} ({profile.rating.count})
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Success Rate</span>
-                  <span className="text-[var(--upwork-navy)]">{Math.round(profile.jobSuccessRate)}%</span>
+                  <span className="text-(--upwork-navy)">{Math.round(profile.jobSuccessRate)}%</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Service Radius</span>
-                  <span className="text-[var(--upwork-navy)]">{profile.serviceRadiusKm}km</span>
+                  <span className="text-(--upwork-navy)">{profile.serviceRadiusKm}km</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Status</span>
