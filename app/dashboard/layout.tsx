@@ -13,12 +13,14 @@ import {
   Menu,
   X,
   User,
+  Search,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 
 const sidebarLinks = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
   { href: '/dashboard/jobs', label: 'My Jobs', icon: Briefcase },
+  { href: '/dashboard/find-talent', label: 'Find Tradies', icon: Search },
   { href: '/post-job', label: 'Post a Job', icon: PlusCircle },
 ]
 
