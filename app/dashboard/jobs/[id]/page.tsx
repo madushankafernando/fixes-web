@@ -60,7 +60,7 @@ function StatusTimeline({ currentStatus }: { currentStatus: JobStatus }) {
   const currentIndex = STATUS_STEPS.findIndex((s) => s.status === currentStatus)
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto pb-2">
+    <div className="flex items-center gap-1 overflow-x-auto pb-2 pt-1 pl-1">
       {STATUS_STEPS.map((step, index) => {
         const Icon = step.icon
         const isCompleted = index <= currentIndex
@@ -395,12 +395,13 @@ export default function JobDetailPage() {
   // Socket.io — live status updates
   useEffect(() => {
     const socket = getSocket()
-    if (!socket || !jobId) return
+    if (!socket || !job) return
 
-    joinJobRoom(jobId)
+    const mongoId = job._id
+    joinJobRoom(mongoId)
 
     const handleStatusUpdate = (payload: JobStatusUpdatePayload) => {
-      if (payload.jobId === jobId) {
+      if (payload.jobId === mongoId) {
         setJob((prev) => (prev ? { ...prev, status: payload.status } : prev))
       }
     }
@@ -409,9 +410,9 @@ export default function JobDetailPage() {
 
     return () => {
       socket.off('job:status_update', handleStatusUpdate)
-      leaveJobRoom(jobId)
+      leaveJobRoom(mongoId)
     }
-  }, [jobId])
+  }, [job?._id])
 
   if (isLoading) {
     return (
