@@ -37,8 +37,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (isLoading || !user || user.role !== 'admin') {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#0f172a]">
-        <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="w-6 h-6 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -52,20 +52,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="h-screen overflow-hidden bg-[#0f172a]">
+    <div className="h-screen overflow-hidden bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-30 bg-[#1e293b] border-b border-white/10">
-        <div className="flex items-center justify-between px-4 lg:px-6 py-3">
+      <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 lg:px-6 h-14">
           <div className="flex items-center gap-3">
             <button
-              className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 text-white"
+              className="lg:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"
               onClick={() => setSidebarOpen(!sidebarOpen)}
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <Link href="/admin" className="flex items-center gap-2">
-              <Image src="/logo.svg" alt="Fixes" width={80} height={28} className="h-6 w-auto brightness-0 invert" priority />
-              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 uppercase tracking-wider">
+            <Link href="/admin" className="flex items-center gap-2.5">
+              <Image src="/logo.svg" alt="Fixes" width={80} height={28} className="h-6 w-auto" priority />
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#2563EB] text-white uppercase tracking-wider">
                 Admin
               </span>
             </Link>
@@ -74,25 +74,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="hidden sm:flex items-center gap-1 text-xs text-white/50 hover:text-white transition-colors"
+              className="hidden sm:flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition-colors"
             >
               <ArrowLeft className="w-3 h-3" />
               Main Site
             </Link>
             <div className="hidden sm:block text-right">
-              <p className="text-xs font-medium text-white leading-tight">{user.name}</p>
-              <p className="text-[10px] text-white/40">{user.fixId}</p>
+              <p className="text-xs font-medium text-gray-700 leading-tight">{user.name}</p>
+              <p className="text-[10px] text-gray-400">{user.fixId}</p>
             </div>
-            <div className="w-8 h-8 rounded-full bg-cyan-500 flex items-center justify-center text-white text-xs font-semibold">
+            <div className="w-8 h-8 rounded-full bg-[#2563EB] flex items-center justify-center text-white text-xs font-semibold">
               {user.name?.charAt(0).toUpperCase()}
             </div>
           </div>
         </div>
       </header>
 
-      <div className="flex h-[calc(100vh-49px)] overflow-hidden">
+      <div className="flex h-[calc(100vh-56px)] overflow-hidden">
         {/* Sidebar — desktop */}
-        <aside className="hidden lg:flex flex-col w-52 bg-[#1e293b] border-r border-white/10 py-4 px-3">
+        <aside className="hidden lg:flex flex-col w-52 bg-white border-r border-gray-200 py-5 px-3">
           <nav className="flex flex-col gap-1 flex-1">
             {sidebarLinks.map((link) => {
               const Icon = link.icon
@@ -103,8 +103,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href={link.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     active
-                      ? 'bg-cyan-500/15 text-cyan-400'
-                      : 'text-white/50 hover:bg-white/5 hover:text-white/80'
+                      ? 'bg-[#2563EB] text-white'
+                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -115,7 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-colors mt-auto"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors mt-auto"
           >
             <LogOut className="w-4 h-4" />
             Log out
@@ -125,8 +125,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Sidebar — mobile overlay */}
         {sidebarOpen && (
           <>
-            <div className="lg:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)} />
-            <aside className="lg:hidden fixed left-0 top-[49px] bottom-0 w-60 bg-[#1e293b] border-r border-white/10 py-4 px-3 z-50 flex flex-col">
+            <div className="lg:hidden fixed inset-0 bg-black/30 z-40" onClick={() => setSidebarOpen(false)} />
+            <aside className="lg:hidden fixed left-0 top-14 bottom-0 w-60 bg-white border-r border-gray-200 py-5 px-3 z-50 flex flex-col">
               <nav className="flex flex-col gap-1 flex-1">
                 {sidebarLinks.map((link) => {
                   const Icon = link.icon
@@ -138,8 +138,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                       onClick={() => setSidebarOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                         active
-                          ? 'bg-cyan-500/15 text-cyan-400'
-                          : 'text-white/50 hover:bg-white/5 hover:text-white/80'
+                          ? 'bg-[#2563EB] text-white'
+                          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
                       }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -150,7 +150,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </nav>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-colors mt-auto"
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors mt-auto"
               >
                 <LogOut className="w-4 h-4" />
                 Log out

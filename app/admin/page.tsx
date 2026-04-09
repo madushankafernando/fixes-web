@@ -25,8 +25,8 @@ export default function AdminDashboardPage() {
 
   if (isLoading || !stats) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      <div className="flex items-center justify-center py-24">
+        <div className="w-6 h-6 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -37,80 +37,81 @@ export default function AdminDashboardPage() {
       value: stats.users.total,
       sub: `${stats.users.clients} clients • ${stats.users.tradies} tradies`,
       icon: Users,
-      color: 'bg-blue-500/15 text-blue-400',
+      iconBg: 'bg-[#EFF6FF]',
+      iconColor: 'text-[#2563EB]',
     },
     {
       label: 'Total Jobs',
       value: stats.jobs.total,
       sub: `${stats.jobs.active} active • ${stats.jobs.completed} done`,
       icon: Briefcase,
-      color: 'bg-emerald-500/15 text-emerald-400',
+      iconBg: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
     },
     {
       label: 'Pending Verification',
       value: stats.tradies.pendingVerification,
       sub: `${stats.tradies.fullyVerified} fully verified`,
       icon: ShieldCheck,
-      color: 'bg-amber-500/15 text-amber-400',
+      iconBg: 'bg-amber-50',
+      iconColor: 'text-amber-600',
     },
     {
       label: 'Revenue',
       value: `$${stats.revenue.totalRevenue.toLocaleString()}`,
       sub: `$${stats.revenue.platformFee.toLocaleString()} platform fee`,
       icon: DollarSign,
-      color: 'bg-cyan-500/15 text-cyan-400',
+      iconBg: 'bg-rose-50',
+      iconColor: 'text-rose-600',
     },
   ]
 
   return (
     <div>
-      <h1 className="text-xl sm:text-2xl font-bold text-white mb-6">Dashboard</h1>
+      <div className="mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-sm text-gray-400 mt-0.5">Platform overview and key metrics</p>
+      </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Primary stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {statCards.map((card) => {
           const Icon = card.icon
           return (
-            <div
-              key={card.label}
-              className="bg-[#1e293b] rounded-xl border border-white/10 p-4 sm:p-5"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${card.color}`}>
-                  <Icon className="w-4.5 h-4.5" />
+            <div key={card.label} className="bg-white rounded-xl border border-gray-200 p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-medium text-gray-400">{card.label}</span>
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${card.iconBg}`}>
+                  <Icon className={`w-4 h-4 ${card.iconColor}`} />
                 </div>
-                <span className="text-xs text-white/50">{card.label}</span>
               </div>
-              <p className="text-2xl font-bold text-white">{card.value}</p>
-              <p className="text-[10px] text-white/30 mt-1">{card.sub}</p>
+              <p className="text-2xl font-bold text-gray-900">{card.value}</p>
+              <p className="text-[11px] text-gray-400 mt-1">{card.sub}</p>
             </div>
           )
         })}
       </div>
 
-      {/* Quick stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-[#1e293b] rounded-xl border border-white/10 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <span className="text-xs text-white/50">Completed Payments</span>
-          </div>
-          <p className="text-lg font-bold text-white">{stats.revenue.completedPayments}</p>
-        </div>
-        <div className="bg-[#1e293b] rounded-xl border border-white/10 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <DollarSign className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs text-white/50">Tradie Earnings</span>
-          </div>
-          <p className="text-lg font-bold text-white">${stats.revenue.tradieEarnings.toLocaleString()}</p>
-        </div>
-        <div className="bg-[#1e293b] rounded-xl border border-white/10 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="w-4 h-4 text-red-400" />
-            <span className="text-xs text-white/50">Cancelled Jobs</span>
-          </div>
-          <p className="text-lg font-bold text-white">{stats.jobs.cancelled}</p>
-        </div>
+      {/* Secondary stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {[
+          { label: 'Completed Payments', value: stats.revenue.completedPayments, icon: TrendingUp, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+          { label: 'Tradie Earnings', value: `$${stats.revenue.tradieEarnings.toLocaleString()}`, icon: DollarSign, iconBg: 'bg-[#EFF6FF]', iconColor: 'text-[#2563EB]' },
+          { label: 'Cancelled Jobs', value: stats.jobs.cancelled, icon: AlertTriangle, iconBg: 'bg-red-50', iconColor: 'text-red-500' },
+        ].map((item) => {
+          const Icon = item.icon
+          return (
+            <div key={item.label} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${item.iconBg}`}>
+                <Icon className={`w-5 h-5 ${item.iconColor}`} />
+              </div>
+              <div>
+                <p className="text-[11px] text-gray-400 mb-0.5">{item.label}</p>
+                <p className="text-xl font-bold text-gray-900">{item.value}</p>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
