@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Image from 'next/image'
 import {
   User as UserIcon,
@@ -13,16 +13,19 @@ import {
   Save,
   X,
   Loader2,
+  Camera,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { api } from '@/lib/api'
 
 export default function DashboardProfilePage() {
   const { user, profile, refreshUser } = useAuth()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isSendingVerification, setIsSendingVerification] = useState(false)
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
 
   // Editable fields
@@ -47,7 +50,6 @@ export default function DashboardProfilePage() {
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      // For tradies, use the tradie profile update endpoint (supports phone)
       if (user?.role === 'tradie') {
         await api.patch('/api/tradie/profile/me', { phone })
       }
@@ -70,6 +72,68 @@ export default function DashboardProfilePage() {
       showToast('Failed to send email. Please try again.', 'error')
     } finally {
       setIsSendingVerification(false)
+    }
+  }
+
+  const handleAvatarClick = () => {
+    if (!isUploadingAvatar) fileInputRef.current?.click()
+  }
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validate file
+    if (!file.type.startsWith('image/')) {
+      showToast('Please select an image file', 'error')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image must be under 5MB', 'error')
+      return
+    }
+
+    setIsUploadingAvatar(true)
+    try {
+      // Step 1 — get signed upload params
+      const signRes = await api.post<{
+        signature: string
+        timestamp: number
+        cloudName: string
+        apiKey: string
+        folder: string
+      }>('/api/uploads/sign', { folder: 'avatars' })
+      const signed = signRes.data
+
+      // Step 2 — upload directly to Cloudinary
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('api_key', signed.apiKey)
+      formData.append('timestamp', String(signed.timestamp))
+      formData.append('signature', signed.signature)
+      formData.append('folder', signed.folder)
+
+      const cloudRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${signed.cloudName}/image/upload`,
+        { method: 'POST', body: formData }
+      )
+      if (!cloudRes.ok) throw new Error('Cloudinary upload failed')
+      const cloudData = await cloudRes.json()
+
+      // Step 3 — confirm with backend → updates user.avatarUrl in DB
+      await api.post('/api/uploads/avatar', {
+        publicId: cloudData.public_id,
+        url: cloudData.secure_url,
+      })
+
+      await refreshUser()
+      showToast('Avatar updated!', 'success')
+    } catch {
+      showToast('Failed to upload avatar. Please try again.', 'error')
+    } finally {
+      setIsUploadingAvatar(false)
+      // Reset input so same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
 
@@ -103,13 +167,45 @@ export default function DashboardProfilePage() {
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 sm:p-6">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden shrink-0">
-                {user.avatarUrl ? (
-                  <Image src={user.avatarUrl} alt={user.name} width={64} height={64} className="object-cover w-full h-full" />
-                ) : (
-                  <UserIcon className="w-7 h-7" />
+
+              {/* Avatar — clickable to upload */}
+              <div className="relative shrink-0">
+                <button
+                  onClick={handleAvatarClick}
+                  disabled={isUploadingAvatar}
+                  title="Change photo"
+                  className="w-16 h-16 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden group relative focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:ring-offset-2"
+                >
+                  {user.avatarUrl ? (
+                    <Image src={user.avatarUrl} alt={user.name} width={64} height={64} className="object-cover w-full h-full" />
+                  ) : (
+                    <UserIcon className="w-7 h-7" />
+                  )}
+                  {/* Hover overlay */}
+                  <span className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    {isUploadingAvatar
+                      ? <Loader2 className="w-5 h-5 text-white animate-spin" />
+                      : <Camera className="w-5 h-5 text-white" />
+                    }
+                  </span>
+                </button>
+                {/* Upload spinner badge */}
+                {isUploadingAvatar && (
+                  <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-white border border-gray-200 rounded-full flex items-center justify-center">
+                    <Loader2 className="w-3 h-3 text-(--upwork-green) animate-spin" />
+                  </span>
                 )}
               </div>
+
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+
               <div>
                 <h2 className="text-lg font-bold text-(--upwork-navy)">{user.name}</h2>
                 <p className="text-xs text-gray-400 font-mono">{user.fixId}</p>
