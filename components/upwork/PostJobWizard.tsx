@@ -850,7 +850,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     } catch {
       // Silent
     }
-    router.push('/')
+    router.back()
   }, [createdJob, router])
 
   // ─── Navigation ─────────────────────────────────────────────────────────────
@@ -859,7 +859,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     } else {
-      router.push('/')
+      router.back()
     }
   }
 
