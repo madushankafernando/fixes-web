@@ -34,7 +34,6 @@ interface PostJobWizardProps {
   preselectedCategory: string
 }
 
-// ─── Step 1: Category ───────────────────────────────────────────────────────────
 
 function StepCategory({
   selectedCategory,
@@ -74,7 +73,6 @@ function StepCategory({
   )
 }
 
-// ─── Step 2: Title + Description ────────────────────────────────────────────────
 
 function StepDescription({
   description,
@@ -152,7 +150,6 @@ function StepDescription({
   )
 }
 
-// ─── Step 3: Photo Upload ───────────────────────────────────────────────────────
 
 function StepPhotos({
   images,
@@ -243,7 +240,6 @@ function StepPhotos({
   )
 }
 
-// ─── Step 4: Location ───────────────────────────────────────────────────────────
 
 function StepLocation({
   address,
@@ -345,7 +341,6 @@ function StepLocation({
   )
 }
 
-// ─── Step 5: Preferred Time ─────────────────────────────────────────────────────
 
 function StepTime({
   selected,
@@ -391,7 +386,6 @@ function StepTime({
   )
 }
 
-// ─── Step 6: Analyzing ──────────────────────────────────────────────────────────
 
 function StepAnalyzing() {
   return (
@@ -412,7 +406,6 @@ function StepAnalyzing() {
   )
 }
 
-// ─── Step 7: Quote ──────────────────────────────────────────────────────────────
 
 function StepQuote({
   quote,
@@ -531,20 +524,15 @@ function StepQuote({
   )
 }
 
-// ═════════════════════════════════════════════════════════════════════════════════
-// MAIN WIZARD
-// ═════════════════════════════════════════════════════════════════════════════════
 
 export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizardProps) {
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
 
-  // If category is preselected from landing page, skip step 1
   const hasPreselectedCategory = VALID_CATEGORIES.includes(preselectedCategory as TradieCategory)
   const [currentStep, setCurrentStep] = useState(hasPreselectedCategory ? 2 : 1)
   const totalSteps = 5
 
-  // Form data
   const [category, setCategory] = useState<TradieCategory | ''>(
     hasPreselectedCategory ? (preselectedCategory as TradieCategory) : ''
   )
@@ -557,19 +545,15 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
   const [locationState, setLocationState] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
 
-  // Upload
   const [isUploading, setIsUploading] = useState(false)
 
-  // Submission
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
   const [createdQuote, setCreatedQuote] = useState<Quote | null>(null)
 
-  // Accept
   const [isAccepting, setIsAccepting] = useState(false)
 
-  // Email verification gate — clients must verify before posting
   if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
     return (
       <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
@@ -606,14 +590,12 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
   const progress = Math.min((currentStep / totalSteps) * 100, 100)
 
-  // ─── Category select (step 1) auto-advances ─────────────────────────────────
 
   const handleCategorySelect = (cat: TradieCategory) => {
     setCategory(cat)
     setCurrentStep(2)
   }
 
-  // ─── Upload handler ─────────────────────────────────────────────────────────
 
   const handleUploadFiles = useCallback(async (files: FileList) => {
     if (!isAuthenticated) {
@@ -627,11 +609,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
       const uploaded: JobImage[] = []
 
       for (const file of Array.from(files)) {
-        // 1. Get signed params (POST, not GET)
         const signRes = await api.post<SignedUploadResponse>('/api/uploads/sign', { folder: 'jobs' })
         const signed = signRes.data
 
-        // 2. Upload directly to Cloudinary
         const formData = new FormData()
         formData.append('file', file)
         formData.append('api_key', signed.apiKey)
@@ -648,7 +628,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
         const cloudData = await cloudRes.json()
 
-        // 3. Confirm with backend
         await api.post('/api/uploads/confirm', {
           publicId: cloudData.public_id,
           url: cloudData.secure_url,
@@ -669,7 +648,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }, [isAuthenticated, router])
 
-  // ─── Submit job ─────────────────────────────────────────────────────────────
 
   const handleSubmitJob = useCallback(async (timeValue: PreferredTime) => {
     if (!isAuthenticated) {
@@ -679,10 +657,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
     setIsSubmitting(true)
     setSubmitError('')
-    setCurrentStep(6) // Analyzing screen
+    setCurrentStep(6) 
 
     try {
-      // Default coordinates — in production, geocode from address
       const lat = -37.8136
       const lng = 144.9631
 
@@ -703,9 +680,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
       setCreatedJob(res.data.job)
       setCreatedQuote(res.data.quote)
-      setCurrentStep(7) // Quote screen
+      setCurrentStep(7) 
     } catch (err) {
-      setCurrentStep(5) // Go back
+      setCurrentStep(5) 
       if (err instanceof ApiError) {
         setSubmitError(err.message)
       } else {
@@ -716,7 +693,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState])
 
-  // ─── Accept quote ───────────────────────────────────────────────────────────
 
   const handleAcceptQuote = useCallback(async () => {
     if (!createdJob) return
@@ -741,19 +717,16 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }, [createdJob, router])
 
-  // ─── Cancel job ─────────────────────────────────────────────────────────────
 
   const handleCancelJob = useCallback(async () => {
     if (!createdJob) return
     try {
       await api.patch(`/api/jobs/${createdJob._id}/cancel`)
     } catch {
-      // Silent
     }
     router.push('/')
   }, [createdJob, router])
 
-  // ─── Navigation ─────────────────────────────────────────────────────────────
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -777,7 +750,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }
 
-  // ─── Analyzing screen (no header) ───────────────────────────────────────────
 
   if (currentStep === 6) {
     return (
@@ -787,7 +759,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     )
   }
 
-  // ─── Quote screen ───────────────────────────────────────────────────────────
 
   if (currentStep === 7 && createdQuote && createdJob) {
     return (
@@ -813,11 +784,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     )
   }
 
-  // ─── Standard wizard ────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white">
-      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 flex items-center justify-between">
           <button
@@ -839,7 +808,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
         </div>
       </header>
 
-      {/* Error */}
       {submitError && (
         <div className="max-w-4xl mx-auto px-4 lg:px-6 mt-6">
           <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -849,7 +817,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
         </div>
       )}
 
-      {/* Content */}
       <main className="max-w-4xl mx-auto px-4 lg:px-6 py-12 md:py-20">
         {currentStep === 1 && (
           <StepCategory

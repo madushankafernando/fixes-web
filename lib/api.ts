@@ -1,7 +1,8 @@
+// fixes-web/lib/api.ts
+
 import type { ApiResponse, PaginatedResponse } from './types'
 import { API_BASE_URL } from './constants'
 
-// ─── Token Management ───────────────────────────────────────────────────────────
 
 let accessToken: string | null = null
 let refreshTokenValue: string | null = null
@@ -40,7 +41,6 @@ export function clearTokens(): void {
   }
 }
 
-// ─── Refresh Logic ──────────────────────────────────────────────────────────────
 
 let isRefreshing = false
 let refreshPromise: Promise<boolean> | null = null
@@ -73,7 +73,6 @@ async function attemptTokenRefresh(): Promise<boolean> {
   }
 }
 
-// ─── Core Fetch Wrapper ─────────────────────────────────────────────────────────
 
 interface FetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -110,7 +109,6 @@ async function apiFetch<T>(
 
   let res = await fetch(`${API_BASE_URL}${endpoint}`, fetchOptions)
 
-  // Auto-refresh on 401
   if (res.status === 401 && !noAuth) {
     if (!isRefreshing) {
       isRefreshing = true
@@ -122,7 +120,6 @@ async function apiFetch<T>(
     refreshPromise = null
 
     if (refreshed) {
-      // Retry with new token
       const newToken = getAccessToken()
       if (newToken) {
         requestHeaders['Authorization'] = `Bearer ${newToken}`
@@ -130,7 +127,6 @@ async function apiFetch<T>(
       fetchOptions.headers = requestHeaders
       res = await fetch(`${API_BASE_URL}${endpoint}`, fetchOptions)
     } else {
-      // Redirect to login
       if (typeof window !== 'undefined') {
         window.location.href = '/login'
       }
@@ -147,7 +143,6 @@ async function apiFetch<T>(
   return json as T
 }
 
-// ─── Error Class ────────────────────────────────────────────────────────────────
 
 export class ApiError extends Error {
   status: number
@@ -165,7 +160,6 @@ export class ApiError extends Error {
   }
 }
 
-// ─── Typed API Helpers ──────────────────────────────────────────────────────────
 
 export const api = {
   get<T>(endpoint: string, noAuth?: boolean): Promise<ApiResponse<T>> {
@@ -205,7 +199,6 @@ export const api = {
     return apiFetch<ApiResponse<T>>(endpoint, { method: 'DELETE' })
   },
 
-  // Raw fetch for non-standard responses (e.g., paginated with extras)
   raw<T>(endpoint: string, options?: FetchOptions): Promise<T> {
     return apiFetch<T>(endpoint, options)
   },

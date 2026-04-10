@@ -1,3 +1,5 @@
+// fixes-web/app/i-want-to-work/page.tsx
+
 import { IWantToWorkPage } from "@/components/upwork/IWantToWorkPage"
 
 export const metadata = {

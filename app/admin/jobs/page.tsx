@@ -1,3 +1,5 @@
+// fixes-web/app/admin/jobs/page.tsx
+
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
@@ -51,7 +53,6 @@ export default function AdminJobsPage() {
         <p className="text-sm text-gray-400 mt-0.5">Monitor all platform jobs</p>
       </div>
 
-      {/* Search */}
       <div className="flex gap-2 mb-4">
         <div className="flex-1 relative">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -72,7 +73,6 @@ export default function AdminJobsPage() {
         </button>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
           <Filter className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -104,7 +104,6 @@ export default function AdminJobsPage() {
 
       {!isLoading && <p className="text-xs text-gray-400 mb-3">{total} job{total !== 1 ? 's' : ''}</p>}
 
-      {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">

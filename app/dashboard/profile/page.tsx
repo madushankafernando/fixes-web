@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/profile/page.tsx
+
 'use client'
 
 import { useState, useRef } from 'react'
@@ -28,7 +30,6 @@ export default function DashboardProfilePage() {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null)
 
-  // Editable fields
   const [name, setName] = useState(user?.name || '')
   const [phone, setPhone] = useState(user?.phone || '')
 
@@ -83,7 +84,6 @@ export default function DashboardProfilePage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file
     if (!file.type.startsWith('image/')) {
       showToast('Please select an image file', 'error')
       return
@@ -95,7 +95,6 @@ export default function DashboardProfilePage() {
 
     setIsUploadingAvatar(true)
     try {
-      // Step 1 — get signed upload params
       const signRes = await api.post<{
         signature: string
         timestamp: number
@@ -105,7 +104,6 @@ export default function DashboardProfilePage() {
       }>('/api/uploads/sign', { folder: 'avatars' })
       const signed = signRes.data
 
-      // Step 2 — upload directly to Cloudinary
       const formData = new FormData()
       formData.append('file', file)
       formData.append('api_key', signed.apiKey)
@@ -120,7 +118,6 @@ export default function DashboardProfilePage() {
       if (!cloudRes.ok) throw new Error('Cloudinary upload failed')
       const cloudData = await cloudRes.json()
 
-      // Step 3 — confirm with backend → updates user.avatarUrl in DB
       await api.post('/api/uploads/avatar', {
         publicId: cloudData.public_id,
         url: cloudData.secure_url,
@@ -132,7 +129,6 @@ export default function DashboardProfilePage() {
       showToast('Failed to upload avatar. Please try again.', 'error')
     } finally {
       setIsUploadingAvatar(false)
-      // Reset input so same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }
@@ -147,7 +143,6 @@ export default function DashboardProfilePage() {
 
   return (
     <div>
-      {/* Toast */}
       {toast && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-lg flex items-center gap-2 ${
           toast.type === 'success' ? 'bg-green-50 border border-green-200 text-green-700' : 'bg-red-50 border border-red-200 text-red-700'
@@ -163,12 +158,10 @@ export default function DashboardProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Main profile card */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 sm:p-6">
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-4">
 
-              {/* Avatar — clickable to upload */}
               <div className="relative shrink-0">
                 <button
                   onClick={handleAvatarClick}
@@ -181,7 +174,6 @@ export default function DashboardProfilePage() {
                   ) : (
                     <UserIcon className="w-7 h-7" />
                   )}
-                  {/* Hover overlay */}
                   <span className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     {isUploadingAvatar
                       ? <Loader2 className="w-5 h-5 text-white animate-spin" />
@@ -189,7 +181,6 @@ export default function DashboardProfilePage() {
                     }
                   </span>
                 </button>
-                {/* Upload spinner badge */}
                 {isUploadingAvatar && (
                   <span className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-white border border-gray-200 rounded-full flex items-center justify-center">
                     <Loader2 className="w-3 h-3 text-(--upwork-green) animate-spin" />
@@ -197,7 +188,6 @@ export default function DashboardProfilePage() {
                 )}
               </div>
 
-              {/* Hidden file input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -244,7 +234,6 @@ export default function DashboardProfilePage() {
             )}
           </div>
 
-          {/* Details */}
           <div className="space-y-4">
             <div className="flex items-center gap-3 text-sm">
               <Mail className="w-4 h-4 text-gray-400 shrink-0" />
@@ -296,9 +285,7 @@ export default function DashboardProfilePage() {
           </div>
         </div>
 
-        {/* Side info */}
         <div className="space-y-4">
-          {/* Account status */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-2">
               <Shield className="w-4 h-4 text-(--upwork-green)" />
@@ -324,7 +311,6 @@ export default function DashboardProfilePage() {
             </div>
           </div>
 
-          {/* Tradie-specific info */}
           {profile && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Tradie Info</h3>

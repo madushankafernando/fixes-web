@@ -121,7 +121,6 @@ export function IWantToWorkPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-[#FFFCE9] border-b border-(--upwork-border)">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
@@ -147,11 +146,9 @@ export function IWantToWorkPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
       <section className="py-12 md:py-16 lg:py-20 px-4 lg:px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-            {/* Left Content */}
             <div className="flex-1 lg:max-w-120 pt-4 lg:pt-8">
               <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-(--upwork-navy) leading-[1.08] mb-5">
                 Join Australia&apos;s largest tradie marketplace
@@ -164,7 +161,6 @@ export function IWantToWorkPage() {
               </Button>
             </div>
 
-            {/* Right Image - matching Upwork partners page style */}
             <div className="flex-1 w-full lg:w-auto lg:max-w-[55%]">
               <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden">
                 <Image
@@ -181,7 +177,6 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      {/* Partnership Types */}
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
           {partnershipTypes.map((type, index) => (
@@ -191,12 +186,10 @@ export function IWantToWorkPage() {
                 index !== partnershipTypes.length - 1 ? "border-b border-gray-200" : ""
               } ${index % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
             >
-              {/* Icon */}
               <div className="shrink-0 w-24 h-24 bg-(--upwork-light-gray) rounded-2xl flex items-center justify-center">
                 {type.icon}
               </div>
 
-              {/* Content */}
               <div className="flex-1 text-center lg:text-left">
                 <h2 className="text-2xl md:text-3xl font-bold text-(--upwork-navy) mb-4">
                   {type.title}
@@ -218,7 +211,6 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="bg-[#f2f7f2] py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -239,17 +231,14 @@ export function IWantToWorkPage() {
           </div>
 
           <div className="bg-white rounded-2xl p-8 md:p-12 shadow-sm">
-            {/* Logo */}
             <div className={`w-12 h-12 ${testimonials[currentTestimonial].logoColor} rounded-lg flex items-center justify-center text-white font-bold text-lg mb-6`}>
               {testimonials[currentTestimonial].logo}
             </div>
 
-            {/* Quote */}
             <blockquote className="text-lg md:text-xl text-(--upwork-navy) mb-6 leading-relaxed">
               &ldquo;{testimonials[currentTestimonial].quote}&rdquo;
             </blockquote>
 
-            {/* Author */}
             <div>
               <p className="font-semibold text-(--upwork-navy)">
                 - {testimonials[currentTestimonial].author}
@@ -260,7 +249,6 @@ export function IWantToWorkPage() {
             </div>
           </div>
 
-          {/* Dots */}
           <div className="flex justify-center gap-2 mt-6">
             {testimonials.map((_, index) => (
               <button
@@ -276,7 +264,6 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-4">
@@ -291,7 +278,6 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      {/* Benefits Grid */}
       <section className="bg-(--upwork-navy) text-white py-20 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
@@ -336,11 +322,9 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      {/* Footer CTA */}
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
-            {/* For Tradies */}
             <div className="bg-(--upwork-light-gray) rounded-2xl p-8">
               <h3 className="text-xl font-bold text-(--upwork-navy) mb-3">
                 Ready to find work?
@@ -354,7 +338,6 @@ export function IWantToWorkPage() {
               </Button>
             </div>
 
-            {/* For Top Tradies */}
             <div className="bg-(--upwork-light-gray) rounded-2xl p-8">
               <h3 className="text-xl font-bold text-(--upwork-navy) mb-3">
                 Already a top tradie?
@@ -371,7 +354,6 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      {/* Simple Footer */}
       <footer className="border-t border-gray-200 py-8 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Image

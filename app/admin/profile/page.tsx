@@ -1,3 +1,5 @@
+// fixes-web/app/admin/profile/page.tsx
+
 'use client'
 
 import Image from 'next/image'
@@ -30,7 +32,6 @@ export default function AdminProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-        {/* Main card */}
         <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 sm:p-6">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-16 h-16 rounded-full bg-[#2563EB] flex items-center justify-center text-white overflow-hidden shrink-0">
@@ -83,7 +84,6 @@ export default function AdminProfilePage() {
           </div>
         </div>
 
-        {/* Account status */}
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
             <Shield className="w-4 h-4 text-[#2563EB]" />

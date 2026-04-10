@@ -1,3 +1,5 @@
+// fixes-web/contexts/auth-context.tsx
+
 'use client'
 
 import {
@@ -11,7 +13,6 @@ import {
 import type { User, TradieProfile, LoginResponse, MeResponse } from '@/lib/types'
 import { api, setTokens, clearTokens, getAccessToken } from '@/lib/api'
 
-// ─── Context Shape ──────────────────────────────────────────────────────────────
 
 interface AuthContextValue {
   user: User | null
@@ -36,14 +37,12 @@ interface RegisterClientData {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
-// ─── Provider ───────────────────────────────────────────────────────────────────
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<TradieProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Restore session on mount
   useEffect(() => {
     const token = getAccessToken()
     if (token) {
@@ -76,7 +75,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTokens(res.data.accessToken, res.data.refreshToken)
       setUser(res.data.user)
 
-      // Fetch full profile if tradie
       if (res.data.user.role === 'tradie') {
         await fetchMe()
       }
@@ -104,7 +102,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await api.post('/api/auth/logout', {})
     } catch {
-      // Silent fail — still clear local state
     }
     clearTokens()
     setUser(null)
@@ -132,7 +129,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-// ─── Hook ───────────────────────────────────────────────────────────────────────
 
 export function useAuth(): AuthContextValue {
   const context = useContext(AuthContext)

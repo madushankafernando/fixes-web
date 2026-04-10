@@ -1,3 +1,5 @@
+// fixes-web/app/admin/tradies/[userId]/page.tsx
+
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
@@ -92,7 +94,6 @@ export default function AdminTradieDocumentsPage() {
 
   return (
     <div>
-      {/* Toast */}
       {toast && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-xl text-sm font-medium shadow-lg flex items-center gap-2 ${
           toast.type === 'success' ? 'bg-emerald-50 border border-emerald-200 text-emerald-700' : 'bg-red-50 border border-red-200 text-red-700'
@@ -107,7 +108,6 @@ export default function AdminTradieDocumentsPage() {
         <ArrowLeft className="w-3.5 h-3.5" />Back to queue
       </button>
 
-      {/* Header */}
       <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -157,7 +157,6 @@ export default function AdminTradieDocumentsPage() {
         </div>
       </div>
 
-      {/* Documents grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {documents.map((doc) => {
           const isProcessing = actionLoading === doc.type

@@ -1,3 +1,5 @@
+// fixes-web/app/register/page.tsx
+
 'use client'
 
 import { useState } from 'react'
@@ -63,7 +65,6 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
-      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
           <Link href="/" className="inline-block">
@@ -79,10 +80,8 @@ export default function RegisterPage() {
         </div>
       </header>
 
-      {/* Main */}
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
               Create your account
@@ -98,7 +97,6 @@ export default function RegisterPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
               <div>
                 <label
                   htmlFor="register-name"
@@ -117,7 +115,6 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Email */}
               <div>
                 <label
                   htmlFor="register-email"
@@ -136,7 +133,6 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Phone */}
               <div>
                 <label
                   htmlFor="register-phone"
@@ -155,7 +151,6 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Password */}
               <div>
                 <label
                   htmlFor="register-password"
@@ -188,7 +183,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label
                   htmlFor="register-confirm-password"
@@ -207,7 +201,6 @@ export default function RegisterPage() {
                 />
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -224,14 +217,12 @@ export default function RegisterPage() {
               </button>
             </form>
 
-            {/* Divider */}
             <div className="flex items-center gap-4 my-6">
               <div className="flex-1 h-px bg-gray-200" />
               <span className="text-sm text-gray-400">or</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
-            {/* Login link */}
             <p className="text-center text-sm text-(--upwork-gray)">
               Already have an account?{' '}
               <Link
@@ -243,7 +234,6 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          {/* Tradie note */}
           <p className="text-center text-xs text-gray-400 mt-6">
             Are you a tradie?{' '}
             <Link href="/register/tradie" className="text-(--upwork-green) hover:underline">

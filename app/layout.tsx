@@ -1,3 +1,5 @@
+// fixes-web/app/layout.tsx
+
 import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'

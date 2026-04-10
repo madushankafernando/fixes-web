@@ -1,3 +1,5 @@
+// fixes-web/app/admin/users/[id]/page.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -61,7 +63,6 @@ export default function AdminUserDetailPage() {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5">
-        {/* User info */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-12 h-12 rounded-full bg-[#2563EB] flex items-center justify-center text-white font-bold text-lg shrink-0">
@@ -107,7 +108,6 @@ export default function AdminUserDetailPage() {
           </div>
         </div>
 
-        {/* Tradie profile */}
         {profile && (
           <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -146,7 +146,6 @@ export default function AdminUserDetailPage() {
           </div>
         )}
 
-        {/* Recent jobs */}
         <div className={`bg-white rounded-xl border border-gray-200 p-5 ${!profile ? 'lg:col-span-2' : ''}`}>
           <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Briefcase className="w-4 h-4 text-[#2563EB]" />Recent Jobs

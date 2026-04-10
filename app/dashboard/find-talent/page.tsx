@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/find-talent/page.tsx
+
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
@@ -42,7 +44,6 @@ export default function DashboardFindTalentPage() {
       setTradies(res.data.tradies)
       setTotal(res.data.total)
     } catch {
-      // Silent
     } finally {
       setIsLoading(false)
     }
@@ -59,13 +60,11 @@ export default function DashboardFindTalentPage() {
 
   return (
     <div>
-      {/* Page header */}
       <div className="mb-6">
         <h1 className="text-xl sm:text-2xl font-bold text-(--upwork-navy)">Find Tradies</h1>
         <p className="text-sm text-gray-400 mt-0.5">Browse verified professionals for your next project</p>
       </div>
 
-      {/* Category filter pills */}
       <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
         <Filter className="w-4 h-4 text-gray-400 shrink-0" />
         <button
@@ -93,7 +92,6 @@ export default function DashboardFindTalentPage() {
         ))}
       </div>
 
-      {/* Results count */}
       {!isLoading && (
         <p className="text-xs text-gray-400 mb-4">
           {total} tradie{total !== 1 ? 's' : ''} found
@@ -101,7 +99,6 @@ export default function DashboardFindTalentPage() {
         </p>
       )}
 
-      {/* Grid */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
           <Loader2 className="w-6 h-6 text-(--upwork-green) animate-spin" />
@@ -128,7 +125,6 @@ export default function DashboardFindTalentPage() {
                 href={`/dashboard/find-talent/${user.fixId}`}
                 className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:shadow-md hover:border-gray-300 transition-all group"
               >
-                {/* Header */}
                 <div className="flex items-start gap-3 mb-3">
                   <div className="w-12 h-12 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden shrink-0">
                     {user.avatarUrl ? (
@@ -157,7 +153,6 @@ export default function DashboardFindTalentPage() {
                   <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-(--upwork-green) transition-colors shrink-0 mt-1" />
                 </div>
 
-                {/* Rating */}
                 <div className="flex items-center gap-1.5 mb-3">
                   <div className="flex items-center gap-0.5">
                     {[1, 2, 3, 4, 5].map((star) => (
@@ -179,7 +174,6 @@ export default function DashboardFindTalentPage() {
                   </span>
                 </div>
 
-                {/* Categories */}
                 <div className="flex flex-wrap gap-1.5 mb-3">
                   {tradie.categories.slice(0, 3).map((cat) => (
                     <span
@@ -196,7 +190,6 @@ export default function DashboardFindTalentPage() {
                   )}
                 </div>
 
-                {/* Footer */}
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div className="flex items-center gap-1 text-[10px] text-gray-400">
                     <MapPin className="w-3 h-3" />
@@ -212,7 +205,6 @@ export default function DashboardFindTalentPage() {
         </div>
       )}
 
-      {/* Pagination */}
       {total > 20 && (
         <div className="flex justify-center gap-2 mt-8">
           <button

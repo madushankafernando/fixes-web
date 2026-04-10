@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/page.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -19,7 +21,6 @@ export default function DashboardPage() {
         const res = await api.getPaginated<Job>('/api/jobs?limit=50')
         setJobs(res.data)
       } catch {
-        // Silent — empty state will show
       } finally {
         setIsLoading(false)
       }
@@ -35,7 +36,6 @@ export default function DashboardPage() {
 
   return (
     <div>
-      {/* Welcome */}
       <div className="mb-6 sm:mb-8">
         <h1 className="text-xl sm:text-2xl font-bold text-(--upwork-navy)">
           Welcome back, {user?.name?.split(' ')[0]}
@@ -45,7 +45,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <div className="flex items-center gap-3 mb-3">
@@ -78,7 +77,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Active Jobs List */}
       <div className="bg-white rounded-xl border border-gray-200">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <h2 className="text-base font-semibold text-(--upwork-navy)">Your Jobs</h2>
@@ -96,7 +94,6 @@ export default function DashboardPage() {
             <div className="w-6 h-6 border-2 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
           </div>
         ) : jobs.length === 0 ? (
-          /* Empty state */
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
               <Briefcase className="w-8 h-8 text-gray-300" />
@@ -113,7 +110,6 @@ export default function DashboardPage() {
             </Link>
           </div>
         ) : (
-          /* Jobs list */
           <div className="divide-y divide-gray-100">
             {jobs.map((job) => {
               const assignedTradie =
@@ -166,7 +162,6 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* Pending quotes alert */}
       {pendingQuotes.length > 0 && (
         <div className="mt-6 flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
           <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />

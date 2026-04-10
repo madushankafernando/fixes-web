@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/layout.tsx
+
 'use client'
 
 import { useEffect } from 'react'
@@ -35,7 +37,6 @@ export default function DashboardLayout({
   const { user, isLoading, isAuthenticated, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  // Protect — redirect to login if not authenticated
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push('/login')
@@ -47,7 +48,6 @@ export default function DashboardLayout({
     router.push('/')
   }
 
-  // Loading state
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#f2f7f2] flex items-center justify-center">
@@ -63,10 +63,8 @@ export default function DashboardLayout({
 
   return (
     <div className="h-screen overflow-hidden bg-[#f9faf9]">
-      {/* Top header */}
       <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
         <div className="flex items-center justify-between px-4 lg:px-6 py-3">
-          {/* Left: logo + mobile toggle */}
           <div className="flex items-center gap-3">
             <button
               className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100"
@@ -86,7 +84,6 @@ export default function DashboardLayout({
             </Link>
           </div>
 
-          {/* Right: user info */}
           <div className="flex items-center gap-3">
             <div className="hidden sm:block text-right">
               <p className="text-sm font-medium text-(--upwork-navy) leading-tight">
@@ -112,7 +109,6 @@ export default function DashboardLayout({
       </header>
 
       <div className="flex h-[calc(100vh-57px)] overflow-hidden">
-        {/* Sidebar — desktop (locked, never scrolls) */}
         <aside className="hidden lg:flex flex-col w-56 bg-white border-r border-gray-200 py-4 px-3">
           <nav className="flex flex-col gap-1 flex-1">
             {sidebarLinks.map((link) => {
@@ -144,7 +140,6 @@ export default function DashboardLayout({
           </button>
         </aside>
 
-        {/* Sidebar — mobile overlay */}
         {sidebarOpen && (
           <>
             <div
@@ -185,7 +180,6 @@ export default function DashboardLayout({
           </>
         )}
 
-        {/* Main content — only this area scrolls */}
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {children}
         </main>

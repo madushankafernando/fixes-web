@@ -1,3 +1,5 @@
+// fixes-web/app/verify-email/[token]/page.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -31,7 +33,6 @@ export default function VerifyEmailPage() {
     verify()
   }, [token])
 
-  // Auto-redirect on success
   useEffect(() => {
     if (state !== 'success') return
     const interval = setInterval(() => {

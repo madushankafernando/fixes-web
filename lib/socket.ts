@@ -1,3 +1,5 @@
+// fixes-web/lib/socket.ts
+
 import { io, Socket } from 'socket.io-client'
 import { API_BASE_URL } from './constants'
 import { getAccessToken } from './api'
@@ -41,7 +43,6 @@ export function disconnectSocket(): void {
   }
 }
 
-// ─── Room Management ────────────────────────────────────────────────────────────
 
 export function joinJobRoom(jobId: string): void {
   socket?.emit('job:join', { jobId })

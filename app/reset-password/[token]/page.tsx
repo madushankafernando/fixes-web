@@ -1,3 +1,5 @@
+// fixes-web/app/reset-password/[token]/page.tsx
+
 'use client'
 
 import { useState } from 'react'
@@ -57,7 +59,6 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
-      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
           <Link href="/" className="inline-block">
@@ -73,12 +74,10 @@ export default function ResetPasswordPage() {
         </div>
       </header>
 
-      {/* Main */}
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             {isSuccess ? (
-              /* Success state */
               <div className="text-center">
                 <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle2 className="w-7 h-7 text-(--upwork-green)" />
@@ -97,7 +96,6 @@ export default function ResetPasswordPage() {
                 </Link>
               </div>
             ) : (
-              /* Form state */
               <>
                 <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
                   Set a new password
@@ -113,7 +111,6 @@ export default function ResetPasswordPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-5">
-                  {/* New Password */}
                   <div>
                     <label
                       htmlFor="reset-password"
@@ -146,7 +143,6 @@ export default function ResetPasswordPage() {
                     </div>
                   </div>
 
-                  {/* Confirm Password */}
                   <div>
                     <label
                       htmlFor="reset-confirm-password"
@@ -165,7 +161,6 @@ export default function ResetPasswordPage() {
                     />
                   </div>
 
-                  {/* Submit */}
                   <button
                     type="submit"
                     disabled={isSubmitting}

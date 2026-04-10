@@ -1,3 +1,5 @@
+// fixes-web/app/admin/page.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -15,7 +17,6 @@ export default function AdminDashboardPage() {
         const res = await api.get<AdminStats>('/api/admin/stats')
         setStats(res.data)
       } catch {
-        // Silent
       } finally {
         setIsLoading(false)
       }
@@ -73,7 +74,6 @@ export default function AdminDashboardPage() {
         <p className="text-sm text-gray-400 mt-0.5">Platform overview and key metrics</p>
       </div>
 
-      {/* Primary stat cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {statCards.map((card) => {
           const Icon = card.icon
@@ -92,7 +92,6 @@ export default function AdminDashboardPage() {
         })}
       </div>
 
-      {/* Secondary stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Completed Payments', value: stats.revenue.completedPayments, icon: TrendingUp, iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },

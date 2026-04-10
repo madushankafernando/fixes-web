@@ -1,3 +1,5 @@
+// fixes-web/app/admin/users/page.tsx
+
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
@@ -50,7 +52,6 @@ export default function AdminUsersPage() {
         <p className="text-sm text-gray-400 mt-0.5">Manage platform accounts</p>
       </div>
 
-      {/* Search + Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="flex-1 flex items-center gap-2">
           <div className="flex-1 relative">
@@ -91,7 +92,6 @@ export default function AdminUsersPage() {
 
       {!isLoading && <p className="text-xs text-gray-400 mb-3">{total} user{total !== 1 ? 's' : ''}</p>}
 
-      {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">

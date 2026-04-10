@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/find-talent/[id]/page.tsx
+
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
@@ -48,7 +50,6 @@ export default function DashboardTradieProfilePage() {
         setUser(res.data.user)
         setProfile(res.data.profile)
       } catch {
-        // Silent
       } finally {
         setIsLoading(false)
       }
@@ -63,7 +64,6 @@ export default function DashboardTradieProfilePage() {
       const raw = res as ReviewsApiResponse
       if (raw.stats) setStats(raw.stats)
     } catch {
-      // Silent
     }
   }, [tradieId])
 
@@ -100,7 +100,6 @@ export default function DashboardTradieProfilePage() {
 
   return (
     <div>
-      {/* Back link */}
       <Link
         href="/dashboard/find-talent"
         className="flex items-center gap-1.5 text-sm text-(--upwork-gray) hover:text-(--upwork-navy) transition-colors w-fit mb-5"
@@ -109,10 +108,8 @@ export default function DashboardTradieProfilePage() {
         Back to tradies
       </Link>
 
-      {/* Profile header */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 sm:p-6 mb-6">
         <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-5">
-          {/* Avatar */}
           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden shrink-0">
             {user.avatarUrl ? (
               <Image
@@ -127,7 +124,6 @@ export default function DashboardTradieProfilePage() {
             )}
           </div>
 
-          {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <h1 className="text-xl sm:text-2xl font-bold text-(--upwork-navy)">
@@ -149,7 +145,6 @@ export default function DashboardTradieProfilePage() {
 
             <p className="text-xs text-gray-400 mb-3">{user.fixId}</p>
 
-            {/* Rating */}
             <div className="flex items-center gap-2 mb-3">
               <div className="flex items-center gap-0.5">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -171,7 +166,6 @@ export default function DashboardTradieProfilePage() {
               </span>
             </div>
 
-            {/* Categories */}
             <div className="flex flex-wrap gap-1.5 mb-3">
               {profile.categories.map((cat) => (
                 <span
@@ -183,7 +177,6 @@ export default function DashboardTradieProfilePage() {
               ))}
             </div>
 
-            {/* Meta */}
             <div className="flex flex-wrap items-center gap-3 text-xs text-gray-400">
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
@@ -201,7 +194,6 @@ export default function DashboardTradieProfilePage() {
           </div>
         </div>
 
-        {/* CTA */}
         <div className="mt-5 pt-5 border-t border-gray-100">
           <Link
             href={`/post-job?category=${profile.categories[0] || ''}`}
@@ -213,9 +205,7 @@ export default function DashboardTradieProfilePage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left: Bio + Reviews */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Bio */}
           {profile.bio && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h2 className="text-sm font-semibold text-(--upwork-navy) mb-3">About</h2>
@@ -225,7 +215,6 @@ export default function DashboardTradieProfilePage() {
             </div>
           )}
 
-          {/* Skills */}
           {profile.skills.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h2 className="text-sm font-semibold text-(--upwork-navy) mb-3">Skills</h2>
@@ -242,7 +231,6 @@ export default function DashboardTradieProfilePage() {
             </div>
           )}
 
-          {/* Reviews */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h2 className="text-sm font-semibold text-(--upwork-navy) mb-4">
               Reviews {stats && `(${stats.total})`}
@@ -318,7 +306,6 @@ export default function DashboardTradieProfilePage() {
           </div>
         </div>
 
-        {/* Right: Rating breakdown */}
         <div className="space-y-6">
           {stats && stats.total > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
@@ -366,7 +353,6 @@ export default function DashboardTradieProfilePage() {
             </div>
           )}
 
-          {/* Verification status */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">
               Verification
