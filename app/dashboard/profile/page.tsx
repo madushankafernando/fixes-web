@@ -170,7 +170,7 @@ export default function DashboardProfilePage() {
                   className="w-16 h-16 rounded-full bg-(--upwork-green) flex items-center justify-center text-white overflow-hidden group relative focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:ring-offset-2"
                 >
                   {user.avatarUrl ? (
-                    <Image src={user.avatarUrl} alt={user.name} width={64} height={64} className="object-cover w-full h-full" />
+                    <Image src={user.avatarUrl} alt={user.name} width={64} height={64} className="object-cover w-full h-full" loading="eager" priority />
                   ) : (
                     <UserIcon className="w-7 h-7" />
                   )}
