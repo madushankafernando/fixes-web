@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -16,9 +16,12 @@ import {
   Sparkles,
   AlertCircle,
   ChevronRight,
+  ShieldCheck,
 } from 'lucide-react'
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
+
 import { VALID_CATEGORIES, CATEGORY_LABELS, AUSTRALIAN_STATES } from '@/lib/constants'
 import type {
   Job,
@@ -34,6 +37,7 @@ interface PostJobWizardProps {
   preselectedCategory: string
 }
 
+// ─── Step 1: Category ───────────────────────────────────────────────────────────
 
 function StepCategory({
   selectedCategory,
@@ -73,6 +77,7 @@ function StepCategory({
   )
 }
 
+// ─── Step 2: Title + Description ────────────────────────────────────────────────
 
 function StepDescription({
   description,
@@ -150,6 +155,7 @@ function StepDescription({
   )
 }
 
+// ─── Step 3: Photo Upload ───────────────────────────────────────────────────────
 
 function StepPhotos({
   images,
@@ -240,6 +246,7 @@ function StepPhotos({
   )
 }
 
+// ─── Step 4: Location ───────────────────────────────────────────────────────────
 
 function StepLocation({
   address,
@@ -341,6 +348,7 @@ function StepLocation({
   )
 }
 
+// ─── Step 5: Preferred Time ─────────────────────────────────────────────────────
 
 function StepTime({
   selected,
@@ -386,6 +394,7 @@ function StepTime({
   )
 }
 
+// ─── Step 6: Analyzing ──────────────────────────────────────────────────────────
 
 function StepAnalyzing() {
   return (
@@ -406,6 +415,7 @@ function StepAnalyzing() {
   )
 }
 
+// ─── Step 7: Quote ──────────────────────────────────────────────────────────────
 
 function StepQuote({
   quote,
@@ -524,15 +534,106 @@ function StepQuote({
   )
 }
 
+// ─── Payment Form (must be inside <Elements>) ────────────────────────────────
+
+function PaymentForm({
+  amount,
+  onSuccess,
+  onCancel,
+}: {
+  amount: number
+  onSuccess: () => void
+  onCancel: () => void
+}) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [isConfirming, setIsConfirming] = useState(false)
+  const [payError, setPayError] = useState('')
+
+  const handleConfirm = async () => {
+    if (!stripe || !elements) return
+    setIsConfirming(true)
+    setPayError('')
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        // Redirect URL after 3DS — we handle redirect in the dashboard
+        return_url: `${window.location.origin}/dashboard`,
+      },
+      redirect: 'if_required', // Only redirect if 3DS needed
+    })
+
+    if (error) {
+      setPayError(error.message || 'Payment failed. Please try again.')
+      setIsConfirming(false)
+    } else {
+      // Payment authorized successfully
+      onSuccess()
+    }
+  }
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
+      <PaymentElement
+        options={{ layout: 'accordion' }}
+        onLoadError={(err) => {
+          console.error('PaymentElement load error:', err)
+          setPayError('Failed to load payment form. Please refresh and try again.')
+        }}
+      />
+
+      {payError && (
+        <div className="flex items-start gap-2 mt-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+          <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+          <p className="text-sm text-red-700">{payError}</p>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-3 mt-6">
+        <button
+          onClick={handleConfirm}
+          disabled={!stripe || !elements || isConfirming}
+          className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-50 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+        >
+          {isConfirming ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Confirming…
+            </>
+          ) : (
+            <>
+              <ShieldCheck className="w-4 h-4" />
+              Pay ${amount} AUD
+            </>
+          )}
+        </button>
+        <button
+          onClick={onCancel}
+          disabled={isConfirming}
+          className="w-full border border-gray-200 text-(--upwork-gray) font-medium py-3 px-6 rounded-xl hover:border-gray-300 transition-colors"
+        >
+          Cancel Job
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ═════════════════════════════════════════════════════════════════════════════════
+// MAIN WIZARD
+// ═════════════════════════════════════════════════════════════════════════════════
 
 export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizardProps) {
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
 
+  // If category is preselected from landing page, skip step 1
   const hasPreselectedCategory = VALID_CATEGORIES.includes(preselectedCategory as TradieCategory)
   const [currentStep, setCurrentStep] = useState(hasPreselectedCategory ? 2 : 1)
   const totalSteps = 5
 
+  // Form data
   const [category, setCategory] = useState<TradieCategory | ''>(
     hasPreselectedCategory ? (preselectedCategory as TradieCategory) : ''
   )
@@ -545,15 +646,29 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
   const [locationState, setLocationState] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
 
+  // Upload
   const [isUploading, setIsUploading] = useState(false)
 
+  // Submission
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
   const [createdQuote, setCreatedQuote] = useState<Quote | null>(null)
 
+  // Accept + payment
   const [isAccepting, setIsAccepting] = useState(false)
+  const [clientSecret, setClientSecret] = useState<string | null>(null)
+  // Preload Stripe.js when wizard mounts — ensures it’s ready before step 8
+  const [stripeInstance, setStripeInstance] = useState<any>(null)
+  useEffect(() => {
+    import('@stripe/stripe-js').then(({ loadStripe }) => {
+      setStripeInstance(
+        loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? '')
+      )
+    })
+  }, [])
 
+  // Email verification gate — clients must verify before posting
   if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
     return (
       <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
@@ -590,12 +705,14 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
   const progress = Math.min((currentStep / totalSteps) * 100, 100)
 
+  // ─── Category select (step 1) auto-advances ─────────────────────────────────
 
   const handleCategorySelect = (cat: TradieCategory) => {
     setCategory(cat)
     setCurrentStep(2)
   }
 
+  // ─── Upload handler ─────────────────────────────────────────────────────────
 
   const handleUploadFiles = useCallback(async (files: FileList) => {
     if (!isAuthenticated) {
@@ -609,9 +726,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
       const uploaded: JobImage[] = []
 
       for (const file of Array.from(files)) {
+        // 1. Get signed params (POST, not GET)
         const signRes = await api.post<SignedUploadResponse>('/api/uploads/sign', { folder: 'jobs' })
         const signed = signRes.data
 
+        // 2. Upload directly to Cloudinary
         const formData = new FormData()
         formData.append('file', file)
         formData.append('api_key', signed.apiKey)
@@ -628,6 +747,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
         const cloudData = await cloudRes.json()
 
+        // 3. Confirm with backend
         await api.post('/api/uploads/confirm', {
           publicId: cloudData.public_id,
           url: cloudData.secure_url,
@@ -648,6 +768,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }, [isAuthenticated, router])
 
+  // ─── Submit job ─────────────────────────────────────────────────────────────
 
   const handleSubmitJob = useCallback(async (timeValue: PreferredTime) => {
     if (!isAuthenticated) {
@@ -657,9 +778,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
     setIsSubmitting(true)
     setSubmitError('')
-    setCurrentStep(6) 
+    setCurrentStep(6) // Analyzing screen
 
     try {
+      // Default coordinates — in production, geocode from address
       const lat = -37.8136
       const lng = 144.9631
 
@@ -680,9 +802,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
       setCreatedJob(res.data.job)
       setCreatedQuote(res.data.quote)
-      setCurrentStep(7) 
+      setCurrentStep(7) // Quote screen
     } catch (err) {
-      setCurrentStep(5) 
+      setCurrentStep(5) // Go back
       if (err instanceof ApiError) {
         setSubmitError(err.message)
       } else {
@@ -693,6 +815,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState])
 
+  // ─── Accept quote ───────────────────────────────────────────────────────────
 
   const handleAcceptQuote = useCallback(async () => {
     if (!createdJob) return
@@ -700,33 +823,37 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     setAcceptError('')
 
     try {
-      await api.post(`/api/jobs/${createdJob._id}/accept-quote`)
-      router.push('/dashboard')
+      const res = await api.post<{ job: Job; payment: unknown; clientSecret: string }>(
+        `/api/jobs/${createdJob._id}/accept-quote`
+      )
+      const secret = res.data.clientSecret
+      if (!secret) throw new Error('No client secret returned from server')
+      setClientSecret(secret)
+      setCurrentStep(8) // Payment step
     } catch (err) {
       if (err instanceof ApiError) {
-        if (err.message.includes('STRIPE_SECRET_KEY')) {
-          setAcceptError('Payment system is not configured yet. Your quote has been saved — you can accept it later from your dashboard once payments are live.')
-        } else {
-          setAcceptError(err.message)
-        }
+        setAcceptError(err.message)
       } else {
         setAcceptError('Failed to accept quote. Please try again.')
       }
     } finally {
       setIsAccepting(false)
     }
-  }, [createdJob, router])
+  }, [createdJob])
 
+  // ─── Cancel job ─────────────────────────────────────────────────────────────
 
   const handleCancelJob = useCallback(async () => {
     if (!createdJob) return
     try {
       await api.patch(`/api/jobs/${createdJob._id}/cancel`)
     } catch {
+      // Silent
     }
     router.push('/')
   }, [createdJob, router])
 
+  // ─── Navigation ─────────────────────────────────────────────────────────────
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -750,6 +877,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     }
   }
 
+  // ─── Analyzing screen (no header) ───────────────────────────────────────────
 
   if (currentStep === 6) {
     return (
@@ -759,6 +887,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     )
   }
 
+  // ─── Quote screen ───────────────────────────────────────────────────────────
 
   if (currentStep === 7 && createdQuote && createdJob) {
     return (
@@ -784,9 +913,65 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     )
   }
 
+  // ─── Payment screen ─────────────────────────────────────────────────────────
+
+  if (currentStep === 8 && clientSecret && createdQuote) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white">
+        <header className="border-b border-gray-200 bg-white">
+          <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
+            <Link href="/" className="inline-block">
+              <Image src="/logo.svg" alt="Fixes" width={120} height={40} className="h-8 w-auto" priority />
+            </Link>
+          </div>
+        </header>
+        <main className="max-w-lg mx-auto px-4 lg:px-6 py-12">
+          <div className="text-center mb-8">
+            <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <ShieldCheck className="w-7 h-7 text-(--upwork-green)" />
+            </div>
+            <h1 className="text-2xl font-bold text-(--upwork-navy) mb-1">Secure Payment</h1>
+            <p className="text-(--upwork-gray) text-sm">
+              Your payment of{' '}
+              <span className="font-semibold text-(--upwork-navy)">${createdQuote.suggestedFixedPrice} AUD</span>{' '}
+              is held in escrow until your job is completed.
+            </p>
+          </div>
+          <Elements
+            stripe={stripeInstance}
+            options={{
+              clientSecret,
+              appearance: {
+                theme: 'stripe',
+                variables: {
+                  colorPrimary: '#14a800',
+                  colorBackground: '#ffffff',
+                  borderRadius: '12px',
+                  fontFamily: 'Inter, system-ui, sans-serif',
+                },
+              },
+            }}
+          >
+            <PaymentForm
+              amount={createdQuote.suggestedFixedPrice}
+              onSuccess={() => router.push('/dashboard')}
+              onCancel={handleCancelJob}
+            />
+          </Elements>
+          <p className="text-center text-xs text-gray-400 mt-6 flex items-center justify-center gap-1">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Payments secured by Stripe — your card details are never stored on our servers
+          </p>
+        </main>
+      </div>
+    )
+  }
+
+  // ─── Standard wizard ────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white">
+      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 flex items-center justify-between">
           <button
@@ -808,6 +993,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
         </div>
       </header>
 
+      {/* Error */}
       {submitError && (
         <div className="max-w-4xl mx-auto px-4 lg:px-6 mt-6">
           <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -817,6 +1003,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
         </div>
       )}
 
+      {/* Content */}
       <main className="max-w-4xl mx-auto px-4 lg:px-6 py-12 md:py-20">
         {currentStep === 1 && (
           <StepCategory

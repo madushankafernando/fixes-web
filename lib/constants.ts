@@ -2,10 +2,12 @@
 
 import type { TradieCategory, JobCategory, JobStatus, DocumentType } from './types'
 
+// ─── API Base URL ───────────────────────────────────────────────────────────────
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
+// ─── Categories ─────────────────────────────────────────────────────────────────
 
 export const VALID_CATEGORIES: TradieCategory[] = [
   'electrical',
@@ -32,10 +34,12 @@ export const CATEGORY_LABELS: Record<JobCategory, string> = {
   other: 'Other',
 }
 
+// ─── Job Status ─────────────────────────────────────────────────────────────────
 
 export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   analyzing: 'Analyzing',
   quoted: 'Quote Ready',
+  payment_pending: 'Awaiting Payment',
   dispatching: 'Finding Tradie',
   no_tradie_found: 'No Tradie Found',
   accepted: 'Tradie Assigned',
@@ -48,6 +52,7 @@ export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
 export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   analyzing: 'bg-blue-100 text-blue-700',
   quoted: 'bg-amber-100 text-amber-700',
+  payment_pending: 'bg-purple-100 text-purple-700',
   dispatching: 'bg-indigo-100 text-indigo-700',
   no_tradie_found: 'bg-red-100 text-red-700',
   accepted: 'bg-emerald-100 text-emerald-700',
@@ -57,6 +62,7 @@ export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   cancelled: 'bg-gray-100 text-gray-500',
 }
 
+// ─── Document Types ─────────────────────────────────────────────────────────────
 
 export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   abn: 'ABN',
@@ -73,6 +79,7 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   builders_license_cbu: 'Builders License (CBU)',
 }
 
+// ─── Preferred Time ─────────────────────────────────────────────────────────────
 
 export const PREFERRED_TIME_LABELS: Record<string, string> = {
   now: 'Now',
@@ -80,6 +87,7 @@ export const PREFERRED_TIME_LABELS: Record<string, string> = {
   'no-rush': 'No Rush',
 }
 
+// ─── Australian States ──────────────────────────────────────────────────────────
 
 export const AUSTRALIAN_STATES = [
   { value: 'NSW', label: 'New South Wales' },

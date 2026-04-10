@@ -1,9 +1,8 @@
-// fixes-web/app/admin/jobs/page.tsx
-
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { Search, Briefcase, Loader2, Filter } from 'lucide-react'
+import Link from 'next/link'
+import { Search, Briefcase, Loader2, Filter, ChevronRight } from 'lucide-react'
 import { api } from '@/lib/api'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS, VALID_CATEGORIES } from '@/lib/constants'
 import type { Job, JobStatus, JobCategory, User, Quote } from '@/lib/types'
@@ -53,6 +52,7 @@ export default function AdminJobsPage() {
         <p className="text-sm text-gray-400 mt-0.5">Monitor all platform jobs</p>
       </div>
 
+      {/* Search */}
       <div className="flex gap-2 mb-4">
         <div className="flex-1 relative">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -73,6 +73,7 @@ export default function AdminJobsPage() {
         </button>
       </div>
 
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
           <Filter className="w-3.5 h-3.5 text-gray-400 shrink-0" />
@@ -104,6 +105,7 @@ export default function AdminJobsPage() {
 
       {!isLoading && <p className="text-xs text-gray-400 mb-3">{total} job{total !== 1 ? 's' : ''}</p>}
 
+      {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
@@ -131,10 +133,12 @@ export default function AdminJobsPage() {
                   const client = typeof job.clientId === 'object' ? (job.clientId as User) : null
                   const quote = typeof job.quote === 'object' ? (job.quote as Quote) : null
                   return (
-                    <tr key={job._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={job._id} className="hover:bg-blue-50/50 transition-colors cursor-pointer">
                       <td className="px-4 py-3">
-                        <p className="text-xs font-medium text-gray-800">{job.title}</p>
-                        <p className="text-[10px] font-mono text-gray-400">{job.jobCode}</p>
+                        <Link href={`/admin/jobs/${job._id}`} className="block">
+                          <p className="text-xs font-medium text-gray-800">{job.title}</p>
+                          <p className="text-[10px] font-mono text-gray-400">{job.jobCode}</p>
+                        </Link>
                       </td>
                       <td className="px-4 py-3">
                         <p className="text-xs text-gray-500">{client?.name || '—'}</p>
@@ -154,6 +158,11 @@ export default function AdminJobsPage() {
                         <span className="text-[10px] text-gray-400">
                           {new Date(job.createdAt).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
                         </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <Link href={`/admin/jobs/${job._id}`}>
+                          <ChevronRight className="w-4 h-4 text-gray-300" />
+                        </Link>
                       </td>
                     </tr>
                   )

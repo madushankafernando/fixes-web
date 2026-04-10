@@ -1,5 +1,7 @@
 // fixes-web/lib/types.ts
 
+// ─── Base API Response Types ────────────────────────────────────────────────────
+
 export interface ApiResponse<T> {
   success: boolean
   message: string
@@ -18,6 +20,7 @@ export interface PaginatedResponse<T> {
   }
 }
 
+// ─── User ───────────────────────────────────────────────────────────────────────
 
 export type UserRole = 'client' | 'tradie' | 'admin'
 
@@ -37,6 +40,7 @@ export interface User {
   updatedAt: string
 }
 
+// ─── TradieProfile ──────────────────────────────────────────────────────────────
 
 export type TradieCategory =
   | 'electrical'
@@ -93,7 +97,7 @@ export interface TradieProfile {
   }
   location: {
     type: 'Point'
-    coordinates: [number, number] 
+    coordinates: [number, number] // [lng, lat]
   }
   serviceRadiusKm: number
   stripeAccountId: string | null
@@ -103,12 +107,14 @@ export interface TradieProfile {
   updatedAt: string
 }
 
+// ─── Job ────────────────────────────────────────────────────────────────────────
 
 export type JobCategory = TradieCategory | 'other'
 
 export type JobStatus =
   | 'analyzing'
   | 'quoted'
+  | 'payment_pending'
   | 'dispatching'
   | 'no_tradie_found'
   | 'accepted'
@@ -160,6 +166,7 @@ export interface Job {
   updatedAt: string
 }
 
+// ─── Quote ──────────────────────────────────────────────────────────────────────
 
 export type SkillLevel = 'junior' | 'senior' | 'specialist'
 export type QuoteEngine = 'gemini' | 'gemini-custom-ml' | 'placeholder'
@@ -188,6 +195,7 @@ export interface Quote {
   updatedAt: string
 }
 
+// ─── Message ────────────────────────────────────────────────────────────────────
 
 export type MessageType = 'text' | 'image' | 'system'
 
@@ -205,6 +213,7 @@ export interface Message {
   updatedAt: string
 }
 
+// ─── Review ─────────────────────────────────────────────────────────────────────
 
 export type ReviewDirection = 'client_to_tradie' | 'tradie_to_client'
 
@@ -226,6 +235,7 @@ export interface ReviewStats {
   breakdown: Record<number, number>
 }
 
+// ─── Auth Response Types ────────────────────────────────────────────────────────
 
 export interface LoginResponse {
   accessToken: string
@@ -257,6 +267,7 @@ export interface MeResponse {
   profile: TradieProfile | null
 }
 
+// ─── Admin Types ────────────────────────────────────────────────────────────────
 
 export interface AdminStats {
   users: { total: number; clients: number; tradies: number }
@@ -296,6 +307,7 @@ export interface TradieDocumentsResponse {
   documents: TradieDocument[]
 }
 
+// ─── Upload Types ───────────────────────────────────────────────────────────────
 
 export interface SignedUploadResponse {
   signature: string
@@ -306,6 +318,7 @@ export interface SignedUploadResponse {
   publicId: string
 }
 
+// ─── Socket Event Payloads ──────────────────────────────────────────────────────
 
 export interface DispatchNewPayload {
   jobId: string
@@ -333,6 +346,7 @@ export interface MessageNewPayload {
   createdAt: string
 }
 
+// ─── Admin Types ────────────────────────────────────────────────────────────────
 
 export interface AdminStats {
   users: { total: number; clients: number; tradies: number }
@@ -352,6 +366,7 @@ export interface AdminUserDetail {
   recentJobs: Job[]
 }
 
+// ─── Review Stats ───────────────────────────────────────────────────────────────
 
 export interface ReviewStats {
   average: number
