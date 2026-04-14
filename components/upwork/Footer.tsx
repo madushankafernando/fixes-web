@@ -2,44 +2,44 @@ import Link from "next/link"
 import Image from "next/image"
 import { Facebook, Twitter, Linkedin, Instagram, Youtube } from "lucide-react"
 
-const footerLinks = {
+const footerLinks: Record<string, { label: string; href: string }[]> = {
   "For Clients": [
-    "How to Hire",
-    "Talent Marketplace",
-    "Project Catalog",
-    "Hire an Agency",
-    "Enterprise",
-    "Any Hire",
-    "Direct Contracts",
-    "Hire Worldwide",
-    "Hire in the USA",
+    { label: "How to Hire", href: "#" },
+    { label: "Talent Marketplace", href: "#" },
+    { label: "Project Catalog", href: "#" },
+    { label: "Hire an Agency", href: "#" },
+    { label: "Enterprise", href: "#" },
+    { label: "Any Hire", href: "#" },
+    { label: "Direct Contracts", href: "#" },
+    { label: "Hire Worldwide", href: "#" },
+    { label: "Hire in the USA", href: "#" },
   ],
   "For Talent": [
-    "How to Find Work",
-    "Direct Contracts",
-    "Find Freelance Jobs Worldwide",
-    "Find Freelance Jobs in the USA",
-    "Win Work with Ads",
+    { label: "How to Find Work", href: "#" },
+    { label: "Direct Contracts", href: "#" },
+    { label: "Find Freelance Jobs Worldwide", href: "#" },
+    { label: "Find Freelance Jobs in the USA", href: "#" },
+    { label: "Win Work with Ads", href: "#" },
   ],
   "Resources": [
-    "Help & Support",
-    "Success Stories",
-    "Upwork Reviews",
-    "Resources",
-    "Blog",
-    "Community",
-    "Affiliate Program",
-    "Free Business tools",
+    { label: "Help & Support", href: "/support" },
+    { label: "Success Stories", href: "#" },
+    { label: "Fixes Reviews", href: "#" },
+    { label: "Resources", href: "#" },
+    { label: "Blog", href: "#" },
+    { label: "Community", href: "#" },
+    { label: "Affiliate Program", href: "#" },
+    { label: "Free Business Tools", href: "#" },
   ],
   "Company": [
-    "About Us",
-    "Leadership",
-    "Investor Relations",
-    "Careers",
-    "Our Impact",
-    "Press",
-    "Contact Us",
-    "Trust, Safety & Security",
+    { label: "About Us", href: "/about" },
+    { label: "Leadership", href: "/about#team" },
+    { label: "Investor Relations", href: "#" },
+    { label: "Careers", href: "#" },
+    { label: "Our Impact", href: "#" },
+    { label: "Press", href: "#" },
+    { label: "Contact Us", href: "#" },
+    { label: "Trust, Safety & Security", href: "#" },
   ],
 }
 
@@ -61,7 +61,7 @@ const bottomLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-[var(--upwork-navy)] text-white">
+    <footer className="bg-(--upwork-navy) text-white">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
@@ -70,12 +70,12 @@ export function Footer() {
               <h3 className="font-semibold text-base mb-4">{category}</h3>
               <ul className="space-y-3">
                 {links.map((link) => (
-                  <li key={link}>
+                  <li key={link.label}>
                     <Link
-                      href="#"
+                      href={link.href}
                       className="text-sm text-gray-400 hover:text-white transition-colors"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}
