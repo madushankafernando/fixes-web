@@ -45,9 +45,9 @@ export function disconnectSocket(): void {
 
 
 export function joinJobRoom(jobId: string): void {
-  socket?.emit('job:join', { jobId })
+  socket?.emit('job:join', jobId)   
 }
 
 export function leaveJobRoom(jobId: string): void {
-  socket?.emit('job:leave', { jobId })
+  socket?.emit('job:leave', jobId)   
 }
