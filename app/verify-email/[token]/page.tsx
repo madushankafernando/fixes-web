@@ -17,10 +17,17 @@ export default function VerifyEmailPage() {
   const [state, setState] = useState<State>('loading')
   const [countdown, setCountdown] = useState(5)
 
+  const [role, setRole] = useState<'client' | 'tradie' | null>(null)
+
   useEffect(() => {
     async function verify() {
       try {
-        const res = await api.get<{ message: string }>(`/api/auth/verify-email/${token}`, true)
+        const res = await api.get<{ message: string; role?: string }>(`/api/auth/verify-email/${token}`, true)
+        
+        if (res.data.role) {
+          setRole(res.data.role as 'client' | 'tradie')
+        }
+
         if (res.data.message === 'Email already verified') {
           setState('already_verified')
         } else {
@@ -34,7 +41,9 @@ export default function VerifyEmailPage() {
   }, [token])
 
   useEffect(() => {
-    if (state !== 'success') return
+    if (state !== 'success' && state !== 'already_verified') return
+    if (role === 'tradie') return 
+
     const interval = setInterval(() => {
       setCountdown((c) => {
         if (c <= 1) {
@@ -67,16 +76,24 @@ export default function VerifyEmailPage() {
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
             <h1 className="text-xl font-bold text-(--upwork-navy) mb-2">Email verified!</h1>
-            <p className="text-sm text-gray-400 mb-6">
-              Your email address has been verified. Redirecting to your dashboard in{' '}
-              <span className="font-semibold text-(--upwork-navy)">{countdown}s</span>…
-            </p>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
-            >
-              Go to Dashboard
-            </Link>
+            {role === 'tradie' ? (
+              <p className="text-sm text-gray-500 mb-6 font-medium">
+                You can safely close this window and return to the Fixer app.
+              </p>
+            ) : (
+              <>
+                <p className="text-sm text-gray-400 mb-6">
+                  Your email address has been verified. Redirecting to your dashboard in{' '}
+                  <span className="font-semibold text-(--upwork-navy)">{countdown}s</span>…
+                </p>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
+                >
+                  Go to Dashboard
+                </Link>
+              </>
+            )}
           </>
         )}
 
@@ -86,15 +103,24 @@ export default function VerifyEmailPage() {
               <CheckCircle2 className="w-8 h-8 text-blue-500" />
             </div>
             <h1 className="text-xl font-bold text-(--upwork-navy) mb-2">Already verified</h1>
-            <p className="text-sm text-gray-400 mb-6">
-              Your email is already verified. You're all set!
-            </p>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
-            >
-              Go to Dashboard
-            </Link>
+            {role === 'tradie' ? (
+              <p className="text-sm text-gray-500 mb-6 font-medium">
+                You can safely close this window and return to the Fixer app.
+              </p>
+            ) : (
+              <>
+                <p className="text-sm text-gray-400 mb-6">
+                  Your email is already verified. Redirecting to your dashboard in{' '}
+                  <span className="font-semibold text-(--upwork-navy)">{countdown}s</span>…
+                </p>
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
+                >
+                  Go to Dashboard
+                </Link>
+              </>
+            )}
           </>
         )}
 
