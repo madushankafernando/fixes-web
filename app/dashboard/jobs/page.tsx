@@ -1,5 +1,3 @@
-// fixes-web/app/dashboard/jobs/page.tsx
-
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -31,12 +29,18 @@ export default function MyJobsPage() {
         const res = await api.getPaginated<Job>(`/api/jobs?limit=100${qs}`)
         setJobs(res.data)
       } catch {
+        // Silent
       } finally {
         setIsLoading(false)
       }
     }
     setIsLoading(true)
     fetchJobs()
+    
+    const unsubs = () => window.removeEventListener('app:refresh_data', fetchJobs)
+    window.addEventListener('app:refresh_data', fetchJobs)
+    
+    return unsubs
   }, [statusFilter])
 
   return (
@@ -52,6 +56,7 @@ export default function MyJobsPage() {
         </Link>
       </div>
 
+      {/* Filters */}
       <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
         <Filter className="w-4 h-4 text-gray-400 shrink-0" />
         {STATUS_FILTERS.map((f) => (
@@ -69,6 +74,7 @@ export default function MyJobsPage() {
         ))}
       </div>
 
+      {/* Jobs table */}
       <div className="bg-white rounded-xl border border-gray-200">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">

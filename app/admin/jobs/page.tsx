@@ -43,7 +43,12 @@ export default function AdminJobsPage() {
     } catch { /* silent */ } finally { setIsLoading(false) }
   }, [page, statusFilter, categoryFilter, search])
 
-  useEffect(() => { fetchJobs() }, [fetchJobs])
+  useEffect(() => { 
+    fetchJobs() 
+    const unsubs = () => window.removeEventListener('app:refresh_data', fetchJobs)
+    window.addEventListener('app:refresh_data', fetchJobs)
+    return unsubs
+  }, [fetchJobs])
 
   return (
     <div>

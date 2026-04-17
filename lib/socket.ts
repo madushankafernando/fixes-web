@@ -1,5 +1,3 @@
-// fixes-web/lib/socket.ts
-
 import { io, Socket } from 'socket.io-client'
 import { API_BASE_URL } from './constants'
 import { getAccessToken } from './api'
@@ -11,7 +9,7 @@ export function getSocket(): Socket | null {
 }
 
 export function connectSocket(): Socket {
-  if (socket?.connected) return socket
+  if (socket) return socket
 
   const token = getAccessToken()
 
@@ -43,11 +41,12 @@ export function disconnectSocket(): void {
   }
 }
 
+// ─── Room Management ────────────────────────────────────────────────────────────
 
 export function joinJobRoom(jobId: string): void {
-  socket?.emit('job:join', jobId)   
+  socket?.emit('job:join', jobId)   // server expects plain string, not { jobId }
 }
 
 export function leaveJobRoom(jobId: string): void {
-  socket?.emit('job:leave', jobId)   
+  socket?.emit('job:leave', jobId)   // server expects plain string, not { jobId }
 }
