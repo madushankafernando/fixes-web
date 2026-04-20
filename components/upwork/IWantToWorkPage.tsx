@@ -121,7 +121,8 @@ export function IWantToWorkPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-[#FFFCE9] border-b border-(--upwork-border)">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-[#FFFCE9] border-b border-[var(--upwork-border)]">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center">
@@ -135,34 +136,37 @@ export function IWantToWorkPage() {
               />
             </Link>
             <div className="flex items-center gap-4">
-              <Link href="/login" className="text-sm font-medium text-(--upwork-navy) hover:underline">
+              <Link href="/login" className="text-sm font-medium text-[var(--upwork-navy)] hover:underline">
                 Log in
               </Link>
-              <Button className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-6">
-                Sign up
+              <Button asChild className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-6">
+                <Link href="/register/tradie">Sign up</Link>
               </Button>
             </div>
           </div>
         </div>
       </header>
 
+      {/* Hero Section */}
       <section className="py-12 md:py-16 lg:py-20 px-4 lg:px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
-            <div className="flex-1 lg:max-w-120 pt-4 lg:pt-8">
-              <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-(--upwork-navy) leading-[1.08] mb-5">
+            {/* Left Content */}
+            <div className="flex-1 lg:max-w-[480px] pt-4 lg:pt-8">
+              <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-[var(--upwork-navy)] leading-[1.08] mb-5">
                 Join Australia&apos;s largest tradie marketplace
               </h1>
-              <p className="text-base md:text-lg text-(--upwork-gray) mb-8 leading-relaxed max-w-md">
+              <p className="text-base md:text-lg text-[var(--upwork-gray)] mb-8 leading-relaxed max-w-md">
                 Empower your trade career with tailored job matching, business tools, and opportunities from Australia&apos;s largest tradie marketplace.
               </p>
-              <Button className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-7 py-3 text-sm font-medium h-auto">
-                Partner with us
+              <Button asChild className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-7 py-3 text-sm font-medium h-auto">
+                <Link href="/register/tradie">Partner with us</Link>
               </Button>
             </div>
 
+            {/* Right Image - matching Upwork partners page style */}
             <div className="flex-1 w-full lg:w-auto lg:max-w-[55%]">
-              <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden">
+              <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden">
                 <Image
                   src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
                   alt="Professional tradie working"
@@ -177,6 +181,7 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
+      {/* Partnership Types */}
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
           {partnershipTypes.map((type, index) => (
@@ -186,23 +191,25 @@ export function IWantToWorkPage() {
                 index !== partnershipTypes.length - 1 ? "border-b border-gray-200" : ""
               } ${index % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
             >
-              <div className="shrink-0 w-24 h-24 bg-(--upwork-light-gray) rounded-2xl flex items-center justify-center">
+              {/* Icon */}
+              <div className="flex-shrink-0 w-24 h-24 bg-[var(--upwork-light-gray)] rounded-2xl flex items-center justify-center">
                 {type.icon}
               </div>
 
+              {/* Content */}
               <div className="flex-1 text-center lg:text-left">
-                <h2 className="text-2xl md:text-3xl font-bold text-(--upwork-navy) mb-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-[var(--upwork-navy)] mb-4">
                   {type.title}
                 </h2>
-                <p className="text-(--upwork-gray) mb-6 max-w-xl">
+                <p className="text-[var(--upwork-gray)] mb-6 max-w-xl">
                   {type.description}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                  <Button variant="outline" className="rounded-full px-6 border-(--upwork-green) text-(--upwork-green) hover:bg-(--upwork-green) hover:text-white">
+                  <Button variant="outline" className="rounded-full px-6 border-[var(--upwork-green)] text-[var(--upwork-green)] hover:bg-[var(--upwork-green)] hover:text-white">
                     {type.cta1}
                   </Button>
-                  <Button className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-6">
-                    {type.cta2}
+                  <Button asChild className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-6">
+                    <Link href="/register/tradie">{type.cta2}</Link>
                   </Button>
                 </div>
               </div>
@@ -211,6 +218,7 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
+      {/* Testimonials */}
       <section className="bg-[#f2f7f2] py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -231,31 +239,35 @@ export function IWantToWorkPage() {
           </div>
 
           <div className="bg-white rounded-2xl p-8 md:p-12 shadow-sm">
+            {/* Logo */}
             <div className={`w-12 h-12 ${testimonials[currentTestimonial].logoColor} rounded-lg flex items-center justify-center text-white font-bold text-lg mb-6`}>
               {testimonials[currentTestimonial].logo}
             </div>
 
-            <blockquote className="text-lg md:text-xl text-(--upwork-navy) mb-6 leading-relaxed">
+            {/* Quote */}
+            <blockquote className="text-lg md:text-xl text-[var(--upwork-navy)] mb-6 leading-relaxed">
               &ldquo;{testimonials[currentTestimonial].quote}&rdquo;
             </blockquote>
 
+            {/* Author */}
             <div>
-              <p className="font-semibold text-(--upwork-navy)">
+              <p className="font-semibold text-[var(--upwork-navy)]">
                 - {testimonials[currentTestimonial].author}
               </p>
-              <p className="text-sm text-(--upwork-gray)">
+              <p className="text-sm text-[var(--upwork-gray)]">
                 {testimonials[currentTestimonial].role}
               </p>
             </div>
           </div>
 
+          {/* Dots */}
           <div className="flex justify-center gap-2 mt-6">
             {testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentTestimonial(index)}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentTestimonial ? "bg-(--upwork-green)" : "bg-gray-300"
+                  index === currentTestimonial ? "bg-[var(--upwork-green)]" : "bg-gray-300"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
@@ -264,21 +276,23 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
+      {/* CTA Section */}
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] mb-4">
             Ready to grow your trade business?
           </h2>
-          <p className="text-(--upwork-gray) mb-8 max-w-xl mx-auto">
+          <p className="text-[var(--upwork-gray)] mb-8 max-w-xl mx-auto">
             Join thousands of tradies who are already finding quality work and growing their businesses on our platform.
           </p>
-          <Button className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-8 py-6 text-lg font-semibold">
-            Join as a tradie
+          <Button asChild className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-8 py-6 text-lg font-semibold">
+            <Link href="/register/tradie">Join as a tradie</Link>
           </Button>
         </div>
       </section>
 
-      <section className="bg-(--upwork-navy) text-white py-20 px-4 lg:px-6">
+      {/* Benefits Grid */}
+      <section className="bg-[var(--upwork-navy)] text-white py-20 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Why tradies choose us
@@ -311,7 +325,7 @@ export function IWantToWorkPage() {
               },
             ].map((benefit, index) => (
               <div key={index} className="flex gap-4">
-                <CheckCircle2 className="w-6 h-6 text-(--upwork-green) shrink-0 mt-1" />
+                <CheckCircle2 className="w-6 h-6 text-[var(--upwork-green)] flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
                   <p className="text-white/70 text-sm">{benefit.description}</p>
@@ -322,38 +336,46 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
+      {/* Footer CTA */}
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-(--upwork-light-gray) rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-(--upwork-navy) mb-3">
+            {/* For Tradies */}
+            <div className="bg-[var(--upwork-light-gray)] rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-[var(--upwork-navy)] mb-3">
                 Ready to find work?
               </h3>
-              <p className="text-(--upwork-gray) mb-6">
+              <p className="text-[var(--upwork-gray)] mb-6">
                 Create your profile and start receiving job matches tailored to your skills and location.
               </p>
-              <Button className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-6">
-                Join as a tradie
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button asChild className="bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white rounded-full px-6">
+                <Link href="/register/tradie">
+                  Join as a tradie
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
               </Button>
             </div>
 
-            <div className="bg-(--upwork-light-gray) rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-(--upwork-navy) mb-3">
+            {/* For Top Tradies */}
+            <div className="bg-[var(--upwork-light-gray)] rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-[var(--upwork-navy)] mb-3">
                 Already a top tradie?
               </h3>
-              <p className="text-(--upwork-gray) mb-6">
+              <p className="text-[var(--upwork-gray)] mb-6">
                 Apply for our verified expert program to unlock premium jobs and exclusive benefits.
               </p>
-              <Button variant="outline" className="rounded-full px-6 border-(--upwork-green) text-(--upwork-green) hover:bg-(--upwork-green) hover:text-white">
-                Apply for expert status
-                <ArrowRight className="w-4 h-4 ml-2" />
+              <Button asChild variant="outline" className="rounded-full px-6 border-[var(--upwork-green)] text-[var(--upwork-green)] hover:bg-[var(--upwork-green)] hover:text-white">
+                <Link href="/register/tradie">
+                  Apply for expert status
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Link>
               </Button>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Simple Footer */}
       <footer className="border-t border-gray-200 py-8 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <Image
@@ -363,7 +385,7 @@ export function IWantToWorkPage() {
             height={32}
             className="h-6 w-auto"
           />
-          <p className="text-sm text-(--upwork-gray)">
+          <p className="text-sm text-[var(--upwork-gray)]">
             &copy; 2024 All rights reserved.
           </p>
         </div>
