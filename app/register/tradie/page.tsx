@@ -20,6 +20,7 @@ export default function RegisterTradiePage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [category, setCategory] = useState<TradieCategory | ''>('')
+  const [skillLevel, setSkillLevel] = useState<'junior' | 'senior' | 'specialist' | ''>('')
   const [skills, setSkills] = useState('')
   const [bio, setBio] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -30,8 +31,8 @@ export default function RegisterTradiePage() {
     e.preventDefault()
     setError('')
 
-    if (!name || !email || !password || !category) {
-      setError('Name, email, password and trade category are required')
+    if (!name || !email || !password || !category || !skillLevel) {
+      setError('Name, email, password, category and skill level are required')
       return
     }
 
@@ -56,6 +57,7 @@ export default function RegisterTradiePage() {
           password,
           phone: phone || undefined,
           category,
+          skillLevel,
           skills: skills
             ? skills.split(',').map((s) => s.trim()).filter(Boolean)
             : [],
@@ -79,6 +81,7 @@ export default function RegisterTradiePage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
+      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
           <Link href="/" className="inline-block">
@@ -94,8 +97,10 @@ export default function RegisterTradiePage() {
         </div>
       </header>
 
+      {/* Main */}
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-lg">
+          {/* Temporary notice */}
           <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6">
             <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-700">
@@ -104,6 +109,7 @@ export default function RegisterTradiePage() {
             </p>
           </div>
 
+          {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
               Join as a Tradie
@@ -119,6 +125,7 @@ export default function RegisterTradiePage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name */}
               <div>
                 <label
                   htmlFor="tradie-name"
@@ -137,6 +144,7 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
+              {/* Email */}
               <div>
                 <label
                   htmlFor="tradie-email"
@@ -155,6 +163,7 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
+              {/* Phone */}
               <div>
                 <label
                   htmlFor="tradie-phone"
@@ -173,6 +182,7 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
+              {/* Trade Category */}
               <div>
                 <label
                   htmlFor="tradie-category"
@@ -197,6 +207,35 @@ export default function RegisterTradiePage() {
                 </select>
               </div>
 
+              {/* Skill Level */}
+              <div>
+                <label
+                  htmlFor="tradie-skill-level"
+                  className="flex items-center gap-2 text-sm font-medium text-(--upwork-navy) mb-1.5"
+                >
+                  Skill Level
+                  <div className="group relative flex items-center">
+                    <Info className="w-3.5 h-3.5 text-gray-400 cursor-help" />
+                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg z-10 text-center">
+                      Skill level can be downgraded by system if your uploaded documents or licenses don't match your selection.
+                      <div className="absolute left-1/2 -translate-x-1/2 top-full border-4 border-transparent border-t-gray-900"></div>
+                    </div>
+                  </div>
+                </label>
+                <select
+                  id="tradie-skill-level"
+                  value={skillLevel}
+                  onChange={(e) => setSkillLevel(e.target.value as any)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) bg-white focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent transition-shadow"
+                >
+                  <option value="" disabled>Select your skill level...</option>
+                  <option value="junior">Junior (Apprentice / Handyman)</option>
+                  <option value="senior">Senior (Fully Licensed / Tradesman)</option>
+                  <option value="specialist">Specialist (Advanced Certifications)</option>
+                </select>
+              </div>
+
+              {/* Skills */}
               <div>
                 <label
                   htmlFor="tradie-skills"
@@ -214,6 +253,7 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
+              {/* Bio */}
               <div>
                 <label
                   htmlFor="tradie-bio"
@@ -235,6 +275,7 @@ export default function RegisterTradiePage() {
                 </p>
               </div>
 
+              {/* Password */}
               <div>
                 <label
                   htmlFor="tradie-password"
@@ -267,6 +308,7 @@ export default function RegisterTradiePage() {
                 </div>
               </div>
 
+              {/* Confirm Password */}
               <div>
                 <label
                   htmlFor="tradie-confirm-password"
@@ -285,6 +327,7 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -301,12 +344,14 @@ export default function RegisterTradiePage() {
               </button>
             </form>
 
+            {/* Divider */}
             <div className="flex items-center gap-4 my-6">
               <div className="flex-1 h-px bg-gray-200" />
               <span className="text-sm text-gray-400">or</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
+            {/* Links */}
             <p className="text-center text-sm text-(--upwork-gray)">
               Already have an account?{' '}
               <Link
