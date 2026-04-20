@@ -8,6 +8,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Search, Star, MapPin, Filter, User as UserIcon, Loader2, ChevronRight } from 'lucide-react'
 import { api } from '@/lib/api'
+import { connectSocket } from '@/lib/socket'
 import { VALID_CATEGORIES, CATEGORY_LABELS } from '@/lib/constants'
 import type { TradieProfile, TradieCategory, User } from '@/lib/types'
 
@@ -32,8 +33,8 @@ export default function DashboardFindTalentPage() {
   const [page, setPage] = useState(1)
   const [category, setCategory] = useState<TradieCategory | 'all'>(preCategory || 'all')
 
-  const fetchTradies = useCallback(async () => {
-    setIsLoading(true)
+  const fetchTradies = useCallback(async (showLoader = true) => {
+    if (showLoader) setIsLoading(true)
     try {
       const qs = new URLSearchParams()
       if (category !== 'all') qs.set('category', category)
@@ -45,12 +46,24 @@ export default function DashboardFindTalentPage() {
       setTotal(res.data.total)
     } catch {
     } finally {
-      setIsLoading(false)
+      if (showLoader) setIsLoading(false)
     }
   }, [category, page])
 
   useEffect(() => {
-    fetchTradies()
+    fetchTradies(true)
+    
+    const socket = connectSocket()
+    
+    const onStatusChanged = () => {
+      fetchTradies(false)
+    }
+    
+    socket.on('tradie:status_changed', onStatusChanged)
+
+    return () => {
+      socket.off('tradie:status_changed', onStatusChanged)
+    }
   }, [fetchTradies])
 
   const handleCategoryChange = (cat: TradieCategory | 'all') => {
@@ -69,11 +82,10 @@ export default function DashboardFindTalentPage() {
         <Filter className="w-4 h-4 text-gray-400 shrink-0" />
         <button
           onClick={() => handleCategoryChange('all')}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-            category === 'all'
+          className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === 'all'
               ? 'bg-(--upwork-navy) text-white'
               : 'bg-white text-(--upwork-gray) border border-gray-200 hover:bg-gray-50'
-          }`}
+            }`}
         >
           All Categories
         </button>
@@ -81,11 +93,10 @@ export default function DashboardFindTalentPage() {
           <button
             key={cat}
             onClick={() => handleCategoryChange(cat)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-              category === cat
+            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === cat
                 ? 'bg-(--upwork-green) text-white'
                 : 'bg-white text-(--upwork-gray) border border-gray-200 hover:bg-gray-50'
-            }`}
+              }`}
           >
             {CATEGORY_LABELS[cat]}
           </button>
@@ -158,11 +169,10 @@ export default function DashboardFindTalentPage() {
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={`w-3.5 h-3.5 ${
-                          star <= Math.round(tradie.rating.average)
+                        className={`w-3.5 h-3.5 ${star <= Math.round(tradie.rating.average)
                             ? 'text-amber-400 fill-amber-400'
                             : 'text-gray-200'
-                        }`}
+                          }`}
                       />
                     ))}
                   </div>
