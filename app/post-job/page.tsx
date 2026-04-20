@@ -10,11 +10,13 @@ function PostJobContent() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('q') || ''
   const preselectedCategory = searchParams.get('category') || ''
+  const jobId = searchParams.get('jobId') || ''
 
   return (
     <PostJobWizard
       searchQuery={searchQuery}
       preselectedCategory={preselectedCategory}
+      existingJobId={jobId}
     />
   )
 }

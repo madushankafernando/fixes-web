@@ -35,6 +35,7 @@ import type {
 interface PostJobWizardProps {
   searchQuery: string
   preselectedCategory: string
+  existingJobId?: string
 }
 
 // ─── Step 1: Category ───────────────────────────────────────────────────────────
@@ -60,11 +61,10 @@ function StepCategory({
           <button
             key={cat}
             onClick={() => onSelectCategory(cat)}
-            className={`px-4 py-3.5 rounded-xl border text-sm font-medium transition-all text-left ${
-              selectedCategory === cat
+            className={`px-4 py-3.5 rounded-xl border text-sm font-medium transition-all text-left ${selectedCategory === cat
                 ? 'bg-(--upwork-navy) text-white border-(--upwork-navy)'
                 : 'bg-white text-(--upwork-navy) border-gray-300 hover:border-(--upwork-navy)'
-            }`}
+              }`}
           >
             <span className="flex items-center justify-between">
               {CATEGORY_LABELS[cat]}
@@ -185,11 +185,10 @@ function StepPhotos({
 
       <label
         htmlFor="photo-upload"
-        className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer transition-colors mb-6 ${
-          isUploading
+        className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer transition-colors mb-6 ${isUploading
             ? 'border-(--upwork-green) bg-green-50'
             : 'border-gray-300 hover:border-(--upwork-green) bg-gray-50 hover:bg-green-50'
-        }`}
+          }`}
       >
         {isUploading ? (
           <div className="flex flex-col items-center gap-2">
@@ -289,13 +288,13 @@ function StepLocation({
             value={address}
             onChange={(e) => onFieldChange('address', e.target.value)}
             placeholder="123 Example Street"
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label htmlFor="loc-suburb" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
+            <label htmlFor="loc-suburb" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
               Suburb
             </label>
             <input
@@ -304,11 +303,11 @@ function StepLocation({
               value={suburb}
               onChange={(e) => onFieldChange('suburb', e.target.value)}
               placeholder="Richmond"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
             />
           </div>
           <div>
-            <label htmlFor="loc-postcode" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
+            <label htmlFor="loc-postcode" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
               Postcode
             </label>
             <input
@@ -318,20 +317,20 @@ function StepLocation({
               onChange={(e) => onFieldChange('postcode', e.target.value)}
               placeholder="3121"
               maxLength={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="loc-state" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
+          <label htmlFor="loc-state" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
             State
           </label>
           <select
             id="loc-state"
             value={state}
             onChange={(e) => onFieldChange('state', e.target.value)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) bg-white focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
           >
             <option value="" disabled>Select state...</option>
             {AUSTRALIAN_STATES.map((s) => (
@@ -352,7 +351,7 @@ function StepLocation({
       <button
         onClick={onNext}
         disabled={!isValid || isGeocoding}
-        className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 mt-8 bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors"
+        className="w-full max-w-sm mx-auto flex items-center justify-center gap-2 mt-8 bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors"
       >
         {isGeocoding ? (
           <>
@@ -384,10 +383,10 @@ function StepTime({
 
   return (
     <div className="max-w-2xl mx-auto text-center">
-      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] mb-3">
         How soon do you need this done?
       </h1>
-      <p className="text-(--upwork-gray) mb-10">
+      <p className="text-[var(--upwork-gray)] mb-10">
         We&apos;ll prioritise tradies that match your timeline.
       </p>
 
@@ -396,11 +395,10 @@ function StepTime({
           <button
             key={opt.value}
             onClick={() => onSelect(opt.value)}
-            className={`flex-1 px-6 py-4 rounded-xl border text-left transition-all ${
-              selected === opt.value
-                ? 'bg-(--upwork-navy) text-white border-(--upwork-navy)'
-                : 'bg-white text-(--upwork-navy) border-gray-300 hover:border-(--upwork-navy)'
-            }`}
+            className={`flex-1 px-6 py-4 rounded-xl border text-left transition-all ${selected === opt.value
+                ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
+                : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
+              }`}
           >
             <div className="font-semibold text-sm">{opt.label}</div>
             <div className={`text-xs mt-1 ${selected === opt.value ? 'text-white/70' : 'text-gray-400'}`}>
@@ -419,16 +417,16 @@ function StepAnalyzing() {
   return (
     <div className="max-w-md mx-auto text-center py-16">
       <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-        <Sparkles className="w-10 h-10 text-(--upwork-green) animate-pulse" />
+        <Sparkles className="w-10 h-10 text-[var(--upwork-green)] animate-pulse" />
       </div>
-      <h1 className="text-2xl font-bold text-(--upwork-navy) mb-3">
+      <h1 className="text-2xl font-bold text-[var(--upwork-navy)] mb-3">
         Analyzing your job...
       </h1>
-      <p className="text-(--upwork-gray) mb-6">
+      <p className="text-[var(--upwork-gray)] mb-6">
         Our AI is reviewing your description and photos to generate an accurate quote.
       </p>
       <div className="flex justify-center">
-        <Loader2 className="w-6 h-6 text-(--upwork-green) animate-spin" />
+        <Loader2 className="w-6 h-6 text-[var(--upwork-green)] animate-spin" />
       </div>
     </div>
   )
@@ -455,43 +453,43 @@ function StepQuote({
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
         <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="w-7 h-7 text-(--upwork-green)" />
+          <Check className="w-7 h-7 text-[var(--upwork-green)]" />
         </div>
-        <h1 className="text-2xl font-bold text-(--upwork-navy) mb-2">
+        <h1 className="text-2xl font-bold text-[var(--upwork-navy)] mb-2">
           Your quote is ready
         </h1>
-        <p className="text-sm text-(--upwork-gray)">
+        <p className="text-sm text-[var(--upwork-gray)]">
           Job: <strong>{job.title}</strong> — {job.jobCode}
         </p>
       </div>
 
       <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6 space-y-5">
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center shrink-0">
-            <DollarSign className="w-5 h-5 text-(--upwork-green)" />
+          <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
+            <DollarSign className="w-5 h-5 text-[var(--upwork-green)]" />
           </div>
           <div>
-            <div className="text-sm text-(--upwork-gray)">Estimated Price Range</div>
-            <div className="text-2xl font-bold text-(--upwork-navy)">
+            <div className="text-sm text-[var(--upwork-gray)]">Estimated Price Range</div>
+            <div className="text-2xl font-bold text-[var(--upwork-navy)]">
               ${quote.price.min} – ${quote.price.max}{' '}
               <span className="text-sm font-normal text-gray-400">{quote.price.currency}</span>
             </div>
-            <div className="text-sm text-(--upwork-gray) mt-1">
+            <div className="text-sm text-[var(--upwork-gray)] mt-1">
               Suggested fixed price: <strong>${quote.suggestedFixedPrice}</strong>
             </div>
           </div>
         </div>
 
         <div className="flex items-start gap-4">
-          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
             <Clock className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <div className="text-sm text-(--upwork-gray)">Estimated Duration</div>
-            <div className="text-lg font-semibold text-(--upwork-navy)">
+            <div className="text-sm text-[var(--upwork-gray)]">Estimated Duration</div>
+            <div className="text-lg font-semibold text-[var(--upwork-navy)]">
               {quote.estimatedHours.min} – {quote.estimatedHours.max} hours
             </div>
-            <div className="text-sm text-(--upwork-gray)">
+            <div className="text-sm text-[var(--upwork-gray)]">
               Skill level: <span className="capitalize">{quote.detectedSkillLevel}</span>
             </div>
           </div>
@@ -499,10 +497,10 @@ function StepQuote({
 
         {quote.reasoning && (
           <div className="bg-gray-50 rounded-xl p-4">
-            <div className="text-xs font-medium text-(--upwork-gray) mb-1 uppercase tracking-wide">
+            <div className="text-xs font-medium text-[var(--upwork-gray)] mb-1 uppercase tracking-wide">
               AI Reasoning
             </div>
-            <p className="text-sm text-(--upwork-navy) leading-relaxed">{quote.reasoning}</p>
+            <p className="text-sm text-[var(--upwork-navy)] leading-relaxed">{quote.reasoning}</p>
           </div>
         )}
 
@@ -518,7 +516,7 @@ function StepQuote({
 
       {acceptError && (
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-6">
-          <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+          <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-amber-700">{acceptError}</p>
         </div>
       )}
@@ -643,13 +641,18 @@ function PaymentForm({
 // MAIN WIZARD
 // ═════════════════════════════════════════════════════════════════════════════════
 
-export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizardProps) {
+export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId }: PostJobWizardProps) {
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
 
+  // State to handle direct jumping from dashboard
+  const [isResuming, setIsResuming] = useState(!!existingJobId)
+  const [resumeError, setResumeError] = useState('')
+
   // If category is preselected from landing page, skip step 1
   const hasPreselectedCategory = VALID_CATEGORIES.includes(preselectedCategory as TradieCategory)
-  const [currentStep, setCurrentStep] = useState(hasPreselectedCategory ? 2 : 1)
+  // If we are resuming an existing job, we target Step 7 (Quote Preview)
+  const [currentStep, setCurrentStep] = useState(existingJobId ? 7 : (hasPreselectedCategory ? 2 : 1))
   const totalSteps = 5
 
   // Form data
@@ -679,6 +682,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
 
   // Accept + payment
   const [isAccepting, setIsAccepting] = useState(false)
+  const [acceptError, setAcceptError] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   // Preload Stripe.js when wizard mounts — ensures it’s ready before step 8
   const [stripeInstance, setStripeInstance] = useState<any>(null)
@@ -690,40 +694,31 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
     })
   }, [])
 
-  // Email verification gate — clients must verify before posting
-  if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
-    return (
-      <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
-        <div className="bg-white border border-amber-200 rounded-2xl p-8 sm:p-10 w-full max-w-md text-center shadow-sm">
-          <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-5">
-            <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-bold text-(--upwork-navy) mb-2">Verify your email first</h1>
-          <p className="text-sm text-gray-400 mb-6">
-            You need to verify your email address before you can post a job.
-            Check your inbox for the verification link.
-          </p>
-          <div className="space-y-3">
-            <a
-              href="/dashboard/profile"
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
-            >
-              Go to Profile to Resend
-            </a>
-            <button
-              onClick={() => router.back()}
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition-colors"
-            >
-              Go Back
-            </button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-  const [acceptError, setAcceptError] = useState('')
+  // Resume existing job logic
+  useEffect(() => {
+    if (existingJobId) {
+      const loadExistingJob = async () => {
+        try {
+          const res = await api.get<{ job: Job }>(`/api/jobs/${existingJobId}`)
+          setCreatedJob(res.data.job)
+          // The quote is embedded in the populated job object
+          if (res.data.job.quote) {
+            setCreatedQuote(res.data.job.quote as Quote)
+          } else {
+            throw new Error('No quote found for this job')
+          }
+          setCurrentStep(7) // Jump straight to Quote summary screen
+        } catch (err) {
+          setResumeError('Could not process job quote.')
+          setCurrentStep(1) // Drop back to start
+        } finally {
+          setIsResuming(false)
+        }
+      }
+      loadExistingJob()
+    }
+  }, [existingJobId])
+
 
   const progress = Math.min((currentStep / totalSteps) * 100, 100)
 
@@ -930,6 +925,65 @@ export function PostJobWizard({ searchQuery, preselectedCategory }: PostJobWizar
       setIsGeocoding(false)
     }
     setCurrentStep(5)
+  }
+
+  // ─── Early return blocks must go strictly AFTER all hooks are defined ───────
+
+  // Email verification gate — clients must verify before posting
+  if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
+    return (
+      <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
+        <div className="bg-white border border-amber-200 rounded-2xl p-8 sm:p-10 w-full max-w-md text-center shadow-sm">
+          <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg className="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-bold text-(--upwork-navy) mb-2">Verify your email first</h1>
+          <p className="text-sm text-gray-400 mb-6">
+            You need to verify your email address before you can post a job.
+            Check your inbox for the verification link.
+          </p>
+          <div className="space-y-3">
+            <a
+              href="/dashboard/profile"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
+            >
+              Go to Profile to Resend
+            </a>
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (isResuming) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-(--upwork-green) animate-spin" />
+          <p className="text-(--upwork-navy) font-medium">Preparing secure checkout...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (resumeError) {
+    return (
+      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
+        <div className="bg-white p-8 rounded-xl shadow-sm text-center">
+           <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
+           <p className="text-(--upwork-navy) font-semibold mb-2">{resumeError}</p>
+           <button onClick={() => router.push('/dashboard/jobs')} className="text-(--upwork-green) text-sm underline hover:opacity-80">Back to Dashboard</button>
+        </div>
+      </div>
+    )
   }
 
   // ─── Analyzing screen (no header) ───────────────────────────────────────────
