@@ -1,8 +1,6 @@
-'use client'
-
 // contexts/notifications-context.tsx
-// Shared notification state for web portals (client dashboard + admin)
-// Fetches from GET /api/notifications and listens to socket 'notification:new'
+
+'use client'
 
 import React, {
   createContext,
@@ -54,7 +52,6 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
       )
       setNotifications(res.data.notifications ?? [])
     } catch {
-      // Silently fail
     } finally {
       setLoading(false)
     }
@@ -74,12 +71,10 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     } catch { }
   }, [])
 
-  // Mount: fetch + socket listener
   useEffect(() => {
     if (!isAuthenticated || !user) return
     fetchAll()
 
-    // Attach to existing socket (connected by layout)
     const socket = connectSocket()
     if (!socket) return
     socketRef.current = socket
@@ -87,8 +82,7 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     const handleNew = (notif: WebNotification) => {
       setNotifications(prev => [notif, ...prev])
       
-      // Global broadcast so page components can re-fetch live data 
-      // without needing their own dedicated socket connections
+   
       if (typeof window !== 'undefined') {
         window.dispatchEvent(new CustomEvent('app:refresh_data'))
       }

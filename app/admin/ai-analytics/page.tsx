@@ -158,7 +158,6 @@ export default function AiAnalyticsPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -168,7 +167,6 @@ export default function AiAnalyticsPage() {
           <p className="text-sm text-gray-400 mt-0.5">Monitor Gemini pricing engine performance</p>
         </div>
 
-        {/* Period filter */}
         <div className="flex items-center gap-1.5">
           <Filter className="w-3.5 h-3.5 text-gray-400 shrink-0" />
           {PERIOD_OPTIONS.map((opt) => (
@@ -193,7 +191,6 @@ export default function AiAnalyticsPage() {
         </div>
       ) : (
         <>
-          {/* ── KPI Cards ──────────────────────────────────────────────── */}
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-5">
             <KpiCard
               icon={Bot}
@@ -241,9 +238,7 @@ export default function AiAnalyticsPage() {
             />
           </div>
 
-          {/* ── Charts Row 1 ───────────────────────────────────────────── */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-            {/* Line chart — calls per day */}
             <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-700 mb-4">AI Calls Over Time</h2>
               {(stats?.callsByDay ?? []).length === 0 ? (
@@ -266,7 +261,6 @@ export default function AiAnalyticsPage() {
               )}
             </div>
 
-            {/* Donut — calls by category */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-700 mb-4">Calls by Category</h2>
               {(stats?.callsByCategory ?? []).length === 0 ? (
@@ -295,7 +289,6 @@ export default function AiAnalyticsPage() {
                   </PieChart>
                 </ResponsiveContainer>
               )}
-              {/* Legend */}
               <div className="flex flex-col gap-1 mt-2">
                 {(stats?.callsByCategory ?? []).slice(0, 5).map((e) => (
                   <div key={e.category} className="flex items-center justify-between">
@@ -310,9 +303,7 @@ export default function AiAnalyticsPage() {
             </div>
           </div>
 
-          {/* ── Charts Row 2 ───────────────────────────────────────────── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
-            {/* Bar — avg fixed price by category */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-700 mb-4">Avg Quoted Price by Category (AUD)</h2>
               {(stats?.avgPriceByCategory ?? []).length === 0 ? (
@@ -338,7 +329,6 @@ export default function AiAnalyticsPage() {
               )}
             </div>
 
-            {/* Bar — skill level distribution */}
             <div className="bg-white rounded-xl border border-gray-200 p-4">
               <h2 className="text-sm font-semibold text-gray-700 mb-4">Skill Level Distribution</h2>
               {(stats?.skillLevelDistribution ?? []).length === 0 ? (
@@ -361,7 +351,6 @@ export default function AiAnalyticsPage() {
             </div>
           </div>
 
-          {/* ── Recent Logs Table ───────────────────────────────────────── */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
               <h2 className="text-sm font-semibold text-gray-700">Recent AI Calls</h2>

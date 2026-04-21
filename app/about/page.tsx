@@ -23,7 +23,6 @@ export const metadata: Metadata = {
     'Learn about Fixes — Australia\'s AI-powered tradie marketplace. Our story, mission, values, and the team building the future of home services.',
 }
 
-// ─── Data ────────────────────────────────────────────────────────────────────
 
 const STATS = [
   { value: '50,000+', label: 'Jobs Completed' },
@@ -63,14 +62,7 @@ const VALUES = [
   },
 ]
 
-const TEAM = [
-  { name: 'Madushan Fernando', role: 'Co-Founder & CEO', avatar: 'https://i.pravatar.cc/200?img=11' },
-  { name: 'Kavinu Jayasinghe', role: 'Co-Founder & CTO', avatar: 'https://i.pravatar.cc/200?img=12' },
-  { name: 'Parth Joshi', role: 'Lead Engineer', avatar: 'https://i.pravatar.cc/200?img=13' },
-  { name: 'Anika Sharma', role: 'Head of Operations', avatar: 'https://i.pravatar.cc/200?img=47' },
-  { name: 'Liam Walsh', role: 'Head of Growth', avatar: 'https://i.pravatar.cc/200?img=15' },
-  { name: 'Sophie Chen', role: 'Head of Design', avatar: 'https://i.pravatar.cc/200?img=49' },
-]
+
 
 const MILESTONES = [
   { year: '2023', event: 'Fixes founded in Melbourne, Australia' },
@@ -81,16 +73,13 @@ const MILESTONES = [
   { year: '2026', event: 'Mobile tradie app launched — Fixer iOS & Android now in early access' },
 ]
 
-// ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
 
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section className="relative bg-(--upwork-navy) text-white overflow-hidden">
-        {/* Background pattern */}
         <div className="absolute inset-0 opacity-5 pointer-events-none"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}
         />
@@ -115,7 +104,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Stats bar ────────────────────────────────────────────────────── */}
       <section className="bg-(--upwork-green) text-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
@@ -129,7 +117,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Our Story ────────────────────────────────────────────────────── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -155,7 +142,6 @@ export default function AboutPage() {
               </div>
             </div>
 
-            {/* Visual */}
             <div className="relative">
               <div className="bg-(--upwork-light-gray) rounded-3xl p-8 lg:p-12 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-48 h-48 bg-(--upwork-green) rounded-full blur-[80px] opacity-10" />
@@ -184,7 +170,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Mission ──────────────────────────────────────────────────────── */}
       <section className="bg-(--upwork-light-gray) py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 lg:px-6 text-center">
           <p className="text-xs font-semibold tracking-widest text-(--upwork-green) uppercase mb-4">Our Mission</p>
@@ -199,7 +184,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Values ───────────────────────────────────────────────────────── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="text-center mb-14">
@@ -223,7 +207,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Timeline ─────────────────────────────────────────────────────── */}
       <section className="bg-(--upwork-navy) text-white py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 lg:px-6">
           <div className="text-center mb-14">
@@ -231,7 +214,6 @@ export default function AboutPage() {
             <h2 className="text-3xl lg:text-4xl font-extrabold">From idea to platform</h2>
           </div>
           <div className="relative">
-            {/* Vertical line */}
             <div className="absolute left-6 top-0 bottom-0 w-px bg-gray-700 hidden sm:block" />
             <div className="space-y-8">
               {MILESTONES.map((m, i) => (
@@ -252,7 +234,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Team ─────────────────────────────────────────────────────────── */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 lg:px-6">
           <div className="text-center mb-14">
@@ -266,7 +247,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────── */}
       <section className="bg-(--upwork-light-gray) py-20">
         <div className="max-w-4xl mx-auto px-4 lg:px-6 text-center">
           <h2 className="text-3xl lg:text-4xl font-extrabold text-(--upwork-navy) mb-4">

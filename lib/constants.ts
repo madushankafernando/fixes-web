@@ -2,12 +2,10 @@
 
 import type { TradieCategory, JobCategory, JobStatus, DocumentType } from './types'
 
-// ─── API Base URL ───────────────────────────────────────────────────────────────
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
-// ─── Categories ─────────────────────────────────────────────────────────────────
 
 export const VALID_CATEGORIES: TradieCategory[] = [
   'electrical',
@@ -34,7 +32,6 @@ export const CATEGORY_LABELS: Record<JobCategory, string> = {
   other: 'Other',
 }
 
-// ─── Job Status ─────────────────────────────────────────────────────────────────
 
 export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   analyzing: 'Analyzing',
@@ -62,7 +59,6 @@ export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   cancelled: 'bg-gray-100 text-gray-500',
 }
 
-// ─── Document Types ─────────────────────────────────────────────────────────────
 
 export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   abn: 'ABN',
@@ -79,7 +75,6 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
   builders_license_cbu: 'Builders License (CBU)',
 }
 
-// ─── Preferred Time ─────────────────────────────────────────────────────────────
 
 export const PREFERRED_TIME_LABELS: Record<string, string> = {
   now: 'Now',
@@ -87,7 +82,6 @@ export const PREFERRED_TIME_LABELS: Record<string, string> = {
   'no-rush': 'No Rush',
 }
 
-// ─── Australian States ──────────────────────────────────────────────────────────
 
 export const AUSTRALIAN_STATES = [
   { value: 'NSW', label: 'New South Wales' },

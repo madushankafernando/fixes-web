@@ -41,12 +41,11 @@ export function disconnectSocket(): void {
   }
 }
 
-// ─── Room Management ────────────────────────────────────────────────────────────
 
 export function joinJobRoom(jobId: string): void {
-  socket?.emit('job:join', jobId)   // server expects plain string, not { jobId }
+  socket?.emit('job:join', jobId)   
 }
 
 export function leaveJobRoom(jobId: string): void {
-  socket?.emit('job:leave', jobId)   // server expects plain string, not { jobId }
+  socket?.emit('job:leave', jobId)   
 }

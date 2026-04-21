@@ -81,7 +81,6 @@ export default function RegisterTradiePage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
-      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
           <Link href="/" className="inline-block">
@@ -97,10 +96,8 @@ export default function RegisterTradiePage() {
         </div>
       </header>
 
-      {/* Main */}
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-lg">
-          {/* Temporary notice */}
           <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-6">
             <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
             <p className="text-sm text-blue-700">
@@ -109,7 +106,6 @@ export default function RegisterTradiePage() {
             </p>
           </div>
 
-          {/* Card */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
             <h1 className="text-2xl font-bold text-(--upwork-navy) text-center mb-2">
               Join as a Tradie
@@ -125,7 +121,6 @@ export default function RegisterTradiePage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Name */}
               <div>
                 <label
                   htmlFor="tradie-name"
@@ -144,7 +139,6 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
-              {/* Email */}
               <div>
                 <label
                   htmlFor="tradie-email"
@@ -163,7 +157,6 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
-              {/* Phone */}
               <div>
                 <label
                   htmlFor="tradie-phone"
@@ -182,7 +175,6 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
-              {/* Trade Category */}
               <div>
                 <label
                   htmlFor="tradie-category"
@@ -207,7 +199,6 @@ export default function RegisterTradiePage() {
                 </select>
               </div>
 
-              {/* Skill Level */}
               <div>
                 <label
                   htmlFor="tradie-skill-level"
@@ -235,7 +226,6 @@ export default function RegisterTradiePage() {
                 </select>
               </div>
 
-              {/* Skills */}
               <div>
                 <label
                   htmlFor="tradie-skills"
@@ -253,7 +243,6 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
-              {/* Bio */}
               <div>
                 <label
                   htmlFor="tradie-bio"
@@ -275,7 +264,6 @@ export default function RegisterTradiePage() {
                 </p>
               </div>
 
-              {/* Password */}
               <div>
                 <label
                   htmlFor="tradie-password"
@@ -308,7 +296,6 @@ export default function RegisterTradiePage() {
                 </div>
               </div>
 
-              {/* Confirm Password */}
               <div>
                 <label
                   htmlFor="tradie-confirm-password"
@@ -327,7 +314,6 @@ export default function RegisterTradiePage() {
                 />
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -344,14 +330,12 @@ export default function RegisterTradiePage() {
               </button>
             </form>
 
-            {/* Divider */}
             <div className="flex items-center gap-4 my-6">
               <div className="flex-1 h-px bg-gray-200" />
               <span className="text-sm text-gray-400">or</span>
               <div className="flex-1 h-px bg-gray-200" />
             </div>
 
-            {/* Links */}
             <p className="text-center text-sm text-(--upwork-gray)">
               Already have an account?{' '}
               <Link

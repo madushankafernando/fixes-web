@@ -81,7 +81,6 @@ export default function AiLogsPage() {
 
   return (
     <div>
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
@@ -97,7 +96,6 @@ export default function AiLogsPage() {
         </div>
       </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <div className="flex items-center gap-1">
           <Filter className="w-3.5 h-3.5 text-gray-400" />
@@ -152,7 +150,6 @@ export default function AiLogsPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <div className="flex items-center justify-center py-16">
@@ -180,40 +177,34 @@ export default function AiLogsPage() {
                   const costAud = calcCostAud(log.tokensIn, log.tokensOut)
                   return (
                     <tr key={log._id} className="hover:bg-purple-50/40 transition-colors">
-                      {/* Status icon */}
                       <td className="pl-4 pr-1 py-3">
                         {log.success
                           ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
                           : <XCircle className="w-3.5 h-3.5 text-red-400" />}
                       </td>
 
-                      {/* Title */}
                       <td className="px-3 py-3 max-w-45">
                         <p className="text-xs font-medium text-gray-800 truncate">{log.inputTitle || '—'}</p>
                       </td>
 
-                      {/* Category */}
                       <td className="px-3 py-3">
                         <span className="text-[10px] text-gray-500">
                           {CATEGORY_LABELS[(log.outputCategory ?? log.inputCategory) as JobCategory] ?? log.outputCategory ?? '—'}
                         </span>
                       </td>
 
-                      {/* Engine */}
                       <td className="px-3 py-3">
                         {log.engine === 'gemini'
                           ? <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700"><BrainCircuit className="w-2.5 h-2.5" /> Gemini</span>
                           : <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500">Fallback</span>}
                       </td>
 
-                      {/* Fixed price */}
                       <td className="px-3 py-3">
                         <span className="text-xs text-gray-700 font-medium">
                           {log.outputFixedPrice != null ? `$${log.outputFixedPrice}` : '—'}
                         </span>
                       </td>
 
-                      {/* Cost AUD */}
                       <td className="px-3 py-3">
                         {costAud != null ? (
                           <span className="text-xs font-medium text-emerald-700">
@@ -224,7 +215,6 @@ export default function AiLogsPage() {
                         )}
                       </td>
 
-                      {/* Confidence bar */}
                       <td className="px-3 py-3">
                         {log.outputConfidence != null ? (
                           <div className="flex items-center gap-1.5">
@@ -239,7 +229,6 @@ export default function AiLogsPage() {
                         ) : <span className="text-[10px] text-gray-400">—</span>}
                       </td>
 
-                      {/* Latency */}
                       <td className="px-3 py-3">
                         {log.latencyMs != null ? (
                           <span className={`text-[10px] font-medium ${
@@ -251,14 +240,12 @@ export default function AiLogsPage() {
                         ) : <span className="text-[10px] text-gray-400">—</span>}
                       </td>
 
-                      {/* Tokens */}
                       <td className="px-3 py-3">
                         <span className="text-[10px] text-gray-500">
                           {log.tokensTotal != null ? log.tokensTotal.toLocaleString() : '—'}
                         </span>
                       </td>
 
-                      {/* Date */}
                       <td className="px-3 py-3 whitespace-nowrap">
                         <span className="text-[10px] text-gray-400">
                           {new Date(log.createdAt).toLocaleDateString('en-AU', {
@@ -268,7 +255,6 @@ export default function AiLogsPage() {
                         </span>
                       </td>
 
-                      {/* Chevron */}
                       <td className="px-3 py-3">
                         <Link href={`/admin/ai-analytics/${log._id}`}>
                           <ChevronRight className="w-4 h-4 text-gray-300" />
@@ -283,7 +269,6 @@ export default function AiLogsPage() {
         )}
       </div>
 
-      {/* Pagination */}
       {total > 20 && (
         <div className="flex justify-center gap-2 mt-5">
           <button
@@ -306,7 +291,6 @@ export default function AiLogsPage() {
         </div>
       )}
 
-      {/* Pricing footnote */}
       <p className="text-[10px] text-gray-400 text-center mt-4">
         Cost estimate based on gemini-2.5-flash-lite pricing: $0.10/1M input tokens · $0.40/1M output tokens (USD) · converted at ~1.55 AUD/USD
       </p>

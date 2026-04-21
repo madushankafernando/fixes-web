@@ -1,10 +1,11 @@
+// fixes-web/app/admin/bug-reports/page.tsx
+
 'use client'
 
 import { useEffect, useState } from 'react'
 import { Bug, Filter, RefreshCw, ChevronDown } from 'lucide-react'
 import { api } from '@/lib/api'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Reporter {
   name: string
@@ -30,7 +31,6 @@ interface ApiResult {
   pagination: { total: number; page: number; pages: number }
 }
 
-// ── Config ────────────────────────────────────────────────────────────────────
 
 const CATEGORIES = ['App Crash', 'Payment Issue', 'Job Dispatch', 'Profile', 'Chat', 'Other']
 
@@ -41,7 +41,6 @@ const STATUS_CONFIG = {
   wont_fix:      { label: "Won't Fix",     classes: 'bg-gray-100 text-gray-500' },
 }
 
-// Which statuses you can transition to from each state
 const TRANSITIONS: Record<string, string[]> = {
   open:          ['investigating', 'wont_fix'],
   investigating: ['resolved', 'wont_fix'],
@@ -55,7 +54,6 @@ function fmt(iso: string) {
   })
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function BugReportsPage() {
   const [reports, setReports]               = useState<BugReport[]>([])
@@ -104,7 +102,6 @@ export default function BugReportsPage() {
     }
   }
 
-  // Count by status for summary cards
   const counts = reports.reduce((acc, r) => {
     acc[r.status] = (acc[r.status] ?? 0) + 1
     return acc
@@ -112,7 +109,6 @@ export default function BugReportsPage() {
 
   return (
     <div>
-      {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">
@@ -130,7 +126,6 @@ export default function BugReportsPage() {
         </button>
       </div>
 
-      {/* Status summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         {(Object.entries(STATUS_CONFIG) as [string, { label: string; classes: string }][]).map(([key, cfg]) => (
           <button
@@ -144,11 +139,9 @@ export default function BugReportsPage() {
         ))}
       </div>
 
-      {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-5">
         <Filter className="w-4 h-4 text-gray-400 shrink-0" />
 
-        {/* Status filter pills */}
         {['all', ...Object.keys(STATUS_CONFIG)].map((s) => (
           <button
             key={s}
@@ -165,7 +158,6 @@ export default function BugReportsPage() {
 
         <div className="w-px h-5 bg-gray-200 mx-1" />
 
-        {/* Category dropdown */}
         <select
           value={categoryFilter}
           onChange={e => handleCategoryFilter(e.target.value)}
@@ -176,7 +168,6 @@ export default function BugReportsPage() {
         </select>
       </div>
 
-      {/* Reports table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
@@ -199,7 +190,6 @@ export default function BugReportsPage() {
 
               return (
                 <div key={report._id}>
-                  {/* Collapsed row */}
                   <button
                     onClick={() => setExpanded(isOpen ? null : report._id)}
                     className="w-full flex items-start sm:items-center justify-between px-4 sm:px-5 py-4 hover:bg-gray-50 transition-colors text-left group"
@@ -229,10 +219,8 @@ export default function BugReportsPage() {
                     </div>
                   </button>
 
-                  {/* Expanded detail */}
                   {isOpen && (
                     <div className="px-4 sm:px-5 pb-5 pt-3 bg-gray-50 border-t border-gray-100 space-y-4">
-                      {/* Description */}
                       <div>
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Description</p>
                         <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed bg-white border border-gray-200 rounded-lg px-4 py-3">
@@ -240,7 +228,6 @@ export default function BugReportsPage() {
                         </p>
                       </div>
 
-                      {/* Reporter meta */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {[
                           { label: 'Name',     value: report.reporter.name },
@@ -255,7 +242,6 @@ export default function BugReportsPage() {
                         ))}
                       </div>
 
-                      {/* Status transition buttons */}
                       {nextSteps.length > 0 && (
                         <div className="flex flex-wrap items-center gap-2 pt-1">
                           <span className="text-xs text-gray-400 font-medium">Move to:</span>

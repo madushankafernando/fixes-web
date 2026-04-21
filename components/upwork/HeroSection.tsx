@@ -34,7 +34,6 @@ export function HeroSection() {
 
   return (
     <section className="pt-4 pb-12 px-4 lg:px-6">
-      {/* Promotional Banner */}
       <div className="max-w-7xl mx-auto mb-6">
         <div className="bg-[#d4f7dc] rounded-full py-4 px-6 flex items-center justify-between">
           <p className="text-(--upwork-navy) font-medium text-sm md:text-base">
@@ -50,10 +49,8 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Hero Section with Video Background */}
       <div className="max-w-7xl mx-auto">
         <div className="relative rounded-3xl overflow-hidden min-h-137.5 lg:min-h-150">
-          {/* Video Background */}
           <video
             autoPlay
             muted
@@ -67,23 +64,18 @@ export function HeroSection() {
             />
           </video>
 
-          {/* Dark Overlay */}
           <div className="absolute inset-0 bg-black/40" />
 
-          {/* Content */}
           <div className="relative z-10 flex flex-col justify-center h-full min-h-137.5 lg:min-h-150 px-6 md:px-12 lg:px-16 py-12">
             <div className="max-w-2xl">
-              {/* Main Heading */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6 text-balance">
                 Hire the experts as your needs
               </h1>
 
-              {/* Subheading */}
               <p className="text-lg md:text-xl text-white/90 mb-10 max-w-xl text-pretty">
                 Access skilled tradies ready to help you build and scale — without the full-time commitment
               </p>
 
-              {/* Toggle Tabs */}
               <div className="flex flex-col sm:flex-row gap-3 mb-6">
                 <button
                   onClick={() => setActiveTab("hire")}
@@ -103,7 +95,6 @@ export function HeroSection() {
                 </button>
               </div>
 
-              {/* Search Bar */}
               <div className="relative mb-8 max-w-xl">
                 <input
                   type="text"
@@ -126,7 +117,6 @@ export function HeroSection() {
                 </button>
               </div>
 
-              {/* Category Tags */}
               <div className="flex flex-wrap gap-3">
                 {categoryTags.map((tag) => (
                   <button

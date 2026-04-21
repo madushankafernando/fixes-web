@@ -62,7 +62,6 @@ const bottomLinks = [
 export function Footer() {
   return (
     <footer className="bg-(--upwork-navy) text-white">
-      {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 lg:px-6 py-12 lg:py-16">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:gap-12">
           {Object.entries(footerLinks).map(([category, links]) => (
@@ -85,11 +84,9 @@ export function Footer() {
         </div>
       </div>
 
-      {/* Bottom Footer */}
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-            {/* Social Links */}
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-400">Follow us</span>
               <div className="flex items-center gap-3">
@@ -109,7 +106,6 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Mobile App Links */}
             <div className="flex items-center gap-3">
               <Link
                 href="#"
@@ -126,7 +122,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Legal Links */}
           <div className="flex flex-wrap items-center gap-4 mt-6 pt-6 border-t border-gray-800">
             <div className="flex items-center gap-2">
               <Image

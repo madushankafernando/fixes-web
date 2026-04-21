@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/jobs/[id]/page.tsx
+
 'use client'
 
 import { useEffect, useState, useRef, useCallback } from 'react'
@@ -34,7 +36,6 @@ import type {
   JobStatusUpdatePayload,
 } from '@/lib/types'
 
-// ─── Auto-refresh helper ────────────────────────────────────────────────────────
 
 function AutoRefresh({ onRefresh, intervalMs }: { onRefresh: () => void; intervalMs: number }) {
   useEffect(() => {
@@ -44,7 +45,6 @@ function AutoRefresh({ onRefresh, intervalMs }: { onRefresh: () => void; interva
   return null
 }
 
-// ─── Status Timeline ────────────────────────────────────────────────────────────
 
 const STATUS_STEPS: { status: JobStatus; label: string; icon: React.ElementType }[] = [
   { status: 'quoted', label: 'Quoted', icon: DollarSign },
@@ -111,7 +111,6 @@ function StatusTimeline({ currentStatus }: { currentStatus: JobStatus }) {
   )
 }
 
-// ─── Chat Widget ────────────────────────────────────────────────────────────────
 
 function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: string }) {
   const [messages, setMessages] = useState<Message[]>([])
@@ -120,14 +119,12 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
   const [isLoadingMessages, setIsLoadingMessages] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Load messages
   useEffect(() => {
     async function loadMessages() {
       try {
         const res = await api.getPaginated<Message>(`/api/messages/${jobId}?limit=100`)
         setMessages(res.data)
       } catch {
-        // Silent
       } finally {
         setIsLoadingMessages(false)
       }
@@ -135,14 +132,12 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
     loadMessages()
   }, [jobId])
 
-  // Mark as read
   useEffect(() => {
     if (messages.length > 0) {
       api.patch(`/api/messages/${jobId}/read`).catch(() => {})
     }
   }, [jobId, messages.length])
 
-  // Socket.io listener
   useEffect(() => {
     const socket = connectSocket()
     if (!socket) return
@@ -165,7 +160,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
           updatedAt: payload.createdAt,
         }
         setMessages((prev) => [...prev, incoming])
-        // Mark as read immediately
         api.patch(`/api/messages/${jobId}/read`).catch(() => {})
       }
     }
@@ -178,7 +172,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
     }
   }, [jobId])
 
-  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
@@ -190,7 +183,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
       await api.post(`/api/messages/${jobId}`, { content: newMessage.trim() })
       setNewMessage('')
     } catch {
-      // Silent
     } finally {
       setIsSending(false)
     }
@@ -209,7 +201,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
         <h3 className="text-sm font-semibold text-(--upwork-navy)">Chat</h3>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {isLoadingMessages ? (
           <div className="flex justify-center py-8">
@@ -263,7 +254,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className="px-3 py-2 border-t border-gray-100 flex items-center gap-2">
         <input
           type="text"
@@ -285,7 +275,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
   )
 }
 
-// ─── Review Form ────────────────────────────────────────────────────────────────
 
 function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => void }) {
   const [rating, setRating] = useState(0)
@@ -373,9 +362,6 @@ function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => 
   )
 }
 
-// ═════════════════════════════════════════════════════════════════════════════════
-// MAIN PAGE
-// ═════════════════════════════════════════════════════════════════════════════════
 
 export default function JobDetailPage() {
   const params = useParams()
@@ -389,18 +375,15 @@ export default function JobDetailPage() {
   const [isRejecting, setIsRejecting] = useState(false)
   const [rejectError, setRejectError] = useState('')
 
-  // Dispatch countdown — driven by dispatch:finding_tradie socket event
-  const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null)  // expiresAt for current cycle
-  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       // timeoutMs from server
-  const [secondsLeft, setSecondsLeft]         = useState<number | null>(null)  // null = not started yet
+  const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null)  
+  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       
+  const [secondsLeft, setSecondsLeft]         = useState<number | null>(null)  
 
-  // Fetch job detail
   const fetchJob = useCallback(async () => {
     try {
       const res = await api.get<{ job: Job }>(`/api/jobs/${jobId}`)
       setJob(res.data.job)
     } catch {
-      // Silent
     } finally {
       setIsLoading(false)
     }
@@ -410,7 +393,6 @@ export default function JobDetailPage() {
     fetchJob()
   }, [fetchJob])
 
-  // Socket.io — live status updates + dispatch countdown
   useEffect(() => {
     const socket = connectSocket()
     if (!socket || !job) return
@@ -424,13 +406,12 @@ export default function JobDetailPage() {
       }
     }
 
-    // Fires each time a new tradie is being tried — resets the countdown
     const handleFindingTradie = (payload: {
       expiresAt: string
       timeoutMs: number
       message: string
     }) => {
-      setDispatchCycleAt(payload.expiresAt)  // changing this key restarts the countdown effect
+      setDispatchCycleAt(payload.expiresAt)  
       setDispatchTotalMs(payload.timeoutMs)
       const secs = Math.ceil(
         (new Date(payload.expiresAt).getTime() - Date.now()) / 1000
@@ -448,7 +429,6 @@ export default function JobDetailPage() {
     }
   }, [job?._id])
 
-  // Countdown tick — resets whenever a new dispatch cycle starts (dispatchCycleAt changes)
   useEffect(() => {
     if (!dispatchCycleAt) return
 
@@ -456,14 +436,14 @@ export default function JobDetailPage() {
       setSecondsLeft((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(id)
-          return 0  // hits 0 → searching for next tradie
+          return 0  
         }
         return prev - 1
       })
     }, 1000)
 
     return () => clearInterval(id)
-  }, [dispatchCycleAt])  // ← new cycle = new interval = no reset-to-0 glitch
+  }, [dispatchCycleAt])  
 
   if (isLoading) {
     return (
@@ -488,11 +468,9 @@ export default function JobDetailPage() {
     )
   }
 
-  // ── Intermediate status screens — auto-poll every 5s ──────────────────────
   if (job.status === 'payment_pending' || job.status === 'dispatching') {
     const isSearching   = job.status === 'dispatching'
     const totalSecs     = Math.round(dispatchTotalMs / 1000)
-    // Progress 0→1 representing how much of the window is left
     const progressRatio = secondsLeft !== null ? secondsLeft / totalSecs : 0
     const urgent        = secondsLeft !== null && secondsLeft <= 10
     const mm = secondsLeft !== null ? String(Math.floor(secondsLeft / 60)).padStart(1, '0') : '0'
@@ -501,7 +479,6 @@ export default function JobDetailPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
         <div className="relative mb-8">
-          {/* Animated rings */}
           <div className="absolute inset-0 rounded-full border-4 border-green-200 animate-ping opacity-40" />
           <div className="absolute inset-0 rounded-full border-4 border-green-300 animate-ping opacity-20" style={{ animationDelay: '0.5s' }} />
           <div className="w-24 h-24 rounded-full bg-linear-to-br from-green-50 to-emerald-100 flex items-center justify-center relative">
@@ -522,7 +499,6 @@ export default function JobDetailPage() {
           }
         </p>
 
-        {/* Countdown — only shown once a tradie is being asked (dispatch:finding_tradie received) */}
         {isSearching && secondsLeft !== null && (
           <div className="mt-8 w-full max-w-xs">
             <div className="flex items-center justify-between mb-2">
@@ -537,7 +513,6 @@ export default function JobDetailPage() {
                 </span>
               )}
             </div>
-            {/* Progress bar */}
             <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-1000 ${
@@ -568,7 +543,6 @@ export default function JobDetailPage() {
           View all my jobs
         </button>
 
-        {/* Auto-refresh — polls every 5s until status changes */}
         <AutoRefresh onRefresh={fetchJob} intervalMs={5000} />
       </div>
     )
@@ -600,7 +574,6 @@ export default function JobDetailPage() {
 
   return (
     <div>
-      {/* Back + Title */}
       <div className="mb-6">
         <button
           onClick={() => router.push('/dashboard/jobs')}
@@ -623,12 +596,10 @@ export default function JobDetailPage() {
         </p>
       </div>
 
-      {/* Status Timeline */}
       <div className="mb-6">
         <StatusTimeline currentStatus={job.status} />
       </div>
 
-      {/* Quote Action Banner — shown when job is awaiting client decision */}
       {job.status === 'quoted' && quote && (
         <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -669,9 +640,7 @@ export default function JobDetailPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Description */}
           <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Description</h3>
             <p className="text-xs sm:text-sm text-(--upwork-gray) leading-relaxed whitespace-pre-wrap">
@@ -679,7 +648,6 @@ export default function JobDetailPage() {
             </p>
           </div>
 
-          {/* Images */}
           {job.images.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Photos</h3>
@@ -699,26 +667,22 @@ export default function JobDetailPage() {
             </div>
           )}
 
-          {/* Chat */}
           {canChat && user && (
             <ChatWidget jobId={job._id} currentUserId={user._id} />
           )}
 
-          {/* Review */}
           {canReview && (
             <ReviewForm
               jobId={job._id}
               onSubmitted={() => {
                 setReviewSubmitted(true)
-                fetchJob() // Refresh job data
+                fetchJob() 
               }}
             />
           )}
         </div>
 
-        {/* Right Column */}
         <div className="space-y-6">
-          {/* Location */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-gray-400" />
@@ -730,7 +694,6 @@ export default function JobDetailPage() {
             </p>
           </div>
 
-          {/* Quote Details */}
           {quote && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-1.5">
@@ -771,7 +734,6 @@ export default function JobDetailPage() {
             </div>
           )}
 
-          {/* Assigned Tradie */}
           {assignedTradie && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">
@@ -806,7 +768,6 @@ export default function JobDetailPage() {
             </div>
           )}
 
-          {/* Preferred Time */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-2 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-gray-400" />

@@ -1,7 +1,6 @@
-'use client'
 // app/stripe-connect/refresh/page.tsx
-// Stripe redirects here if the onboarding link expires.
-// Shows a message; tradie taps "Payout Methods" in the app to get a fresh link.
+
+'use client'
 
 import { RefreshCw } from 'lucide-react'
 

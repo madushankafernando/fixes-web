@@ -1,7 +1,6 @@
-'use client'
 // app/stripe-connect/return/page.tsx
-// Stripe redirects the tradie here after completing (or abandoning) onboarding.
-// Shows a confirmation message and guides them back to the app.
+
+'use client'
 
 import { CheckCircle } from 'lucide-react'
 

@@ -1,7 +1,6 @@
-'use client'
-
 // app/admin/notifications/page.tsx
-// Admin broadcast compose panel — send notifications to all tradies, clients, or everyone
+
+'use client'
 
 import { useState } from 'react'
 import { Bell, Megaphone, Send, Users, Wrench, Globe } from 'lucide-react'
@@ -73,7 +72,6 @@ export default function AdminNotificationsPage() {
         </div>
       </div>
 
-      {/* Target selector */}
       <div className="mb-6">
         <label className="block text-sm font-semibold text-gray-700 mb-3">Send to</label>
         <div className="grid grid-cols-3 gap-3">
@@ -99,7 +97,6 @@ export default function AdminNotificationsPage() {
         </div>
       </div>
 
-      {/* Compose */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -127,12 +124,11 @@ export default function AdminNotificationsPage() {
           />
         </div>
 
-        {/* Preview */}
         {(title || body) && (
           <div className="bg-gray-900 rounded-xl p-4">
             <p className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">Preview</p>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#2563EB] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-full bg-[#2563EB] flex items-center justify-center shrink-0">
                 <Megaphone className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -144,7 +140,6 @@ export default function AdminNotificationsPage() {
         )}
       </div>
 
-      {/* Result / error */}
       {result && (
         <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
           <p className="text-sm font-semibold text-green-700">✅ Broadcast sent!</p>
@@ -160,7 +155,6 @@ export default function AdminNotificationsPage() {
         </div>
       )}
 
-      {/* Send */}
       <button
         onClick={handleSend}
         disabled={!canSend}

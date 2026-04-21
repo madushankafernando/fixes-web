@@ -130,7 +130,6 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="h-screen overflow-hidden bg-gray-50">
-      {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b border-gray-200">
         <div className="flex items-center justify-between px-4 lg:px-6 h-14">
           <div className="flex items-center gap-3">
@@ -169,7 +168,6 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
       </header>
 
       <div className="flex h-[calc(100vh-56px)] overflow-hidden">
-        {/* Sidebar — desktop */}
         <aside className="hidden lg:flex flex-col w-52 bg-white border-r border-gray-200 py-5 px-3">
           <nav className="flex flex-col gap-1 flex-1">
             {sidebarLinks.map((link) => {
@@ -200,7 +198,6 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
           </button>
         </aside>
 
-        {/* Sidebar — mobile overlay */}
         {sidebarOpen && (
           <>
             <div className="lg:hidden fixed inset-0 bg-black/30 z-40" onClick={() => setSidebarOpen(false)} />
@@ -237,7 +234,6 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
           </>
         )}
 
-        {/* Main */}
         <main className="flex-1 p-4 lg:p-6 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
           {children}
         </main>

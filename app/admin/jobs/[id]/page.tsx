@@ -1,6 +1,6 @@
-'use client'
-
 // fixes-web/app/admin/jobs/[id]/page.tsx
+
+'use client'
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
@@ -139,14 +139,12 @@ export default function AdminJobDetailPage() {
   const payment = typeof job.payment === 'object' && job.payment ? job.payment as Payment : null
   const quote = typeof job.quote === 'object' && job.quote ? job.quote as Quote : null
 
-  // Determine which test actions are available
   const canSimulateAccept = job.status === 'dispatching'
   const canSimulateComplete = ['accepted', 'on_the_way', 'in_progress'].includes(job.status)
   const canCapture = job.status === 'completed' && payment?.status === 'pending'
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* Back */}
       <button
         onClick={() => router.back()}
         className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 transition-colors mb-6"
@@ -155,7 +153,6 @@ export default function AdminJobDetailPage() {
         Back to Jobs
       </button>
 
-      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-gray-900">{job.title}</h1>
@@ -166,7 +163,6 @@ export default function AdminJobDetailPage() {
         </span>
       </div>
 
-      {/* Message banner */}
       {message && (
         <div className={`flex items-start gap-2 px-4 py-3 rounded-xl mb-5 text-sm ${
           message.type === 'success'
@@ -181,7 +177,6 @@ export default function AdminJobDetailPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-        {/* Job info */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Job Details</h2>
           <dl className="space-y-3">
@@ -212,7 +207,6 @@ export default function AdminJobDetailPage() {
           </dl>
         </div>
 
-        {/* Payment info */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Payment</h2>
           {payment ? (
@@ -250,7 +244,6 @@ export default function AdminJobDetailPage() {
         </div>
       </div>
 
-      {/* ── Test Control Panel ── */}
       <div className="bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-5 text-white">
         <div className="flex items-center gap-2 mb-1">
           <Zap className="w-4 h-4 text-yellow-400" />
@@ -262,9 +255,7 @@ export default function AdminJobDetailPage() {
           Run these in order: Accept → Complete → Capture.
         </p>
 
-        {/* Step flow */}
         <div className="space-y-3">
-          {/* Step 1 */}
           <div className="flex items-center gap-3">
             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
               !canSimulateAccept && ['accepted','on_the_way','in_progress','completed'].includes(job.status)
@@ -286,7 +277,6 @@ export default function AdminJobDetailPage() {
             />
           </div>
 
-          {/* Step 2 */}
           <div className="flex items-center gap-3">
             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
               job.status === 'completed' ? 'bg-green-500 text-white'
@@ -308,7 +298,6 @@ export default function AdminJobDetailPage() {
             />
           </div>
 
-          {/* Step 3 */}
           <div className="flex items-center gap-3">
             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
               payment?.status === 'captured' ? 'bg-green-500 text-white'
