@@ -118,6 +118,8 @@ export type JobStatus =
   | 'in_progress'
   | 'completed'
   | 'cancelled'
+  | 'disputed'
+
 
 export type PreferredTime = 'now' | '1-2weeks' | 'no-rush'
 

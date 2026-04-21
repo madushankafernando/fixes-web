@@ -19,6 +19,8 @@ import {
   Bug,
   Bell,
   Bot,
+  MessageSquareCodeIcon,
+  MessageSquareWarning,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { NotificationsProvider, useWebNotifications } from '@/contexts/notifications-context'
@@ -31,6 +33,7 @@ const sidebarLinks = [
   { href: '/admin/bug-reports',    label: 'Bug Reports',    icon: Bug },
   { href: '/admin/notifications',  label: 'Notifications',  icon: Bell },
   { href: '/admin/ai-analytics',   label: 'AI Analytics',   icon: Bot },
+  { href: '/admin/disputes',   label: 'Dispute Center',   icon: MessageSquareWarning },
   { href: '/admin/profile',        label: 'My Profile',     icon: User },
 ]
 
