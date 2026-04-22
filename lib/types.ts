@@ -1,5 +1,4 @@
-// fixes-web/lib/types.ts
-
+// ─── Base API Response Types ────────────────────────────────────────────────────
 
 export interface ApiResponse<T> {
   success: boolean
@@ -120,8 +119,7 @@ export type JobStatus =
   | 'cancelled'
   | 'disputed'
 
-
-export type PreferredTime = 'now' | '1-2weeks' | 'no-rush'
+export type PreferredTime = 'now' | 'scheduled' | '1-2weeks' | 'no-rush'
 
 export interface JobImage {
   url: string
@@ -154,6 +152,7 @@ export interface Job {
   images: JobImage[]
   location: JobLocation
   preferredTime: PreferredTime
+  scheduledFor: string | null
   status: JobStatus
   quote: string | Quote | null
   assignedTradieId: string | User | null
@@ -335,6 +334,12 @@ export interface MessageNewPayload {
   content: string
   type: MessageType
   createdAt: string
+}
+
+export interface TradieLocationUpdatePayload {
+  lat: number
+  lng: number
+  updatedAt: number
 }
 
 

@@ -38,6 +38,7 @@ interface PostJobWizardProps {
   existingJobId?: string
 }
 
+// ─── Step 1: Category ───────────────────────────────────────────────────────────
 
 function StepCategory({
   selectedCategory,
@@ -48,10 +49,10 @@ function StepCategory({
 }) {
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) text-center mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] text-center mb-3">
         What type of work do you need?
       </h1>
-      <p className="text-(--upwork-gray) text-center mb-10">
+      <p className="text-[var(--upwork-gray)] text-center mb-10">
         Select a category to get started.
       </p>
 
@@ -61,8 +62,8 @@ function StepCategory({
             key={cat}
             onClick={() => onSelectCategory(cat)}
             className={`px-4 py-3.5 rounded-xl border text-sm font-medium transition-all text-left ${selectedCategory === cat
-                ? 'bg-(--upwork-navy) text-white border-(--upwork-navy)'
-                : 'bg-white text-(--upwork-navy) border-gray-300 hover:border-(--upwork-navy)'
+                ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
+                : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
               }`}
           >
             <span className="flex items-center justify-between">
@@ -76,6 +77,7 @@ function StepCategory({
   )
 }
 
+// ─── Step 2: Title + Description ────────────────────────────────────────────────
 
 function StepDescription({
   description,
@@ -96,22 +98,22 @@ function StepDescription({
     <div className="max-w-2xl mx-auto">
       {categoryLabel && (
         <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-(--upwork-green) text-sm font-medium rounded-full">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[var(--upwork-green)] text-sm font-medium rounded-full">
             <Check className="w-3.5 h-3.5" />
             {categoryLabel}
           </span>
         </div>
       )}
 
-      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) text-center mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] text-center mb-3">
         Tell us about the job
       </h1>
-      <p className="text-(--upwork-gray) text-center mb-8">
+      <p className="text-[var(--upwork-gray)] text-center mb-8">
         A clear title and detailed description help our AI generate a better quote.
       </p>
 
       <div className="mb-5">
-        <label htmlFor="step2-title" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
+        <label htmlFor="step2-title" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
           Job Title
         </label>
         <input
@@ -121,13 +123,13 @@ function StepDescription({
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="e.g. Fix leaking kitchen tap"
           maxLength={150}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
         />
         <p className="text-xs text-gray-400 mt-1 text-right">{title.length}/150</p>
       </div>
 
       <div className="mb-5">
-        <label htmlFor="step2-desc" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
+        <label htmlFor="step2-desc" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
           Description
         </label>
         <textarea
@@ -137,7 +139,7 @@ function StepDescription({
           placeholder="Describe what needs to be done, any issues you've noticed, access details, etc."
           maxLength={2000}
           rows={6}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent resize-none"
         />
         <p className="text-xs text-gray-400 mt-1 text-right">{description.length}/2000</p>
       </div>
@@ -145,7 +147,7 @@ function StepDescription({
       <button
         onClick={onNext}
         disabled={!title.trim() || !description.trim()}
-        className="w-full max-w-sm mx-auto block bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors"
+        className="w-full max-w-sm mx-auto block bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors"
       >
         Next
       </button>
@@ -153,6 +155,7 @@ function StepDescription({
   )
 }
 
+// ─── Step 3: Photo Upload ───────────────────────────────────────────────────────
 
 function StepPhotos({
   images,
@@ -173,29 +176,29 @@ function StepPhotos({
 
   return (
     <div className="max-w-2xl mx-auto text-center">
-      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] mb-3">
         Add photos
       </h1>
-      <p className="text-(--upwork-gray) mb-8">
+      <p className="text-[var(--upwork-gray)] mb-8">
         Photos help our AI provide a more accurate quote. Optional but recommended.
       </p>
 
       <label
         htmlFor="photo-upload"
         className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer transition-colors mb-6 ${isUploading
-            ? 'border-(--upwork-green) bg-green-50'
-            : 'border-gray-300 hover:border-(--upwork-green) bg-gray-50 hover:bg-green-50'
+            ? 'border-[var(--upwork-green)] bg-green-50'
+            : 'border-gray-300 hover:border-[var(--upwork-green)] bg-gray-50 hover:bg-green-50'
           }`}
       >
         {isUploading ? (
           <div className="flex flex-col items-center gap-2">
-            <Loader2 className="w-8 h-8 text-(--upwork-green) animate-spin" />
-            <span className="text-sm text-(--upwork-green) font-medium">Uploading...</span>
+            <Loader2 className="w-8 h-8 text-[var(--upwork-green)] animate-spin" />
+            <span className="text-sm text-[var(--upwork-green)] font-medium">Uploading...</span>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-2">
             <Upload className="w-8 h-8 text-gray-400" />
-            <span className="text-sm text-(--upwork-gray)">Click to upload or drag and drop</span>
+            <span className="text-sm text-[var(--upwork-gray)]">Click to upload or drag and drop</span>
             <span className="text-xs text-gray-400">PNG, JPG up to 10MB</span>
           </div>
         )}
@@ -234,7 +237,7 @@ function StepPhotos({
 
       <button
         onClick={onNext}
-        className="w-full max-w-sm mx-auto block bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white font-medium py-3 px-6 rounded-xl transition-colors"
+        className="w-full max-w-sm mx-auto block bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white font-medium py-3 px-6 rounded-xl transition-colors"
       >
         {images.length > 0 ? 'Next' : 'Skip — no photos'}
       </button>
@@ -242,6 +245,7 @@ function StepPhotos({
   )
 }
 
+// ─── Step 4: Location ───────────────────────────────────────────────────────────
 
 function StepLocation({
   address,
@@ -266,16 +270,16 @@ function StepLocation({
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) text-center mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] text-center mb-3">
         Where is the job?
       </h1>
-      <p className="text-(--upwork-gray) text-center mb-8">
+      <p className="text-[var(--upwork-gray)] text-center mb-8">
         We&apos;ll find tradies near this location.
       </p>
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="loc-address" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
+          <label htmlFor="loc-address" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
             Street Address
           </label>
           <input
@@ -336,6 +340,7 @@ function StepLocation({
         </div>
       </div>
 
+      {/* Geocode error */}
       {geocodeError && (
         <div className="flex items-start gap-2 mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
           <MapPin className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
@@ -361,50 +366,109 @@ function StepLocation({
   )
 }
 
+// ─── Step 5: Preferred Time ─────────────────────────────────────────────────────
 
 function StepTime({
   selected,
   onSelect,
+  scheduledFor,
+  onScheduledForChange,
+  onScheduledSubmit,
 }: {
   selected: PreferredTime | ''
   onSelect: (val: PreferredTime) => void
+  scheduledFor: string
+  onScheduledForChange: (val: string) => void
+  onScheduledSubmit: () => void
 }) {
-  const options: { value: PreferredTime; label: string; desc: string }[] = [
-    { value: 'now', label: 'Now', desc: 'As soon as possible' },
-    { value: '1-2weeks', label: 'In 1–2 Weeks', desc: 'Flexible timing' },
-    { value: 'no-rush', label: 'No Rush', desc: 'Whenever available' },
+  // Calculate min (now + 5 min) and max (now + 24h) for the datetime picker
+  const now = new Date()
+  const minDt = new Date(now.getTime() + 5 * 60 * 1000)
+  const maxDt = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+  const toDatetimeLocal = (d: Date) =>
+    new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
+
+  const options: { value: PreferredTime; label: string; desc: string; icon: string }[] = [
+    { value: 'now',       label: 'Now',               desc: 'Dispatch a tradie immediately', icon: '⚡' },
+    { value: 'scheduled', label: 'Schedule for Later', desc: 'Choose a time (up to 24h ahead)', icon: '🗓️' },
+    { value: '1-2weeks',  label: 'In 1–2 Weeks',      desc: 'Flexible timing',                 icon: '📅' },
+    { value: 'no-rush',   label: 'No Rush',            desc: 'Whenever available',              icon: '😌' },
   ]
+
+  // Validate chosen datetime
+  const scheduledValid = selected !== 'scheduled' || (
+    scheduledFor &&
+    new Date(scheduledFor).getTime() > minDt.getTime() &&
+    new Date(scheduledFor).getTime() <= maxDt.getTime()
+  )
 
   return (
     <div className="max-w-2xl mx-auto text-center">
       <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] mb-3">
-        How soon do you need this done?
+        When do you need this done?
       </h1>
       <p className="text-[var(--upwork-gray)] mb-10">
-        We&apos;ll prioritise tradies that match your timeline.
+        We&apos;ll dispatch a tradie based on your timing preference.
       </p>
 
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
+      <div className="grid grid-cols-2 gap-3 mb-6">
         {options.map((opt) => (
           <button
             key={opt.value}
             onClick={() => onSelect(opt.value)}
-            className={`flex-1 px-6 py-4 rounded-xl border text-left transition-all ${selected === opt.value
+            className={`px-5 py-4 rounded-xl border text-left transition-all ${
+              selected === opt.value
                 ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
                 : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
-              }`}
+            }`}
           >
+            <div className="text-xl mb-1">{opt.icon}</div>
             <div className="font-semibold text-sm">{opt.label}</div>
-            <div className={`text-xs mt-1 ${selected === opt.value ? 'text-white/70' : 'text-gray-400'}`}>
+            <div className={`text-xs mt-0.5 ${selected === opt.value ? 'text-white/70' : 'text-gray-400'}`}>
               {opt.desc}
             </div>
           </button>
         ))}
       </div>
+
+      {/* Datetime picker — only visible when 'scheduled' is selected */}
+      {selected === 'scheduled' && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-left">
+          <label htmlFor="scheduled-time" className="block text-sm font-medium text-[var(--upwork-navy)] mb-2">
+            🕐 Choose dispatch time
+          </label>
+          <input
+            id="scheduled-time"
+            type="datetime-local"
+            value={scheduledFor}
+            min={toDatetimeLocal(minDt)}
+            max={toDatetimeLocal(maxDt)}
+            onChange={(e) => onScheduledForChange(e.target.value)}
+            className="w-full px-4 py-3 border border-blue-300 rounded-xl text-[var(--upwork-navy)] bg-white focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
+          />
+          <p className="text-xs text-blue-600 mt-2">
+            ⚡ Tradies will receive the dispatch at your chosen time. Max 24 hours ahead.
+          </p>
+          {scheduledFor && !scheduledValid && (
+            <p className="text-xs text-red-600 mt-1">
+              Please choose a time at least 5 minutes from now and within 24 hours.
+            </p>
+          )}
+          {/* Confirm button */}
+          <button
+            onClick={onScheduledSubmit}
+            disabled={!scheduledFor || !scheduledValid}
+            className="mt-4 w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-colors"
+          >
+            📅 Schedule Job
+          </button>
+        </div>
+      )}
     </div>
   )
 }
 
+// ─── Step 6: Analyzing ──────────────────────────────────────────────────────────
 
 function StepAnalyzing() {
   return (
@@ -425,6 +489,7 @@ function StepAnalyzing() {
   )
 }
 
+// ─── Step 7: Quote ──────────────────────────────────────────────────────────────
 
 function StepQuote({
   quote,
@@ -517,7 +582,7 @@ function StepQuote({
         <button
           onClick={onAccept}
           disabled={isAccepting}
-          className="flex-1 bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-50 text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+          className="flex-1 bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-50 text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
         >
           {isAccepting ? (
             <>
@@ -534,7 +599,7 @@ function StepQuote({
         <button
           onClick={onCancel}
           disabled={isAccepting}
-          className="flex-1 border border-gray-300 text-(--upwork-navy) font-medium py-3 px-6 rounded-xl hover:border-gray-400 transition-colors"
+          className="flex-1 border border-gray-300 text-[var(--upwork-navy)] font-medium py-3 px-6 rounded-xl hover:border-gray-400 transition-colors"
         >
           Cancel Job
         </button>
@@ -543,6 +608,7 @@ function StepQuote({
   )
 }
 
+// ─── Payment Form (must be inside <Elements>) ────────────────────────────────
 
 function PaymentForm({
   amount,
@@ -566,15 +632,17 @@ function PaymentForm({
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
+        // Redirect URL after 3DS — we handle redirect in the dashboard
         return_url: `${window.location.origin}/dashboard`,
       },
-      redirect: 'if_required', 
+      redirect: 'if_required', // Only redirect if 3DS needed
     })
 
     if (error) {
       setPayError(error.message || 'Payment failed. Please try again.')
       setIsConfirming(false)
     } else {
+      // Payment authorized successfully
       onSuccess()
     }
   }
@@ -600,7 +668,7 @@ function PaymentForm({
         <button
           onClick={handleConfirm}
           disabled={!stripe || !elements || isConfirming}
-          className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-50 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-50 text-white font-semibold py-3.5 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
         >
           {isConfirming ? (
             <>
@@ -617,7 +685,7 @@ function PaymentForm({
         <button
           onClick={onCancel}
           disabled={isConfirming}
-          className="w-full border border-gray-200 text-(--upwork-gray) font-medium py-3 px-6 rounded-xl hover:border-gray-300 transition-colors"
+          className="w-full border border-gray-200 text-[var(--upwork-gray)] font-medium py-3 px-6 rounded-xl hover:border-gray-300 transition-colors"
         >
           Cancel Job
         </button>
@@ -626,18 +694,25 @@ function PaymentForm({
   )
 }
 
+// ═════════════════════════════════════════════════════════════════════════════════
+// MAIN WIZARD
+// ═════════════════════════════════════════════════════════════════════════════════
 
 export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId }: PostJobWizardProps) {
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
 
+  // State to handle direct jumping from dashboard
   const [isResuming, setIsResuming] = useState(!!existingJobId)
   const [resumeError, setResumeError] = useState('')
 
+  // If category is preselected from landing page, skip step 1
   const hasPreselectedCategory = VALID_CATEGORIES.includes(preselectedCategory as TradieCategory)
+  // If we are resuming an existing job, we target Step 7 (Quote Preview)
   const [currentStep, setCurrentStep] = useState(existingJobId ? 7 : (hasPreselectedCategory ? 2 : 1))
   const totalSteps = 5
 
+  // Form data
   const [category, setCategory] = useState<TradieCategory | ''>(
     hasPreselectedCategory ? (preselectedCategory as TradieCategory) : ''
   )
@@ -652,17 +727,22 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [geocodeError, setGeocodeError] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
+  const [scheduledFor, setScheduledFor] = useState('')  // ISO datetime string for 'scheduled' jobs
 
+  // Upload
   const [isUploading, setIsUploading] = useState(false)
 
+  // Submission
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
   const [createdQuote, setCreatedQuote] = useState<Quote | null>(null)
 
+  // Accept + payment
   const [isAccepting, setIsAccepting] = useState(false)
   const [acceptError, setAcceptError] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
+  // Preload Stripe.js when wizard mounts — ensures it’s ready before step 8
   const [stripeInstance, setStripeInstance] = useState<any>(null)
   useEffect(() => {
     import('@stripe/stripe-js').then(({ loadStripe }) => {
@@ -672,21 +752,23 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     })
   }, [])
 
+  // Resume existing job logic
   useEffect(() => {
     if (existingJobId) {
       const loadExistingJob = async () => {
         try {
           const res = await api.get<{ job: Job }>(`/api/jobs/${existingJobId}`)
           setCreatedJob(res.data.job)
+          // The quote is embedded in the populated job object
           if (res.data.job.quote) {
             setCreatedQuote(res.data.job.quote as Quote)
           } else {
             throw new Error('No quote found for this job')
           }
-          setCurrentStep(7) 
+          setCurrentStep(7) // Jump straight to Quote summary screen
         } catch (err) {
           setResumeError('Could not process job quote.')
-          setCurrentStep(1)
+          setCurrentStep(1) // Drop back to start
         } finally {
           setIsResuming(false)
         }
@@ -698,12 +780,14 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const progress = Math.min((currentStep / totalSteps) * 100, 100)
 
+  // ─── Category select (step 1) auto-advances ─────────────────────────────────
 
   const handleCategorySelect = (cat: TradieCategory) => {
     setCategory(cat)
     setCurrentStep(2)
   }
 
+  // ─── Upload handler ─────────────────────────────────────────────────────────
 
   const handleUploadFiles = useCallback(async (files: FileList) => {
     if (!isAuthenticated) {
@@ -717,9 +801,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       const uploaded: JobImage[] = []
 
       for (const file of Array.from(files)) {
+        // 1. Get signed params (POST, not GET)
         const signRes = await api.post<SignedUploadResponse>('/api/uploads/sign', { folder: 'jobs' })
         const signed = signRes.data
 
+        // 2. Upload directly to Cloudinary
         const formData = new FormData()
         formData.append('file', file)
         formData.append('api_key', signed.apiKey)
@@ -736,6 +822,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
         const cloudData = await cloudRes.json()
 
+        // 3. Confirm with backend
         await api.post('/api/uploads/confirm', {
           publicId: cloudData.public_id,
           url: cloudData.secure_url,
@@ -756,6 +843,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     }
   }, [isAuthenticated, router])
 
+  // ─── Submit job ─────────────────────────────────────────────────────────────
 
   const handleSubmitJob = useCallback(async (timeValue: PreferredTime) => {
     if (!isAuthenticated) {
@@ -765,9 +853,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
     setIsSubmitting(true)
     setSubmitError('')
-    setCurrentStep(6) 
+    setCurrentStep(6) // Analyzing screen
 
     try {
+      // Use geocoded coords from Step 4; fallback to Melbourne CBD only in dev
       const lat = coords?.lat ?? -37.8136
       const lng = coords?.lng ?? 144.9631
 
@@ -784,13 +873,17 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           coordinates: { lat, lng },
         },
         preferredTime: timeValue,
+        // Only send scheduledFor when client chose 'scheduled'
+        ...(timeValue === 'scheduled' && scheduledFor
+          ? { scheduledFor: new Date(scheduledFor).toISOString() }
+          : {}),
       })
 
       setCreatedJob(res.data.job)
       setCreatedQuote(res.data.quote)
-      setCurrentStep(7) 
+      setCurrentStep(7) // Quote screen
     } catch (err) {
-      setCurrentStep(5) 
+      setCurrentStep(5) // Go back
       if (err instanceof ApiError) {
         setSubmitError(err.message)
       } else {
@@ -799,8 +892,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     } finally {
       setIsSubmitting(false)
     }
-  }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState, coords])
+  }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState, coords, scheduledFor])
 
+  // ─── Accept quote ───────────────────────────────────────────────────────────
 
   const handleAcceptQuote = useCallback(async () => {
     if (!createdJob) return
@@ -814,7 +908,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       const secret = res.data.clientSecret
       if (!secret) throw new Error('No client secret returned from server')
       setClientSecret(secret)
-      setCurrentStep(8) 
+      setCurrentStep(8) // Payment step
     } catch (err) {
       if (err instanceof ApiError) {
         setAcceptError(err.message)
@@ -826,16 +920,19 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     }
   }, [createdJob])
 
+  // ─── Cancel job ─────────────────────────────────────────────────────────────
 
   const handleCancelJob = useCallback(async () => {
     if (!createdJob) return
     try {
       await api.patch(`/api/jobs/${createdJob._id}/cancel`)
     } catch {
+      // Silent
     }
     router.back()
   }, [createdJob, router])
 
+  // ─── Navigation ─────────────────────────────────────────────────────────────
 
   const handleBack = () => {
     if (currentStep > 1) {
@@ -847,7 +944,16 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const handleTimeSelect = (val: PreferredTime) => {
     setPreferredTime(val)
-    handleSubmitJob(val)
+    // 'scheduled' needs a time picker before submitting — do not auto-submit
+    if (val !== 'scheduled') {
+      handleSubmitJob(val)
+    }
+  }
+
+  const handleScheduledSubmit = () => {
+    if (preferredTime === 'scheduled' && scheduledFor) {
+      handleSubmitJob('scheduled')
+    }
   }
 
   const handleLocationFieldChange = (field: string, value: string) => {
@@ -857,10 +963,12 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       case 'postcode': setPostcode(value); break
       case 'state': setLocationState(value); break
     }
+    // Clear cached coords when address changes
     setCoords(null)
     setGeocodeError('')
   }
 
+  // ─── Geocode on location step Next ──────────────────────────────────────────
 
   const handleLocationNext = async () => {
     setIsGeocoding(true)
@@ -875,12 +983,14 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       if (data.length > 0) {
         setCoords({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) })
       } else {
+        // Address not found — warn but still allow proceeding (dev fallback)
         console.warn('[Geocode] Address not found, dispatch radius will use fallback coords')
         setGeocodeError('Could not locate this address — please double-check the details.')
         setIsGeocoding(false)
-        return 
+        return // Don't advance — ask client to fix
       }
     } catch {
+      // Network error — still advance, job creation will use fallback
       console.warn('[Geocode] Nominatim unreachable, using fallback coords')
     } finally {
       setIsGeocoding(false)
@@ -888,7 +998,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     setCurrentStep(5)
   }
 
+  // ─── Early return blocks must go strictly AFTER all hooks are defined ───────
 
+  // Email verification gate — clients must verify before posting
   if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
     return (
       <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
@@ -898,7 +1010,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-(--upwork-navy) mb-2">Verify your email first</h1>
+          <h1 className="text-xl font-bold text-[var(--upwork-navy)] mb-2">Verify your email first</h1>
           <p className="text-sm text-gray-400 mb-6">
             You need to verify your email address before you can post a job.
             Check your inbox for the verification link.
@@ -906,7 +1018,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           <div className="space-y-3">
             <a
               href="/dashboard/profile"
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-2.5 px-6 rounded-xl bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white text-sm font-medium transition-colors"
             >
               Go to Profile to Resend
             </a>
@@ -924,10 +1036,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   if (isResuming) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-8 h-8 text-(--upwork-green) animate-spin" />
-          <p className="text-(--upwork-navy) font-medium">Preparing secure checkout...</p>
+          <Loader2 className="w-8 h-8 text-[var(--upwork-green)] animate-spin" />
+          <p className="text-[var(--upwork-navy)] font-medium">Preparing secure checkout...</p>
         </div>
       </div>
     )
@@ -935,29 +1047,31 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   if (resumeError) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
            <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
-           <p className="text-(--upwork-navy) font-semibold mb-2">{resumeError}</p>
-           <button onClick={() => router.push('/dashboard/jobs')} className="text-(--upwork-green) text-sm underline hover:opacity-80">Back to Dashboard</button>
+           <p className="text-[var(--upwork-navy)] font-semibold mb-2">{resumeError}</p>
+           <button onClick={() => router.push('/dashboard/jobs')} className="text-[var(--upwork-green)] text-sm underline hover:opacity-80">Back to Dashboard</button>
         </div>
       </div>
     )
   }
 
+  // ─── Analyzing screen (no header) ───────────────────────────────────────────
 
   if (currentStep === 6) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center px-4">
         <StepAnalyzing />
       </div>
     )
   }
 
+  // ─── Quote screen ───────────────────────────────────────────────────────────
 
   if (currentStep === 7 && createdQuote && createdJob) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white">
+      <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white">
         <header className="border-b border-gray-200 bg-white">
           <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
             <Link href="/" className="inline-block">
@@ -979,10 +1093,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     )
   }
 
+  // ─── Payment screen ─────────────────────────────────────────────────────────
 
   if (currentStep === 8 && clientSecret && createdQuote) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white">
+      <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white">
         <header className="border-b border-gray-200 bg-white">
           <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
             <Link href="/" className="inline-block">
@@ -993,12 +1108,12 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         <main className="max-w-lg mx-auto px-4 lg:px-6 py-12">
           <div className="text-center mb-8">
             <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ShieldCheck className="w-7 h-7 text-(--upwork-green)" />
+              <ShieldCheck className="w-7 h-7 text-[var(--upwork-green)]" />
             </div>
-            <h1 className="text-2xl font-bold text-(--upwork-navy) mb-1">Secure Payment</h1>
-            <p className="text-(--upwork-gray) text-sm">
+            <h1 className="text-2xl font-bold text-[var(--upwork-navy)] mb-1">Secure Payment</h1>
+            <p className="text-[var(--upwork-gray)] text-sm">
               Your payment of{' '}
-              <span className="font-semibold text-(--upwork-navy)">${createdQuote.suggestedFixedPrice} AUD</span>{' '}
+              <span className="font-semibold text-[var(--upwork-navy)]">${createdQuote.suggestedFixedPrice} AUD</span>{' '}
               is held in escrow until your job is completed.
             </p>
           </div>
@@ -1032,39 +1147,43 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     )
   }
 
+  // ─── Standard wizard ────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white">
+    <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white">
+      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 flex items-center justify-between">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-(--upwork-navy) font-medium hover:opacity-70 transition-opacity"
+            className="flex items-center gap-2 text-[var(--upwork-navy)] font-medium hover:opacity-70 transition-opacity"
           >
             <ArrowLeft className="w-5 h-5" />
             Back
           </button>
-          <span className="text-sm text-(--upwork-gray)">
+          <span className="text-sm text-[var(--upwork-gray)]">
             Step {currentStep} of {totalSteps}
           </span>
         </div>
         <div className="h-1 bg-gray-200">
           <div
-            className="h-full bg-(--upwork-green) transition-all duration-300"
+            className="h-full bg-[var(--upwork-green)] transition-all duration-300"
             style={{ width: `${progress}%` }}
           />
         </div>
       </header>
 
+      {/* Error */}
       {submitError && (
         <div className="max-w-4xl mx-auto px-4 lg:px-6 mt-6">
           <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-            <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-red-700">{submitError}</p>
           </div>
         </div>
       )}
 
+      {/* Content */}
       <main className="max-w-4xl mx-auto px-4 lg:px-6 py-12 md:py-20">
         {currentStep === 1 && (
           <StepCategory
@@ -1111,6 +1230,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           <StepTime
             selected={preferredTime}
             onSelect={handleTimeSelect}
+            scheduledFor={scheduledFor}
+            onScheduledForChange={setScheduledFor}
+            onScheduledSubmit={handleScheduledSubmit}
           />
         )}
       </main>

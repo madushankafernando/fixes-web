@@ -1,5 +1,3 @@
-// fixes-web/lib/constants.ts
-
 import type { TradieCategory, JobCategory, JobStatus, DocumentType } from './types'
 
 
@@ -44,6 +42,7 @@ export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   in_progress: 'In Progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
+  disputed: 'Disputed',
 }
 
 export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
@@ -57,6 +56,7 @@ export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   in_progress: 'bg-orange-100 text-orange-700',
   completed: 'bg-green-100 text-green-700',
   cancelled: 'bg-gray-100 text-gray-500',
+  disputed: 'bg-red-100 text-red-700',
 }
 
 
@@ -78,6 +78,7 @@ export const DOCUMENT_TYPE_LABELS: Record<DocumentType, string> = {
 
 export const PREFERRED_TIME_LABELS: Record<string, string> = {
   now: 'Now',
+  scheduled: 'Scheduled',
   '1-2weeks': 'In 1–2 Weeks',
   'no-rush': 'No Rush',
 }

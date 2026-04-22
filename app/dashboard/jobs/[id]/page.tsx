@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import {
@@ -23,6 +23,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
 import { connectSocket, joinJobRoom, leaveJobRoom } from '@/lib/socket'
+import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api'
 import type {
   Job,
   Quote,
@@ -32,9 +33,9 @@ import type {
   JobCategory,
   MessageNewPayload,
   JobStatusUpdatePayload,
+  TradieLocationUpdatePayload,
 } from '@/lib/types'
 
-// ─── Auto-refresh helper ────────────────────────────────────────────────────────
 
 function AutoRefresh({ onRefresh, intervalMs }: { onRefresh: () => void; intervalMs: number }) {
   useEffect(() => {
@@ -44,7 +45,6 @@ function AutoRefresh({ onRefresh, intervalMs }: { onRefresh: () => void; interva
   return null
 }
 
-// ─── Status Timeline ────────────────────────────────────────────────────────────
 
 const STATUS_STEPS: { status: JobStatus; label: string; icon: React.ElementType }[] = [
   { status: 'quoted', label: 'Quoted', icon: DollarSign },
@@ -81,27 +81,24 @@ function StatusTimeline({ currentStatus }: { currentStatus: JobStatus }) {
           <div key={step.status} className="flex items-center shrink-0">
             <div className="flex flex-col items-center">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
-                  isCompleted
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isCompleted
                     ? 'bg-(--upwork-green) text-white'
                     : 'bg-gray-100 text-gray-400'
-                } ${isCurrent ? 'ring-2 ring-(--upwork-green) ring-offset-2' : ''}`}
+                  } ${isCurrent ? 'ring-2 ring-(--upwork-green) ring-offset-2' : ''}`}
               >
                 <Icon className="w-4 h-4" />
               </div>
               <span
-                className={`text-[10px] mt-1 font-medium whitespace-nowrap ${
-                  isCompleted ? 'text-(--upwork-navy)' : 'text-gray-400'
-                }`}
+                className={`text-[10px] mt-1 font-medium whitespace-nowrap ${isCompleted ? 'text-(--upwork-navy)' : 'text-gray-400'
+                  }`}
               >
                 {step.label}
               </span>
             </div>
             {index < STATUS_STEPS.length - 1 && (
               <div
-                className={`w-6 sm:w-10 h-0.5 mx-1 -mt-3.5 ${
-                  index < currentIndex ? 'bg-(--upwork-green)' : 'bg-gray-200'
-                }`}
+                className={`w-6 sm:w-10 h-0.5 mx-1 -mt-3.5 ${index < currentIndex ? 'bg-(--upwork-green)' : 'bg-gray-200'
+                  }`}
               />
             )}
           </div>
@@ -111,7 +108,6 @@ function StatusTimeline({ currentStatus }: { currentStatus: JobStatus }) {
   )
 }
 
-// ─── Chat Widget ────────────────────────────────────────────────────────────────
 
 function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: string }) {
   const [messages, setMessages] = useState<Message[]>([])
@@ -120,14 +116,12 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
   const [isLoadingMessages, setIsLoadingMessages] = useState(true)
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Load messages
   useEffect(() => {
     async function loadMessages() {
       try {
         const res = await api.getPaginated<Message>(`/api/messages/${jobId}?limit=100`)
         setMessages(res.data)
       } catch {
-        // Silent
       } finally {
         setIsLoadingMessages(false)
       }
@@ -135,14 +129,12 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
     loadMessages()
   }, [jobId])
 
-  // Mark as read
   useEffect(() => {
     if (messages.length > 0) {
-      api.patch(`/api/messages/${jobId}/read`).catch(() => {})
+      api.patch(`/api/messages/${jobId}/read`).catch(() => { })
     }
   }, [jobId, messages.length])
 
-  // Socket.io listener
   useEffect(() => {
     const socket = connectSocket()
     if (!socket) return
@@ -165,8 +157,7 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
           updatedAt: payload.createdAt,
         }
         setMessages((prev) => [...prev, incoming])
-        // Mark as read immediately
-        api.patch(`/api/messages/${jobId}/read`).catch(() => {})
+        api.patch(`/api/messages/${jobId}/read`).catch(() => { })
       }
     }
 
@@ -178,7 +169,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
     }
   }, [jobId])
 
-  // Auto-scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
@@ -190,7 +180,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
       await api.post(`/api/messages/${jobId}`, { content: newMessage.trim() })
       setNewMessage('')
     } catch {
-      // Silent
     } finally {
       setIsSending(false)
     }
@@ -209,7 +198,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
         <h3 className="text-sm font-semibold text-(--upwork-navy)">Chat</h3>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {isLoadingMessages ? (
           <div className="flex justify-center py-8">
@@ -233,11 +221,10 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
                 className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-xl px-3 py-2 ${
-                    isOwn
+                  className={`max-w-[75%] rounded-xl px-3 py-2 ${isOwn
                       ? 'bg-(--upwork-green) text-white'
                       : 'bg-gray-100 text-(--upwork-navy)'
-                  }`}
+                    }`}
                 >
                   {!isOwn && (
                     <p className="text-[10px] font-medium mb-0.5 opacity-70">
@@ -246,9 +233,8 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
                   )}
                   <p className="text-sm leading-relaxed">{msg.content}</p>
                   <p
-                    className={`text-[10px] mt-1 ${
-                      isOwn ? 'text-white/60' : 'text-gray-400'
-                    }`}
+                    className={`text-[10px] mt-1 ${isOwn ? 'text-white/60' : 'text-gray-400'
+                      }`}
                   >
                     {new Date(msg.createdAt).toLocaleTimeString('en-AU', {
                       hour: '2-digit',
@@ -263,7 +249,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
       <div className="px-3 py-2 border-t border-gray-100 flex items-center gap-2">
         <input
           type="text"
@@ -285,7 +270,6 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
   )
 }
 
-// ─── Review Form ────────────────────────────────────────────────────────────────
 
 function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => void }) {
   const [rating, setRating] = useState(0)
@@ -336,11 +320,10 @@ function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => 
             className="p-0.5"
           >
             <Star
-              className={`w-7 h-7 transition-colors ${
-                star <= (hoverRating || rating)
+              className={`w-7 h-7 transition-colors ${star <= (hoverRating || rating)
                   ? 'text-amber-400 fill-amber-400'
                   : 'text-gray-300'
-              }`}
+                }`}
             />
           </button>
         ))}
@@ -373,9 +356,252 @@ function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => 
   )
 }
 
-// ═════════════════════════════════════════════════════════════════════════════════
-// MAIN PAGE
-// ═════════════════════════════════════════════════════════════════════════════════
+
+const GOOGLE_MAPS_LIBRARIES: ('geometry' | 'places')[] = ['geometry']
+const MIN_MOVE_METRES = 30
+
+
+const TRADIE_MARKER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="52" viewBox="0 0 40 52">
+  <path d="M20 0C8.954 0 0 8.954 0 20c0 11.046 20 32 20 32S40 31.046 40 20C40 8.954 31.046 0 20 0z" fill="#16a34a"/>
+  <circle cx="20" cy="20" r="12" fill="rgba(255,255,255,0.18)"/>
+  <g transform="translate(8,8)" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+  </g>
+</svg>`
+
+const JOB_MARKER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="52" viewBox="0 0 40 52">
+  <path d="M20 0C8.954 0 0 8.954 0 20c0 11.046 20 32 20 32S40 31.046 40 20C40 8.954 31.046 0 20 0z" fill="#3b82f6"/>
+  <circle cx="20" cy="20" r="12" fill="rgba(255,255,255,0.18)"/>
+  <g transform="translate(8,8)" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </g>
+</svg>`
+
+function haversineMetres(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
+  const R = 6_371_000
+  const dLat = ((b.lat - a.lat) * Math.PI) / 180
+  const dLng = ((b.lng - a.lng) * Math.PI) / 180
+  const x =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((a.lat * Math.PI) / 180) * Math.cos((b.lat * Math.PI) / 180) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x))
+}
+
+interface LiveTrackingMapProps {
+  jobId: string         
+  jobCode: string
+  jobLocation: { lat: number; lng: number }
+  initialTradieLocation: { lat: number; lng: number } | null
+}
+
+function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }: LiveTrackingMapProps) {
+  const [tradiePos, setTradiePos] = useState<{ lat: number; lng: number } | null>(initialTradieLocation)
+  const [routePath, setRoutePath] = useState<{ lat: number; lng: number }[]>([])
+  const [routeKey, setRouteKey] = useState(0)   
+  const [eta, setEta] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [arrived, setArrived] = useState(false)
+  const lastCalcPos = useRef<{ lat: number; lng: number } | null>(null)
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '',
+    libraries: GOOGLE_MAPS_LIBRARIES,
+  })
+
+  const tradieIcon = useMemo(() => {
+    if (!isLoaded || typeof window === 'undefined' || !window.google) return undefined
+    return {
+      url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(TRADIE_MARKER_SVG)}`,
+      scaledSize: new window.google.maps.Size(40, 52),
+      anchor: new window.google.maps.Point(20, 52),
+    }
+  }, [isLoaded])
+
+  const jobIcon = useMemo(() => {
+    if (!isLoaded || typeof window === 'undefined' || !window.google) return undefined
+    return {
+      url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(JOB_MARKER_SVG)}`,
+      scaledSize: new window.google.maps.Size(40, 52),
+      anchor: new window.google.maps.Point(20, 52),
+    }
+  }, [isLoaded])
+
+  useEffect(() => {
+    if (initialTradieLocation && !tradiePos) {
+      setTradiePos(initialTradieLocation)
+    }
+  }, [initialTradieLocation]) // eslint-disable-line
+
+  const fetchRoute = useCallback(async (origin: { lat: number; lng: number }) => {
+    if (!window.google?.maps?.geometry) return
+    try {
+      const res = await fetch('https://routes.googleapis.com/directions/v2:computeRoutes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '',
+          'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline',
+        },
+        body: JSON.stringify({
+          origin: { location: { latLng: { latitude: origin.lat, longitude: origin.lng } } },
+          destination: { location: { latLng: { latitude: jobLocation.lat, longitude: jobLocation.lng } } },
+          travelMode: 'DRIVE',
+          routingPreference: 'TRAFFIC_AWARE',
+        }),
+      })
+      const data = await res.json()
+      const route = data.routes?.[0]
+      if (!route?.polyline?.encodedPolyline) return
+
+      const decoded = window.google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline)
+      setRoutePath(decoded.map((p: google.maps.LatLng) => ({ lat: p.lat(), lng: p.lng() })))
+      setRouteKey(k => k + 1)  
+
+      const secs = parseInt((route.duration ?? '0s').replace('s', ''), 10)
+      if (secs > 0) {
+        const mins = Math.round(secs / 60)
+        setEta(`${mins} min${mins !== 1 ? 's' : ''}`)
+      }
+      lastCalcPos.current = origin
+    } catch (err) {
+      console.warn('[Routes API] fetch failed:', err)
+    }
+  }, [jobLocation])
+
+  useEffect(() => {
+    if (isLoaded && tradiePos) fetchRoute(tradiePos)
+  }, [isLoaded, tradiePos]) // eslint-disable-line
+
+  const joinedRef = useRef(false)
+  useEffect(() => {
+    const socket = connectSocket()
+    if (!socket || joinedRef.current) return
+
+    const doJoin = () => {
+      if (!joinedRef.current) {
+        socket.emit('job:join', jobId)
+        joinedRef.current = true
+      }
+    }
+    if (socket.connected) {
+      doJoin()
+    } else {
+      socket.once('connect', doJoin)
+    }
+    return () => {
+      socket.emit('job:leave', jobId)
+      joinedRef.current = false
+    }
+  }, [jobId]) // eslint-disable-line
+
+  useEffect(() => {
+    const socket = connectSocket()
+    if (!socket) return
+
+    const handleLocation = (payload: TradieLocationUpdatePayload) => {
+      const newPos = { lat: payload.lat, lng: payload.lng }
+      setTradiePos(newPos)
+      if (isLoaded) {
+        const prev = lastCalcPos.current
+        if (!prev || haversineMetres(prev, newPos) > MIN_MOVE_METRES) {
+          fetchRoute(newPos)
+        }
+      }
+    }
+
+    const handleArrived = () => {
+      setArrived(true)
+    }
+
+    socket.on('tradie:location_update', handleLocation)
+    socket.on('tradie:arrived', handleArrived)
+    return () => {
+      socket.off('tradie:location_update', handleLocation)
+      socket.off('tradie:arrived', handleArrived)
+    }
+  }, [isLoaded, fetchRoute])
+
+  const trackingUrl = typeof window !== 'undefined' ? `${window.location.origin}/track/${jobCode}` : ''
+
+  const handleCopyLink = async () => {
+    await navigator.clipboard.writeText(trackingUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2500)
+  }
+
+  if (!isLoaded) {
+    return (
+      <div className="rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 h-64 flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-4">
+      {arrived ? (
+        <div className="flex items-center justify-between px-4 py-3 bg-linear-to-r from-emerald-500 to-green-400 text-white">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4" />
+            <span className="text-sm font-semibold">Tradie has arrived! Please guide them in 🔧</span>
+          </div>
+          <span className="text-xs bg-white/20 px-2.5 py-1 rounded-full font-medium animate-pulse">Arrived</span>
+        </div>
+      ) : (
+        <div className="flex items-center justify-between px-4 py-3 bg-linear-to-r from-green-600 to-emerald-500 text-white">
+          <div className="flex items-center gap-2">
+            <Truck className="w-4 h-4" />
+            <span className="text-sm font-semibold">
+              {eta ? `Arriving in ~${eta}` : 'Tradie is on the way'}
+            </span>
+          </div>
+          <button
+            onClick={handleCopyLink}
+            className="flex items-center gap-1.5 text-xs bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-full transition-colors font-medium"
+          >
+            {copied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <MapPin className="w-3.5 h-3.5" />}
+            {copied ? 'Copied!' : 'Share Link'}
+          </button>
+        </div>
+      )}
+
+      <GoogleMap
+        mapContainerStyle={{ width: '100%', height: '320px' }}
+        center={tradiePos ?? jobLocation}
+        zoom={14}
+        options={{ disableDefaultUI: true, zoomControl: true }}
+      >
+        <Marker
+          position={jobLocation}
+          icon={jobIcon}
+          title="Job location"
+        />
+        {tradiePos && (
+          <Marker
+            position={tradiePos}
+            icon={tradieIcon}
+            title="Tradie"
+          />
+        )}
+        {routePath.length > 0 && (
+          <Polyline
+            key={routeKey}
+            path={routePath}
+            options={{ strokeColor: '#16a34a', strokeWeight: 5, strokeOpacity: 0.85 }}
+          />
+        )}
+      </GoogleMap>
+
+      <div className="flex items-center gap-4 px-4 py-2.5 bg-white border-t border-gray-100 text-xs text-gray-500">
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block" /> Tradie</span>
+        <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Job Location</span>
+        {!tradiePos && <span className="text-amber-500 italic">Waiting for tradie location...</span>}
+      </div>
+    </div>
+  )
+}
+
 
 export default function JobDetailPage() {
   const params = useParams()
@@ -389,12 +615,12 @@ export default function JobDetailPage() {
   const [isRejecting, setIsRejecting] = useState(false)
   const [rejectError, setRejectError] = useState('')
 
-  // Dispatch countdown — driven by dispatch:finding_tradie socket event
-  const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null)  // expiresAt for current cycle
-  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       // timeoutMs from server
-  const [secondsLeft, setSecondsLeft]         = useState<number | null>(null)  // null = not started yet
+  const [tradieLocation, setTradieLocation] = useState<{ lat: number; lng: number } | null>(null)
 
-  // Fetch job detail
+  const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null)  
+  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null)  
+
   const fetchJob = useCallback(async () => {
     try {
       const res = await api.get<{ job: Job }>(`/api/jobs/${jobId}`)
@@ -410,7 +636,18 @@ export default function JobDetailPage() {
     fetchJob()
   }, [fetchJob])
 
-  // Socket.io — live status updates + dispatch countdown
+  useEffect(() => {
+    if (!job) return
+    const trackingStatuses = ['on_the_way', 'in_progress']
+    if (trackingStatuses.includes(job.status) && job.assignedTradieId) {
+      api.get<{ location: { lat: number; lng: number } | null }>(`/api/jobs/${jobId}/tradie-location`)
+        .then((res) => {
+          if (res.data.location) setTradieLocation(res.data.location)
+        })
+        .catch(() => { }) 
+    }
+  }, [job?.status, jobId]) // eslint-disable-line
+
   useEffect(() => {
     const socket = connectSocket()
     if (!socket || !job) return
@@ -424,13 +661,12 @@ export default function JobDetailPage() {
       }
     }
 
-    // Fires each time a new tradie is being tried — resets the countdown
     const handleFindingTradie = (payload: {
       expiresAt: string
       timeoutMs: number
       message: string
     }) => {
-      setDispatchCycleAt(payload.expiresAt)  // changing this key restarts the countdown effect
+      setDispatchCycleAt(payload.expiresAt)  
       setDispatchTotalMs(payload.timeoutMs)
       const secs = Math.ceil(
         (new Date(payload.expiresAt).getTime() - Date.now()) / 1000
@@ -438,17 +674,16 @@ export default function JobDetailPage() {
       setSecondsLeft(Math.max(0, secs))
     }
 
-    socket.on('job:status_update',      handleStatusUpdate)
+    socket.on('job:status_update', handleStatusUpdate)
     socket.on('dispatch:finding_tradie', handleFindingTradie)
 
     return () => {
-      socket.off('job:status_update',      handleStatusUpdate)
+      socket.off('job:status_update', handleStatusUpdate)
       socket.off('dispatch:finding_tradie', handleFindingTradie)
       leaveJobRoom(mongoId)
     }
   }, [job?._id])
 
-  // Countdown tick — resets whenever a new dispatch cycle starts (dispatchCycleAt changes)
   useEffect(() => {
     if (!dispatchCycleAt) return
 
@@ -456,14 +691,14 @@ export default function JobDetailPage() {
       setSecondsLeft((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(id)
-          return 0  // hits 0 → searching for next tradie
+          return 0  
         }
         return prev - 1
       })
     }, 1000)
 
     return () => clearInterval(id)
-  }, [dispatchCycleAt])  // ← new cycle = new interval = no reset-to-0 glitch
+  }, [dispatchCycleAt])  
 
   if (isLoading) {
     return (
@@ -488,20 +723,17 @@ export default function JobDetailPage() {
     )
   }
 
-  // ── Intermediate status screens — auto-poll every 5s ──────────────────────
   if (job.status === 'payment_pending' || job.status === 'dispatching') {
-    const isSearching   = job.status === 'dispatching'
-    const totalSecs     = Math.round(dispatchTotalMs / 1000)
-    // Progress 0→1 representing how much of the window is left
+    const isSearching = job.status === 'dispatching'
+    const totalSecs = Math.round(dispatchTotalMs / 1000)
     const progressRatio = secondsLeft !== null ? secondsLeft / totalSecs : 0
-    const urgent        = secondsLeft !== null && secondsLeft <= 10
+    const urgent = secondsLeft !== null && secondsLeft <= 10
     const mm = secondsLeft !== null ? String(Math.floor(secondsLeft / 60)).padStart(1, '0') : '0'
     const ss = secondsLeft !== null ? String(secondsLeft % 60).padStart(2, '0') : '00'
 
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
         <div className="relative mb-8">
-          {/* Animated rings */}
           <div className="absolute inset-0 rounded-full border-4 border-green-200 animate-ping opacity-40" />
           <div className="absolute inset-0 rounded-full border-4 border-green-300 animate-ping opacity-20" style={{ animationDelay: '0.5s' }} />
           <div className="w-24 h-24 rounded-full bg-linear-to-br from-green-50 to-emerald-100 flex items-center justify-center relative">
@@ -522,7 +754,6 @@ export default function JobDetailPage() {
           }
         </p>
 
-        {/* Countdown — only shown once a tradie is being asked (dispatch:finding_tradie received) */}
         {isSearching && secondsLeft !== null && (
           <div className="mt-8 w-full max-w-xs">
             <div className="flex items-center justify-between mb-2">
@@ -530,19 +761,16 @@ export default function JobDetailPage() {
                 {secondsLeft > 0 ? 'Tradie has' : 'Searching for next tradie\u2026'}
               </span>
               {secondsLeft > 0 && (
-                <span className={`text-sm font-bold tabular-nums ${
-                  urgent ? 'text-red-500' : 'text-(--upwork-green)'
-                }`}>
+                <span className={`text-sm font-bold tabular-nums ${urgent ? 'text-red-500' : 'text-(--upwork-green)'
+                  }`}>
                   {mm}:{ss}
                 </span>
               )}
             </div>
-            {/* Progress bar */}
             <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-1000 ${
-                  urgent ? 'bg-red-400' : 'bg-(--upwork-green)'
-                }`}
+                className={`h-full rounded-full transition-all duration-1000 ${urgent ? 'bg-red-400' : 'bg-(--upwork-green)'
+                  }`}
                 style={{ width: `${Math.round(progressRatio * 100)}%` }}
               />
             </div>
@@ -568,7 +796,6 @@ export default function JobDetailPage() {
           View all my jobs
         </button>
 
-        {/* Auto-refresh — polls every 5s until status changes */}
         <AutoRefresh onRefresh={fetchJob} intervalMs={5000} />
       </div>
     )
@@ -600,7 +827,6 @@ export default function JobDetailPage() {
 
   return (
     <div>
-      {/* Back + Title */}
       <div className="mb-6">
         <button
           onClick={() => router.push('/dashboard/jobs')}
@@ -623,12 +849,34 @@ export default function JobDetailPage() {
         </p>
       </div>
 
-      {/* Status Timeline */}
       <div className="mb-6">
         <StatusTimeline currentStatus={job.status} />
       </div>
 
-      {/* Dispute Options (Before payment release) */}
+      {job.preferredTime === 'scheduled' && job.scheduledFor && (
+        <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">
+          <Clock className="w-4 h-4 text-blue-500 shrink-0" />
+          <span>
+            Scheduled for:{' '}
+            <strong>
+              {new Date(job.scheduledFor).toLocaleString('en-AU', {
+                weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+              })}
+            </strong>
+          </span>
+        </div>
+      )}
+
+      {(job.status === 'on_the_way' || job.status === 'in_progress') &&
+        job.location?.coordinates?.lat && (
+          <LiveTrackingMap
+            jobId={job._id as string}
+            jobCode={job.jobCode}
+            jobLocation={{ lat: job.location.coordinates.lat, lng: job.location.coordinates.lng }}
+            initialTradieLocation={tradieLocation}
+          />
+        )}
+
       {job.status === 'completed' && !(job as any).disputeId && (
         <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -663,7 +911,6 @@ export default function JobDetailPage() {
         </div>
       )}
 
-      {/* Quote Action Banner — shown when job is awaiting client decision */}
       {job.status === 'quoted' && quote && (
         <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -704,9 +951,7 @@ export default function JobDetailPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Description */}
           <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Description</h3>
             <p className="text-xs sm:text-sm text-(--upwork-gray) leading-relaxed whitespace-pre-wrap">
@@ -714,7 +959,6 @@ export default function JobDetailPage() {
             </p>
           </div>
 
-          {/* Images */}
           {job.images.length > 0 && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">Photos</h3>
@@ -734,26 +978,22 @@ export default function JobDetailPage() {
             </div>
           )}
 
-          {/* Chat */}
           {canChat && user && (
             <ChatWidget jobId={job._id} currentUserId={user._id} />
           )}
 
-          {/* Review */}
           {canReview && (
             <ReviewForm
               jobId={job._id}
               onSubmitted={() => {
                 setReviewSubmitted(true)
-                fetchJob() // Refresh job data
+                fetchJob() 
               }}
             />
           )}
         </div>
 
-        {/* Right Column */}
         <div className="space-y-6">
-          {/* Location */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-1.5">
               <MapPin className="w-4 h-4 text-gray-400" />
@@ -765,7 +1005,6 @@ export default function JobDetailPage() {
             </p>
           </div>
 
-          {/* Quote Details */}
           {quote && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3 flex items-center gap-1.5">
@@ -806,7 +1045,6 @@ export default function JobDetailPage() {
             </div>
           )}
 
-          {/* Assigned Tradie */}
           {assignedTradie && (
             <div className="bg-white border border-gray-200 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-(--upwork-navy) mb-3">
@@ -841,7 +1079,6 @@ export default function JobDetailPage() {
             </div>
           )}
 
-          {/* Preferred Time */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-(--upwork-navy) mb-2 flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-gray-400" />
