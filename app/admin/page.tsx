@@ -2,27 +2,39 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Users, Briefcase, ShieldCheck, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react'
+import { useEffect, useState, useCallback } from 'react'
+import { Users, Briefcase, ShieldCheck, DollarSign, TrendingUp, AlertTriangle, RefreshCw } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { AdminStats } from '@/lib/types'
+
+const REFRESH_INTERVAL_MS = 30_000 
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<AdminStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+
+  const load = useCallback(async (silent = false) => {
+    if (!silent) setIsLoading(true)
+    else setIsRefreshing(true)
+    try {
+      const res = await api.get<AdminStats>('/api/admin/stats')
+      setStats(res.data)
+      setLastUpdated(new Date())
+    } catch {
+    } finally {
+      setIsLoading(false)
+      setIsRefreshing(false)
+    }
+  }, [])
+
+  useEffect(() => { load() }, [load])
 
   useEffect(() => {
-    async function load() {
-      try {
-        const res = await api.get<AdminStats>('/api/admin/stats')
-        setStats(res.data)
-      } catch {
-      } finally {
-        setIsLoading(false)
-      }
-    }
-    load()
-  }, [])
+    const interval = setInterval(() => load(true), REFRESH_INTERVAL_MS)
+    return () => clearInterval(interval)
+  }, [load])
 
   if (isLoading || !stats) {
     return (
@@ -69,9 +81,26 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Platform overview and key metrics</p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-sm text-gray-400 mt-0.5">Platform overview and key metrics</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {lastUpdated && (
+            <span className="text-xs text-gray-400 hidden sm:block">
+              Updated {lastUpdated.toLocaleTimeString()}
+            </span>
+          )}
+          <button
+            onClick={() => load(true)}
+            disabled={isRefreshing}
+            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-1.5 transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
