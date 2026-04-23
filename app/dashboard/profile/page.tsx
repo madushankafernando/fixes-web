@@ -51,9 +51,12 @@ export default function DashboardProfilePage() {
   const handleSave = async () => {
     setIsSaving(true)
     try {
+      await api.patch('/api/auth/me', { name, phone })
+
       if (user?.role === 'tradie') {
         await api.patch('/api/tradie/profile/me', { phone })
       }
+
       await refreshUser()
       showToast('Profile updated', 'success')
       setIsEditing(false)
