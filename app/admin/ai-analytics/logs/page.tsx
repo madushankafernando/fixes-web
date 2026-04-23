@@ -20,23 +20,27 @@ interface AiLog {
   outputCategory: string | null
   outputFixedPrice: number | null
   outputConfidence: number | null
-  engine: 'gemini' | 'placeholder'
+  engine: 'gemini' | 'rule_based' | 'placeholder'
   success: boolean
   latencyMs: number | null
   tokensIn: number | null
   tokensOut: number | null
   tokensTotal: number | null
+  modelVersion: string | null
   createdAt: string
 }
 
+const PRICING: Record<string, { in: number, out: number }> = {
+  'gemini-2.5-flash-lite': { in: 0.075 / 1_000_000, out: 0.30 / 1_000_000 },
+  'gemini-2.0-flash':      { in: 0.10  / 1_000_000, out: 0.40 / 1_000_000 },
+}
+const AUD_PER_USD = 1.55
 
-const USD_PER_INPUT_TOKEN  = 0.10 / 1_000_000
-const USD_PER_OUTPUT_TOKEN = 0.40 / 1_000_000
-const AUD_PER_USD          = 1.55
-
-function calcCostAud(tokensIn: number | null, tokensOut: number | null): number | null {
+function calcCostAud(tokensIn: number | null, tokensOut: number | null, modelVersion: string | null): number | null {
   if (tokensIn == null && tokensOut == null) return null
-  const usd = ((tokensIn ?? 0) * USD_PER_INPUT_TOKEN) + ((tokensOut ?? 0) * USD_PER_OUTPUT_TOKEN)
+  
+  const rates = PRICING[modelVersion || ''] || PRICING['gemini-2.0-flash']
+  const usd = ((tokensIn ?? 0) * rates.in) + ((tokensOut ?? 0) * rates.out)
   return Math.round(usd * AUD_PER_USD * 10000) / 10000 
 }
 
@@ -48,9 +52,9 @@ const PERIOD_OPTIONS = [
 ]
 
 const ENGINE_OPTIONS = [
-  { label: 'All',         value: 'all'         },
-  { label: 'Gemini',      value: 'gemini'      },
-  { label: 'Placeholder', value: 'placeholder' },
+  { label: 'All',        value: 'all'       },
+  { label: 'Gemini',     value: 'gemini'    },
+  { label: 'Rule-Based', value: 'rule_based'},
 ]
 
 export default function AiLogsPage() {
@@ -174,7 +178,7 @@ export default function AiLogsPage() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {logs.map((log) => {
-                  const costAud = calcCostAud(log.tokensIn, log.tokensOut)
+                  const costAud = calcCostAud(log.tokensIn, log.tokensOut, log.modelVersion)
                   return (
                     <tr key={log._id} className="hover:bg-purple-50/40 transition-colors">
                       <td className="pl-4 pr-1 py-3">
@@ -196,7 +200,7 @@ export default function AiLogsPage() {
                       <td className="px-3 py-3">
                         {log.engine === 'gemini'
                           ? <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700"><BrainCircuit className="w-2.5 h-2.5" /> Gemini</span>
-                          : <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500">Fallback</span>}
+                          : <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-600">Rule-Based</span>}
                       </td>
 
                       <td className="px-3 py-3">
@@ -292,7 +296,7 @@ export default function AiLogsPage() {
       )}
 
       <p className="text-[10px] text-gray-400 text-center mt-4">
-        Cost estimate based on gemini-2.5-flash-lite pricing: $0.10/1M input tokens · $0.40/1M output tokens (USD) · converted at ~1.55 AUD/USD
+        Cost estimates based on dynamic model pricing (e.g. gemini-2.0-flash: $0.10/1M in, $0.40/1M out USD) · converted at ~1.55 AUD/USD
       </p>
     </div>
   )

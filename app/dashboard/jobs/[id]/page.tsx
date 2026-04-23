@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/jobs/[id]/page.tsx
+
 'use client'
 
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react'
@@ -389,7 +391,7 @@ function haversineMetres(a: { lat: number; lng: number }, b: { lat: number; lng:
 }
 
 interface LiveTrackingMapProps {
-  jobId: string         
+  jobId: string          
   jobCode: string
   jobLocation: { lat: number; lng: number }
   initialTradieLocation: { lat: number; lng: number } | null
@@ -456,7 +458,7 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }:
 
       const decoded = window.google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline)
       setRoutePath(decoded.map((p: google.maps.LatLng) => ({ lat: p.lat(), lng: p.lng() })))
-      setRouteKey(k => k + 1)  
+      setRouteKey(k => k + 1)   
 
       const secs = parseInt((route.duration ?? '0s').replace('s', ''), 10)
       if (secs > 0) {
@@ -1038,7 +1040,7 @@ export default function JobDetailPage() {
                 </div>
                 <div className="pt-2 border-t border-gray-100">
                   <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500">
-                    {quote.engine} • {Math.round(quote.confidence * 100)}%
+                    {quote.engine === 'gemini' ? '✨ AI-Powered Estimate' : '📊 Market Rate Estimate'} • {Math.round(quote.confidence * 100)}% confidence
                   </span>
                 </div>
               </div>

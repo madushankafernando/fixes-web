@@ -27,6 +27,7 @@ interface KPIs {
   totalTokensUsed: number | null
   totalTokensIn: number | null
   totalTokensOut: number | null
+  totalCostAud: number | null
   avgConfidence: number | null
 }
 
@@ -38,7 +39,7 @@ interface AiLog {
   outputCategory: string | null
   outputFixedPrice: number | null
   outputConfidence: number | null
-  engine: 'gemini' | 'placeholder'
+  engine: 'gemini' | 'rule_based' | 'placeholder'
   success: boolean
   latencyMs: number | null
   createdAt: string
@@ -48,7 +49,7 @@ interface StatsResponse {
   period: string
   kpis: KPIs
   callsByCategory: { category: string; count: number }[]
-  callsByDay: { date: string; gemini: number; placeholder: number }[]
+  callsByDay: { date: string; gemini: number; rule_based: number }[]
   skillLevelDistribution: { level: string; count: number }[]
   avgPriceByCategory: { category: string; avgFixed: number; count: number }[]
   finishReasonBreakdown: { reason: string; count: number }[]
@@ -80,15 +81,6 @@ const SKILL_COLORS: Record<string, string> = {
   specialist: '#8B5CF6',
 }
 
-const USD_PER_INPUT_TOKEN  = 0.10 / 1_000_000
-const USD_PER_OUTPUT_TOKEN = 0.40 / 1_000_000
-const AUD_PER_USD          = 1.55
-
-function calcCostAud(tokensIn: number | null, tokensOut: number | null): number | null {
-  if (tokensIn == null && tokensOut == null) return null
-  const usd = ((tokensIn ?? 0) * USD_PER_INPUT_TOKEN) + ((tokensOut ?? 0) * USD_PER_OUTPUT_TOKEN)
-  return Math.round(usd * AUD_PER_USD * 100) / 100 
-}
 
 function KpiCard({
   icon: Icon,
@@ -125,10 +117,10 @@ function KpiCard({
   )
 }
 
-function EngineBadge({ engine }: { engine: 'gemini' | 'placeholder' }) {
+function EngineBadge({ engine }: { engine: 'gemini' | 'rule_based' | 'placeholder' }) {
   return engine === 'gemini'
     ? <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-purple-100 text-purple-700"><BrainCircuit className="w-2.5 h-2.5" /> Gemini</span>
-    : <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-500">Placeholder</span>
+    : <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-600">Rule-Based</span>
 }
 
 export default function AiAnalyticsPage() {
@@ -216,9 +208,7 @@ export default function AiAnalyticsPage() {
             <KpiCard
               icon={Coins}
               label="Est. Cost (AUD)"
-              value={calcCostAud(kpis?.totalTokensIn ?? 0, kpis?.totalTokensOut ?? 0) != null
-                ? `$${calcCostAud(kpis?.totalTokensIn ?? 0, kpis?.totalTokensOut ?? 0)?.toFixed(2)}`
-                : '—'}
+              value={kpis?.totalCostAud != null ? `$${kpis.totalCostAud.toFixed(2)}` : '—'}
               sub={kpis?.totalTokensUsed ? `${kpis.totalTokensUsed.toLocaleString()} tokens` : undefined}
               accent="purple"
             />
@@ -233,7 +223,7 @@ export default function AiAnalyticsPage() {
               icon={AlertTriangle}
               label="Fallbacks"
               value={(kpis?.fallbackCount ?? 0).toLocaleString()}
-              sub="Times placeholder fired"
+              sub="Times rule-based engine fired"
               accent={kpis?.fallbackCount ? 'red' : 'gray'}
             />
           </div>
@@ -254,8 +244,8 @@ export default function AiAnalyticsPage() {
                       labelFormatter={(l) => `Date: ${l}`}
                     />
                     <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                    <Line type="monotone" dataKey="gemini"      name="Gemini"      stroke="#7C3AED" strokeWidth={2} dot={false} />
-                    <Line type="monotone" dataKey="placeholder" name="Placeholder" stroke="#D1D5DB" strokeWidth={1.5} dot={false} strokeDasharray="4 2" />
+                    <Line type="monotone" dataKey="gemini"     name="Gemini"      stroke="#7C3AED" strokeWidth={2}   dot={false} />
+                    <Line type="monotone" dataKey="rule_based" name="Rule-Based"   stroke="#F59E0B" strokeWidth={1.5} dot={false} strokeDasharray="4 2" />
                   </LineChart>
                 </ResponsiveContainer>
               )}
