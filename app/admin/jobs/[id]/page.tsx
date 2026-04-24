@@ -15,6 +15,8 @@ import {
   Clock,
   AlertCircle,
   ChevronRight,
+  Camera,
+  ShieldCheck,
 } from 'lucide-react'
 import { api, ApiError } from '@/lib/api'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
@@ -243,6 +245,65 @@ export default function AdminJobDetailPage() {
           )}
         </div>
       </div>
+
+      {(job.completionPhotos?.length > 0 || job.status === 'completed') && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+              <Camera className="w-3.5 h-3.5" />
+              Proof of Work
+            </h2>
+            {job.completionPhotos?.length > 0 && (
+              <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-medium">
+                <ShieldCheck className="w-3 h-3" />
+                {job.completionPhotos.length} photo{job.completionPhotos.length !== 1 ? 's' : ''} submitted
+              </span>
+            )}
+          </div>
+
+          {job.completionPhotos?.length > 0 ? (
+            <>
+              <p className="text-xs text-gray-400 mb-4">
+                Watermarked photos captured by the tradie — each contains GPS address, timestamp, and tradie ID baked in.
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                {job.completionPhotos.map((photo, i) => (
+                  <a
+                    key={photo.publicId}
+                    href={photo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group relative aspect-square rounded-xl overflow-hidden border border-gray-100 hover:border-green-300 transition-colors"
+                  >
+                    <img
+                      src={photo.url}
+                      alt={`Completion photo ${i + 1}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                    />
+                    <div className="absolute bottom-0 inset-x-0 bg-linear-to-t from-black/50 to-transparent px-2 py-1.5">
+                      <p className="text-[10px] text-white/80">Photo {i + 1}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+              {job.completedAt && (
+                <p className="text-xs text-gray-400 mt-4">
+                  Job completed: {new Date(job.completedAt).toLocaleString('en-AU', {
+                    day: 'numeric', month: 'short', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit',
+                  })}
+                </p>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <Camera className="w-8 h-8 text-gray-200 mb-2" />
+              <p className="text-xs text-gray-400">No completion photos yet.</p>
+              <p className="text-xs text-gray-300 mt-0.5">Photos will appear once the tradie submits them via the mobile app.</p>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-5 text-white">
         <div className="flex items-center gap-2 mb-1">

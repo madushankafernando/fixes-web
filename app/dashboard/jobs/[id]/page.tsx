@@ -20,6 +20,8 @@ import {
   Search,
   Loader2,
   AlertCircle,
+  Camera,
+  ShieldCheck,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
@@ -391,7 +393,7 @@ function haversineMetres(a: { lat: number; lng: number }, b: { lat: number; lng:
 }
 
 interface LiveTrackingMapProps {
-  jobId: string          
+  jobId: string        
   jobCode: string
   jobLocation: { lat: number; lng: number }
   initialTradieLocation: { lat: number; lng: number } | null
@@ -605,6 +607,7 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }:
 }
 
 
+
 export default function JobDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -628,7 +631,6 @@ export default function JobDetailPage() {
       const res = await api.get<{ job: Job }>(`/api/jobs/${jobId}`)
       setJob(res.data.job)
     } catch {
-      // Silent
     } finally {
       setIsLoading(false)
     }
@@ -646,7 +648,7 @@ export default function JobDetailPage() {
         .then((res) => {
           if (res.data.location) setTradieLocation(res.data.location)
         })
-        .catch(() => { }) 
+        .catch(() => { })
     }
   }, [job?.status, jobId]) // eslint-disable-line
 
@@ -678,10 +680,13 @@ export default function JobDetailPage() {
 
     socket.on('job:status_update', handleStatusUpdate)
     socket.on('dispatch:finding_tradie', handleFindingTradie)
+    const handleOtpSent = () => fetchJob()
+    socket.on('job:otp_sent', handleOtpSent)
 
     return () => {
       socket.off('job:status_update', handleStatusUpdate)
       socket.off('dispatch:finding_tradie', handleFindingTradie)
+      socket.off('job:otp_sent', handleOtpSent)
       leaveJobRoom(mongoId)
     }
   }, [job?._id])
@@ -979,6 +984,66 @@ export default function JobDetailPage() {
               </div>
             </div>
           )}
+          {(job.completionPhotos?.length > 0 || job.status === 'completed') && (
+            <div className="bg-white border border-gray-200 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-(--upwork-navy) flex items-center gap-1.5">
+                  <Camera className="w-4 h-4 text-gray-400" />
+                  Proof of Work
+                </h3>
+                {job.completionPhotos?.length > 0 && (
+                  <span className="flex items-center gap-1 text-xs px-2 py-0.5 bg-green-50 text-green-700 border border-green-200 rounded-full font-medium">
+                    <ShieldCheck className="w-3 h-3" />
+                    {job.completionPhotos.length} verified photo{job.completionPhotos.length !== 1 ? 's' : ''}
+                  </span>
+                )}
+              </div>
+
+              {job.completionPhotos?.length > 0 ? (
+                <>
+                  <p className="text-xs text-gray-400 mb-3">
+                    GPS-tagged, timestamped photos taken by your tradie as proof of completed work.
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {job.completionPhotos.map((photo, i) => (
+                      <a
+                        key={photo.publicId}
+                        href={photo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="aspect-square rounded-lg overflow-hidden relative block group"
+                      >
+                        <Image
+                          src={photo.url}
+                          alt={`Work photo ${i + 1}`}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-200"
+                          sizes="(max-width: 640px) 50vw, 33vw"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                      </a>
+                    ))}
+                  </div>
+                  {job.completedAt && (
+                    <p className="text-xs text-gray-400 mt-3">
+                      Completed {new Date(job.completedAt).toLocaleString('en-AU', {
+                        day: 'numeric', month: 'short', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit',
+                      })}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <div className="flex items-center gap-2 py-6 justify-center text-center">
+                  <div>
+                    <Camera className="w-8 h-8 text-gray-200 mx-auto mb-2" />
+                    <p className="text-xs text-gray-400">Completion photos will appear here once your tradie submits them.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
 
           {canChat && user && (
             <ChatWidget jobId={job._id} currentUserId={user._id} />
@@ -989,7 +1054,7 @@ export default function JobDetailPage() {
               jobId={job._id}
               onSubmitted={() => {
                 setReviewSubmitted(true)
-                fetchJob() 
+                fetchJob()
               }}
             />
           )}

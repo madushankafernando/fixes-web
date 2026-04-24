@@ -93,7 +93,7 @@ export interface TradieProfile {
   }
   location: {
     type: 'Point'
-    coordinates: [number, number] 
+    coordinates: [number, number]
   }
   serviceRadiusKm: number
   stripeAccountId: string | null
@@ -150,6 +150,7 @@ export interface Job {
   description: string
   category: JobCategory
   images: JobImage[]
+  completionPhotos: JobImage[]   
   location: JobLocation
   preferredTime: PreferredTime
   scheduledFor: string | null
@@ -159,6 +160,8 @@ export interface Job {
   payment: string | null
   clientReview: string | Review | null
   tradieReview: string | Review | null
+  completedAt: string | null
+  completionOtpExpiry: string | null  
   createdAt: string
   updatedAt: string
 }
