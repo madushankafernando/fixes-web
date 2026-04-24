@@ -16,8 +16,12 @@ import {
   User,
   Search,
   Bell,
+  ChevronDown,
+  Loader2,
+  ShieldAlert,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { SkeletonDashboardLayout } from './_components/skeletons'
 import { NotificationsProvider, useWebNotifications } from '@/contexts/notifications-context'
 
 const sidebarLinks = [
@@ -119,11 +123,7 @@ function DashboardLayout({
   }
 
   if (isLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#f2f7f2] flex items-center justify-center">
-        <div className="w-8 h-8 border-3 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    return <SkeletonDashboardLayout />
   }
 
   const isActive = (href: string) => {

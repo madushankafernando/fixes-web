@@ -11,6 +11,7 @@ import { api } from '@/lib/api'
 import { connectSocket } from '@/lib/socket'
 import { VALID_CATEGORIES, CATEGORY_LABELS } from '@/lib/constants'
 import type { TradieProfile, TradieCategory, User } from '@/lib/types'
+import { SkeletonTradieGrid } from '../_components/skeletons'
 
 interface TradieSearchResult extends Omit<TradieProfile, 'userId'> {
   userId: Pick<User, '_id' | 'name' | 'avatarUrl' | 'fixId' | 'createdAt'>
@@ -111,9 +112,7 @@ export default function DashboardFindTalentPage() {
       )}
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-6 h-6 text-(--upwork-green) animate-spin" />
-        </div>
+        <SkeletonTradieGrid />
       ) : tradies.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 px-4">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">

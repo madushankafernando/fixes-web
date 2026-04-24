@@ -8,6 +8,7 @@ import { Briefcase, PlusCircle, Filter } from 'lucide-react'
 import { api } from '@/lib/api'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
 import type { Job, JobStatus, JobCategory } from '@/lib/types'
+import { SkeletonJobList } from '../_components/skeletons'
 
 const STATUS_FILTERS: { label: string; value: JobStatus | 'all' }[] = [
   { label: 'All', value: 'all' },
@@ -76,9 +77,7 @@ export default function MyJobsPage() {
 
       <div className="bg-white rounded-xl border border-gray-200">
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
-          </div>
+          <SkeletonJobList />
         ) : jobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">

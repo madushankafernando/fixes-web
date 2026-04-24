@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { api } from '@/lib/api'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
 import type { Job, JobCategory } from '@/lib/types'
+import { SkeletonStatCards, SkeletonJobList } from './_components/skeletons'
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -50,37 +51,41 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
-              <Briefcase className="w-4.5 h-4.5 text-blue-600" />
+      {isLoading ? (
+        <SkeletonStatCards />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Briefcase className="w-4.5 h-4.5 text-blue-600" />
+              </div>
+              <span className="text-sm text-(--upwork-gray)">Active Jobs</span>
             </div>
-            <span className="text-sm text-(--upwork-gray)">Active Jobs</span>
+            <p className="text-3xl font-bold text-(--upwork-navy)">{activeJobs.length}</p>
           </div>
-          <p className="text-3xl font-bold text-(--upwork-navy)">{activeJobs.length}</p>
-        </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
-              <CheckCircle2 className="w-4.5 h-4.5 text-(--upwork-green)" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-green-50 flex items-center justify-center">
+                <CheckCircle2 className="w-4.5 h-4.5 text-(--upwork-green)" />
+              </div>
+              <span className="text-sm text-(--upwork-gray)">Completed</span>
             </div>
-            <span className="text-sm text-(--upwork-gray)">Completed</span>
+            <p className="text-3xl font-bold text-(--upwork-navy)">{completedJobs.length}</p>
           </div>
-          <p className="text-3xl font-bold text-(--upwork-navy)">{completedJobs.length}</p>
-        </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-5">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-              <Clock className="w-4.5 h-4.5 text-amber-600" />
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
+                <Clock className="w-4.5 h-4.5 text-amber-600" />
+              </div>
+              <span className="text-sm text-(--upwork-gray)">Pending Quotes</span>
             </div>
-            <span className="text-sm text-(--upwork-gray)">Pending Quotes</span>
+            <p className="text-3xl font-bold text-(--upwork-navy)">{pendingQuotes.length}</p>
           </div>
-          <p className="text-3xl font-bold text-(--upwork-navy)">{pendingQuotes.length}</p>
         </div>
-      </div>
+      )}
 
       <div className="bg-white rounded-xl border border-gray-200">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -95,9 +100,7 @@ export default function DashboardPage() {
         </div>
 
         {isLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
-          </div>
+          <SkeletonJobList />
         ) : jobs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">

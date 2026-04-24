@@ -26,6 +26,7 @@ import {
 import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
 import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
+import { SkeletonJobDetail, SkeletonChatMessages } from '../../_components/skeletons'
 import { connectSocket, joinJobRoom, leaveJobRoom } from '@/lib/socket'
 import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api'
 import type {
@@ -204,9 +205,7 @@ function ChatWidget({ jobId, currentUserId }: { jobId: string; currentUserId: st
 
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
         {isLoadingMessages ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="w-5 h-5 text-gray-300 animate-spin" />
-          </div>
+          <SkeletonChatMessages />
         ) : messages.length === 0 ? (
           <p className="text-center text-xs text-gray-400 py-8">
             No messages yet. Start the conversation.
@@ -393,7 +392,7 @@ function haversineMetres(a: { lat: number; lng: number }, b: { lat: number; lng:
 }
 
 interface LiveTrackingMapProps {
-  jobId: string        
+  jobId: string          
   jobCode: string
   jobLocation: { lat: number; lng: number }
   initialTradieLocation: { lat: number; lng: number } | null
@@ -648,7 +647,7 @@ export default function JobDetailPage() {
         .then((res) => {
           if (res.data.location) setTradieLocation(res.data.location)
         })
-        .catch(() => { })
+        .catch(() => { }) 
     }
   }, [job?.status, jobId]) // eslint-disable-line
 
@@ -708,11 +707,7 @@ export default function JobDetailPage() {
   }, [dispatchCycleAt])  
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-(--upwork-green) border-t-transparent rounded-full animate-spin" />
-      </div>
-    )
+    return <SkeletonJobDetail />
   }
 
   if (!job) {
@@ -1054,7 +1049,7 @@ export default function JobDetailPage() {
               jobId={job._id}
               onSubmitted={() => {
                 setReviewSubmitted(true)
-                fetchJob()
+                fetchJob() 
               }}
             />
           )}

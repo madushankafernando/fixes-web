@@ -20,6 +20,7 @@ import {
 import { api } from '@/lib/api'
 import { CATEGORY_LABELS } from '@/lib/constants'
 import type { TradieProfile, User, TradieCategory, Review, ReviewStats } from '@/lib/types'
+import { SkeletonTradieProfile } from '../../_components/skeletons'
 
 interface ReviewsApiResponse {
   data: Review[]
@@ -58,25 +59,22 @@ export default function DashboardTradieProfilePage() {
   }, [tradieId])
 
   const fetchReviews = useCallback(async () => {
+    if (!user) return
     try {
-      const res = await api.getPaginated<Review>(`/api/reviews/tradie/${tradieId}?limit=50`)
+      const res = await api.getPaginated<Review>(`/api/reviews/tradie/${user._id}?limit=50`)
       setReviews(res.data)
       const raw = res as ReviewsApiResponse
       if (raw.stats) setStats(raw.stats)
     } catch {
     }
-  }, [tradieId])
+  }, [user])
 
   useEffect(() => {
     fetchReviews()
   }, [fetchReviews])
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-24">
-        <Loader2 className="w-6 h-6 text-(--upwork-green) animate-spin" />
-      </div>
-    )
+    return <SkeletonTradieProfile />
   }
 
   if (!user || !profile) {
