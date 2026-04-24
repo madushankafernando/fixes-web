@@ -618,6 +618,9 @@ export default function JobDetailPage() {
   const [reviewSubmitted, setReviewSubmitted] = useState(false)
   const [isRejecting, setIsRejecting] = useState(false)
   const [rejectError, setRejectError] = useState('')
+  const [isCancelling, setIsCancelling] = useState(false)
+  const [cancelError, setCancelError] = useState('')
+ const [dispatchElapsedSecs, setDispatchElapsedSecs] = useState(0)
 
   const [tradieLocation, setTradieLocation] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -650,6 +653,16 @@ export default function JobDetailPage() {
         .catch(() => { }) 
     }
   }, [job?.status, jobId]) // eslint-disable-line
+
+  useEffect(() => {
+    if (job?.status !== 'dispatching') {
+      setDispatchElapsedSecs(0)
+      return
+    }
+    setDispatchElapsedSecs(0)
+    const id = setInterval(() => setDispatchElapsedSecs((s) => s + 1), 1000)
+    return () => clearInterval(id)
+  }, [job?.status])
 
   useEffect(() => {
     const socket = connectSocket()
@@ -697,7 +710,7 @@ export default function JobDetailPage() {
       setSecondsLeft((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(id)
-          return 0  
+          return 0 
         }
         return prev - 1
       })
@@ -723,6 +736,26 @@ export default function JobDetailPage() {
         </button>
       </div>
     )
+  }
+
+
+  const handleCancelJob = async () => {
+    if (!window.confirm(
+      'Are you sure you want to cancel this job?\n\nYour payment will be fully refunded — no charges apply.'
+    )) return
+    setIsCancelling(true)
+    setCancelError('')
+    try {
+      await api.patch(`/api/jobs/${job!._id}/cancel`)
+      router.push('/dashboard/jobs')
+    } catch (err) {
+      if (err instanceof ApiError) {
+        setCancelError(err.message)
+      } else {
+        setCancelError('Failed to cancel job. Please try again or contact support.')
+      }
+      setIsCancelling(false)
+    }
   }
 
   if (job.status === 'payment_pending' || job.status === 'dispatching') {
@@ -788,6 +821,29 @@ export default function JobDetailPage() {
           <div className="mt-8 flex items-center gap-2 text-xs text-gray-400">
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
             Checking nearby tradies\u2026
+          </div>
+        )}
+
+        {isSearching && dispatchElapsedSecs >= 120 && (
+          <div className="mt-6 flex flex-col items-center gap-2">
+            {cancelError && (
+              <p className="text-xs text-red-500 flex items-center gap-1">
+                <AlertCircle className="w-3.5 h-3.5" />
+                {cancelError}
+              </p>
+            )}
+            <button
+              onClick={handleCancelJob}
+              disabled={isCancelling}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 text-sm font-medium transition-all disabled:opacity-50 animate-in fade-in duration-500"
+            >
+              {isCancelling ? (
+                <><Loader2 className="w-4 h-4 animate-spin" />Cancelling...</>
+              ) : (
+                <><XCircle className="w-4 h-4" />Cancel Job &amp; Get Refund</>
+              )}
+            </button>
+            <p className="text-[11px] text-gray-400">You will receive a full refund immediately.</p>
           </div>
         )}
 

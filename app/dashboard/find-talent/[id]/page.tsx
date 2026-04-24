@@ -197,7 +197,7 @@ export default function DashboardTradieProfilePage() {
             href={`/post-job?category=${profile.categories[0] || ''}`}
             className="inline-flex items-center gap-2 bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white text-sm font-medium py-2.5 px-6 rounded-xl transition-colors"
           >
-            Request This Tradie
+            Post a Job in This Category
           </Link>
         </div>
       </div>
