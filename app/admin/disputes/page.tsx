@@ -1,3 +1,5 @@
+// fixes-web/app/admin/disputes/page.tsx
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -100,7 +102,7 @@ export default function AdminDisputesPage() {
 
           <div>
             <h3 className="font-semibold text-(--upwork-navy) mb-2">Description</h3>
-            <p className="text-sm border border-gray-200 p-4 rounded-xl text-(--upwork-gray) min-h-[100px]">{selectedDispute.description}</p>
+            <p className="text-sm border border-gray-200 p-4 rounded-xl text-(--upwork-gray) min-h-25">{selectedDispute.description}</p>
           </div>
 
           {selectedDispute.initiatorEvidence?.length > 0 && (
@@ -147,7 +149,7 @@ export default function AdminDisputesPage() {
                 <textarea 
                   value={resolutionNotes} 
                   onChange={e => setResolutionNotes(e.target.value)} 
-                  className="w-full border border-gray-200 rounded-lg p-3 min-h-[100px]" 
+                  className="w-full border border-gray-200 rounded-lg p-3 min-h-25" 
                   placeholder="Explain why this decision was made..."
                 />
               </div>

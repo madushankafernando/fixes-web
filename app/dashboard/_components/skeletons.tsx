@@ -1,10 +1,10 @@
+// fixes-web/app/dashboard/_components/skeletons.tsx
+
 import { MapPin, Star, ShieldCheck, MessageSquare, Plus, DollarSign, Clock, Calendar, Briefcase, Settings } from 'lucide-react'
 
-// Layout Skeletons
 export function SkeletonDashboardLayout() {
   return (
     <div className="flex h-screen bg-[#f9faf9] overflow-hidden">
-      {/* Sidebar Skeleton */}
       <div className="hidden lg:flex flex-col w-64 bg-white border-r border-gray-200 animate-pulse">
         <div className="h-16 flex items-center px-6 border-b border-gray-200">
           <div className="w-24 h-8 bg-gray-200 rounded-lg"></div>
@@ -28,9 +28,7 @@ export function SkeletonDashboardLayout() {
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Header Skeleton */}
         <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 lg:px-8 shrink-0 animate-pulse">
           <div className="flex items-center gap-4">
             <div className="lg:hidden w-6 h-6 bg-gray-200 rounded-md"></div>
@@ -43,7 +41,6 @@ export function SkeletonDashboardLayout() {
           </div>
         </header>
 
-        {/* Content Shimmer */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="w-48 h-8 bg-gray-200 rounded-lg animate-pulse mb-8"></div>
@@ -59,7 +56,6 @@ export function SkeletonDashboardLayout() {
   )
 }
 
-// Stats Cards
 export function SkeletonStatCards() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
@@ -78,7 +74,6 @@ export function SkeletonStatCards() {
   )
 }
 
-// Single Job Row
 export function SkeletonJobRow() {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 hover:bg-gray-50 border-b border-gray-100 last:border-0 animate-pulse">
@@ -100,7 +95,6 @@ export function SkeletonJobRow() {
   )
 }
 
-// Job List Container
 export function SkeletonJobList() {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 divide-y divide-gray-100">
@@ -111,7 +105,6 @@ export function SkeletonJobList() {
   )
 }
 
-// Chat Messages Skeleton
 export function SkeletonChatMessages() {
   return (
     <div className="flex-1 p-4 space-y-4 animate-pulse">
@@ -131,7 +124,6 @@ export function SkeletonChatMessages() {
   )
 }
 
-// Tradie Card
 export function SkeletonTradieCard() {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm animate-pulse flex flex-col h-full">
@@ -161,7 +153,6 @@ export function SkeletonTradieCard() {
   )
 }
 
-// Tradie Grid
 export function SkeletonTradieGrid() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -172,11 +163,9 @@ export function SkeletonTradieGrid() {
   )
 }
 
-// Job Detail Full Skeleton
 export function SkeletonJobDetail() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 animate-pulse">
-      {/* Header + Back */}
       <div className="space-y-4">
         <div className="w-24 h-5 bg-gray-200 rounded-full"></div>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -191,7 +180,6 @@ export function SkeletonJobDetail() {
         </div>
       </div>
 
-      {/* Timeline Strip */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 overflow-hidden hidden sm:block">
         <div className="flex items-center justify-between">
           {[...Array(7)].map((_, i) => (
@@ -206,7 +194,6 @@ export function SkeletonJobDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white border border-gray-200 rounded-xl p-6">
             <div className="w-40 h-6 bg-gray-200 rounded-lg mb-4"></div>
@@ -225,7 +212,6 @@ export function SkeletonJobDetail() {
           </div>
         </div>
 
-        {/* Right Sidebar */}
         <div className="space-y-6">
           <div className="bg-white border border-gray-200 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
@@ -263,13 +249,11 @@ export function SkeletonJobDetail() {
   )
 }
 
-// Tradie Profile Full Skeleton
 export function SkeletonTradieProfile() {
   return (
     <div className="max-w-7xl mx-auto space-y-6 lg:space-y-8 animate-pulse">
       <div className="w-24 h-5 bg-gray-200 rounded-full mb-6"></div>
 
-      {/* Header Card */}
       <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row gap-6 items-start">
           <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-200 shrink-0"></div>
@@ -296,7 +280,6 @@ export function SkeletonTradieProfile() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-        {/* Left Content */}
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
             <div className="w-32 h-6 bg-gray-200 rounded-lg mb-2"></div>
@@ -323,7 +306,6 @@ export function SkeletonTradieProfile() {
           </div>
         </div>
 
-        {/* Right Sidebar */}
         <div className="space-y-6">
           <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4">
             <div className="w-40 h-5 bg-gray-200 rounded-lg"></div>

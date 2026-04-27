@@ -1,3 +1,5 @@
+// fixes-web/app/dashboard/jobs/[id]/dispute/page.tsx
+
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -6,7 +8,6 @@ import Link from 'next/link'
 import { api } from '@/lib/api'
 
 
-// Since this is a next.js page, we use lucide-react, not lucide-react-native
 import { ArrowLeft as ArrowLeftWeb, Loader2 as Loader2Web, AlertTriangle as AlertTriangleWeb, UploadCloud as UploadCloudWeb } from 'lucide-react'
 
 const REASONS = [
@@ -38,7 +39,7 @@ export default function ClientDisputePage() {
         jobId: id,
         reason,
         description,
-        evidence: [] // mock evidence for now
+        evidence: [] 
       })
       router.push(`/dashboard/jobs/${id}`)
     } catch (err: any) {
@@ -101,7 +102,7 @@ export default function ClientDisputePage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Explain exactly what happened..."
-            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm min-h-[150px] resize-y focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent text-(--upwork-navy)"
+            className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm min-h-37.5 resize-y focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent text-(--upwork-navy)"
             required
           />
         </div>

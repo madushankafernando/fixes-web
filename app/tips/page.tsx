@@ -350,7 +350,6 @@ export default function TipsPage() {
         </div>
       </section>
 
-      {/* ── Payment FAQ ───────────────────────────────────────────────────── */}
       <section className="bg-(--upwork-navy) text-white py-20 lg:py-28">
         <div className="max-w-3xl mx-auto px-4 lg:px-6">
           <div className="text-center mb-14">
