@@ -22,6 +22,8 @@ import {
   AlertCircle,
   Camera,
   ShieldCheck,
+  UploadCloud,
+  X,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
@@ -459,7 +461,7 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }:
 
       const decoded = window.google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline)
       setRoutePath(decoded.map((p: google.maps.LatLng) => ({ lat: p.lat(), lng: p.lng() })))
-      setRouteKey(k => k + 1)   
+      setRouteKey(k => k + 1)  
 
       const secs = parseInt((route.duration ?? '0s').replace('s', ''), 10)
       if (secs > 0) {
@@ -606,6 +608,195 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }:
 }
 
 
+async function signAndUpload(file: File): Promise<{ url: string; publicId: string }> {
+  const signRes = await api.post<any>('/api/uploads/sign', { folder: 'dispute_evidence' })
+  const { signature, timestamp, cloudName, apiKey, folder } = signRes.data.data
+  const form = new FormData()
+  form.append('file', file)
+  form.append('api_key', apiKey)
+  form.append('timestamp', String(timestamp))
+  form.append('signature', signature)
+  form.append('folder', folder)
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST', body: form,
+  })
+  if (!res.ok) throw new Error(`Upload failed: ${await res.text()}`)
+  const { secure_url, public_id } = await res.json()
+  return { url: secure_url, publicId: public_id }
+}
+
+function DisputeEvidenceSection({ job, user }: { job: Job; user: any }) {
+  const [dispute, setDispute] = useState<any | null>(null)
+  const [loadingDispute, setLoadingDispute] = useState(true)
+  const [newFiles, setNewFiles] = useState<{ localUri: string; url: string; publicId: string }[]>([])
+  const [uploading, setUploading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!job.disputeId) return
+    api.get<{ dispute: any }>(`/api/disputes/${job.disputeId}`)
+      .then(res => setDispute(res.data.dispute))
+      .catch(() => {})
+      .finally(() => setLoadingDispute(false))
+  }, [job.disputeId])
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? [])
+    if (!files.length) return
+    if (newFiles.length + files.length > 5) {
+      setError('Maximum 5 photos per submission.')
+      return
+    }
+    setUploading(true)
+    setError('')
+    try {
+      for (const file of files) {
+        const localUri = URL.createObjectURL(file)
+        const { url, publicId } = await signAndUpload(file)
+        setNewFiles(prev => [...prev, { localUri, url, publicId }])
+      }
+    } catch {
+      setError('Upload failed. Please try again.')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleSubmitEvidence = async () => {
+    if (!newFiles.length || !dispute) return
+    setSubmitting(true)
+    setError('')
+    try {
+      await api.post(`/api/disputes/${dispute._id}/evidence`, {
+        evidence: newFiles.map(f => ({ url: f.url, publicId: f.publicId }))
+      })
+      setSuccess(true)
+      setNewFiles([])
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Failed to submit evidence.')
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const canAddEvidence = dispute && (dispute.status === 'open' || dispute.status === 'under_review')
+  const isInitiator = dispute && user && dispute.initiatorId?._id === user._id
+  const myEvidence = dispute ? (isInitiator ? dispute.initiatorEvidence : dispute.againstEvidence) : []
+  const theirEvidence = dispute ? (isInitiator ? dispute.againstEvidence : dispute.initiatorEvidence) : []
+
+  return (
+    <div className="mb-6 space-y-4">
+      <div className="bg-red-50 border border-red-200 rounded-xl p-4 sm:p-5">
+        <p className="text-sm font-semibold text-red-800 mb-1 flex items-center gap-1.5">
+          <AlertCircle className="w-4 h-4" /> Job is Disputed
+        </p>
+        <p className="text-xs text-red-700">
+          Payment is frozen in escrow. Our admin team will mediate and reach a fair resolution.
+        </p>
+      </div>
+
+      {loadingDispute ? (
+        <div className="flex items-center gap-2 text-xs text-gray-400 px-1">
+          <Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading dispute details…
+        </div>
+      ) : dispute ? (
+        <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-5">
+          <div>
+            <p className="text-xs font-semibold text-(--upwork-gray) uppercase tracking-wider mb-2">Your Evidence</p>
+            {myEvidence.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {myEvidence.map((ev: any, i: number) => (
+                  <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer"
+                    className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 block">
+                    <img src={ev.url} alt={`Evidence ${i + 1}`} className="w-full h-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-gray-400">No evidence submitted yet.</p>
+            )}
+          </div>
+
+          {theirEvidence.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-(--upwork-gray) uppercase tracking-wider mb-2">Their Evidence</p>
+              <div className="flex flex-wrap gap-2">
+                {theirEvidence.map((ev: any, i: number) => (
+                  <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer"
+                    className="w-20 h-20 rounded-lg overflow-hidden border border-gray-200 block">
+                    <img src={ev.url} alt={`Their evidence ${i + 1}`} className="w-full h-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {canAddEvidence && (
+            <div className="border-t border-gray-100 pt-4 space-y-3">
+              <p className="text-sm font-semibold text-(--upwork-navy)">Add More Evidence</p>
+
+              {success && (
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> Evidence submitted successfully.
+                </p>
+              )}
+              {error && (
+                <p className="text-xs text-red-500 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" /> {error}
+                </p>
+              )}
+
+              {newFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {newFiles.map((f, i) => (
+                    <div key={f.publicId} className="relative w-20 h-20 rounded-lg overflow-hidden border border-gray-200">
+                      <img src={f.url} alt={`New ${i + 1}`} className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => setNewFiles(p => p.filter((_, idx) => idx !== i))}
+                        className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center">
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                  {uploading && (
+                    <div className="w-20 h-20 rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
+                      <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {newFiles.length < 5 && (
+                <>
+                  <input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden"
+                    onChange={handleFileChange} disabled={uploading} />
+                  <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading}
+                    className="flex items-center gap-2 text-sm text-(--upwork-green) hover:underline disabled:opacity-50">
+                    <UploadCloud className="w-4 h-4" />
+                    {uploading ? 'Uploading…' : 'Select photos'}
+                  </button>
+                </>
+              )}
+
+              {newFiles.length > 0 && !uploading && (
+                <button onClick={handleSubmitEvidence} disabled={submitting}
+                  className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
+                  {submitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                  Submit Evidence
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+
 
 export default function JobDetailPage() {
   const params = useParams()
@@ -620,7 +811,15 @@ export default function JobDetailPage() {
   const [rejectError, setRejectError] = useState('')
   const [isCancelling, setIsCancelling] = useState(false)
   const [cancelError, setCancelError] = useState('')
- const [dispatchElapsedSecs, setDispatchElapsedSecs] = useState(0)
+  const [dispatchElapsedSecs, setDispatchElapsedSecs] = useState(0)
+
+  const [dispute, setDispute] = useState<any | null>(null)
+  const [evidenceFiles, setEvidenceFiles] = useState<{ localUri: string; url: string; publicId: string }[]>([])
+  const [evidenceUploading, setEvidenceUploading] = useState(false)
+  const [evidenceSubmitting, setEvidenceSubmitting] = useState(false)
+  const [evidenceError, setEvidenceError] = useState('')
+  const [evidenceSuccess, setEvidenceSuccess] = useState(false)
+  const evidenceInputRef = useRef<HTMLInputElement>(null)
 
   const [tradieLocation, setTradieLocation] = useState<{ lat: number; lng: number } | null>(null)
 
@@ -654,6 +853,7 @@ export default function JobDetailPage() {
     }
   }, [job?.status, jobId]) // eslint-disable-line
 
+  
   useEffect(() => {
     if (job?.status !== 'dispatching') {
       setDispatchElapsedSecs(0)
@@ -710,7 +910,7 @@ export default function JobDetailPage() {
       setSecondsLeft((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(id)
-          return 0 
+          return 0  
         }
         return prev - 1
       })
@@ -958,16 +1158,7 @@ export default function JobDetailPage() {
         </div>
       )}
 
-      {job.status === 'disputed' && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-xl p-4 sm:p-5">
-          <p className="text-sm font-semibold text-red-800 mb-0.5 flex items-center gap-1.5">
-            <AlertCircle className="w-4 h-4" /> Job is Disputed
-          </p>
-          <p className="text-xs text-red-700 max-w-lg">
-            This job has been disputed. Payment is frozen in escrow. Our admin team will mediate with the tradie to process refunds or adjustments if necessary.
-          </p>
-        </div>
-      )}
+      {job.status === 'disputed' && <DisputeEvidenceSection job={job} user={user} />}
 
       {job.status === 'quoted' && quote && (
         <div className="mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4 sm:p-5">

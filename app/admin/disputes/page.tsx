@@ -35,8 +35,8 @@ export default function AdminDisputesPage() {
   const fetchDisputes = async () => {
     setLoading(true)
     try {
-      const { data } = await api.get<any>('/api/disputes/admin/all')
-      setDisputes(data || [])
+      const res = await api.get<any>('/api/disputes/admin/all')
+      setDisputes(res.data.data || [])
     } catch (err) {
       console.error(err)
     } finally {
@@ -107,10 +107,27 @@ export default function AdminDisputesPage() {
 
           {selectedDispute.initiatorEvidence?.length > 0 && (
             <div>
-              <h3 className="font-semibold text-(--upwork-navy) mb-2">Evidence</h3>
-              <div className="flex gap-2">
+              <h3 className="font-semibold text-(--upwork-navy) mb-2">Client Evidence</h3>
+              <div className="flex gap-2 flex-wrap">
                 {selectedDispute.initiatorEvidence.map((ev, i) => (
-                  <img key={i} src={ev.url} alt="Evidence" className="w-32 h-32 object-cover rounded-xl border border-gray-200" />
+                  <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer"
+                    className="block w-32 h-32 rounded-xl overflow-hidden border border-gray-200">
+                    <img src={ev.url} alt="Evidence" className="w-full h-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(selectedDispute as any).againstEvidence?.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-(--upwork-navy) mb-2">Tradie Evidence</h3>
+              <div className="flex gap-2 flex-wrap">
+                {(selectedDispute as any).againstEvidence.map((ev: any, i: number) => (
+                  <a key={i} href={ev.url} target="_blank" rel="noopener noreferrer"
+                    className="block w-32 h-32 rounded-xl overflow-hidden border border-gray-200">
+                    <img src={ev.url} alt="Tradie evidence" className="w-full h-full object-cover" />
+                  </a>
                 ))}
               </div>
             </div>

@@ -160,6 +160,7 @@ export interface Job {
   payment: string | null
   clientReview: string | Review | null
   tradieReview: string | Review | null
+  disputeId?: string | null
   completedAt: string | null
   completionOtpExpiry: string | null  
   createdAt: string
