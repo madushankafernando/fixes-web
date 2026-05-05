@@ -1,4 +1,4 @@
-// fixes-web/app/dashboard/jobs/[id]/page.tsx
+// app/dashboard/jobs/[id]/page.tsx
 
 'use client'
 
@@ -27,7 +27,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
-import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
+import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS, TIER_LABELS } from '@/lib/constants'
 import { SkeletonJobDetail, SkeletonChatMessages } from '../../_components/skeletons'
 import { connectSocket, joinJobRoom, leaveJobRoom } from '@/lib/socket'
 import { GoogleMap, useJsApiLoader, Polyline, Marker } from '@react-google-maps/api'
@@ -461,7 +461,7 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }:
 
       const decoded = window.google.maps.geometry.encoding.decodePath(route.polyline.encodedPolyline)
       setRoutePath(decoded.map((p: google.maps.LatLng) => ({ lat: p.lat(), lng: p.lng() })))
-      setRouteKey(k => k + 1)  
+      setRouteKey(k => k + 1)   
 
       const secs = parseInt((route.duration ?? '0s').replace('s', ''), 10)
       if (secs > 0) {
@@ -477,6 +477,7 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation }:
   useEffect(() => {
     if (isLoaded && tradiePos) fetchRoute(tradiePos)
   }, [isLoaded, tradiePos]) // eslint-disable-line
+
 
   const joinedRef = useRef(false)
   useEffect(() => {
@@ -823,9 +824,9 @@ export default function JobDetailPage() {
 
   const [tradieLocation, setTradieLocation] = useState<{ lat: number; lng: number } | null>(null)
 
-  const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null)  
-  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null)  
+  const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null)  // expiresAt for current cycle
+  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       // timeoutMs from server
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null)  // null = not started yet
 
   const fetchJob = useCallback(async () => {
     try {
@@ -849,7 +850,7 @@ export default function JobDetailPage() {
         .then((res) => {
           if (res.data.location) setTradieLocation(res.data.location)
         })
-        .catch(() => { }) 
+        .catch(() => { })
     }
   }, [job?.status, jobId]) // eslint-disable-line
 
@@ -1060,6 +1061,9 @@ export default function JobDetailPage() {
   }
 
   const quote = typeof job.quote === 'object' ? (job.quote as Quote) : null
+  const selectedQuoteOption = quote
+    ? quote.options?.find((o) => o.tier === quote.selectedTier) || quote.options?.[0]
+    : null
   const assignedTradie =
     typeof job.assignedTradieId === 'object' ? (job.assignedTradieId as User) : null
   const canChat = assignedTradie && !['cancelled', 'no_tradie_found'].includes(job.status)
@@ -1166,8 +1170,8 @@ export default function JobDetailPage() {
             <div>
               <p className="text-sm font-semibold text-amber-800 mb-0.5">Quote Ready — Your Decision</p>
               <p className="text-xs text-amber-600">
-                Fixed price: <span className="font-bold">${quote.suggestedFixedPrice}</span> •
-                Est. {quote.estimatedHours.min}–{quote.estimatedHours.max}h work
+                Fixed price: <span className="font-bold">${selectedQuoteOption?.suggestedFixedPrice}</span> •
+                Est. {selectedQuoteOption?.estimatedHours.min}–{selectedQuoteOption?.estimatedHours.max}h work
               </p>
               {rejectError && (
                 <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
@@ -1324,30 +1328,30 @@ export default function JobDetailPage() {
                 <div className="flex justify-between text-sm">
                   <span className="text-(--upwork-gray)">Price Range</span>
                   <span className="font-medium text-(--upwork-navy)">
-                    ${quote.price.min} – ${quote.price.max}
+                    ${selectedQuoteOption?.price.min} – ${selectedQuoteOption?.price.max}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-(--upwork-gray)">Fixed Price</span>
                   <span className="font-semibold text-(--upwork-green)">
-                    ${quote.suggestedFixedPrice}
+                    ${selectedQuoteOption?.suggestedFixedPrice}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-(--upwork-gray)">Est. Hours</span>
                   <span className="text-(--upwork-navy)">
-                    {quote.estimatedHours.min}–{quote.estimatedHours.max}h
+                    {selectedQuoteOption?.estimatedHours.min}–{selectedQuoteOption?.estimatedHours.max}h
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-(--upwork-gray)">Skill Level</span>
                   <span className="text-(--upwork-navy) capitalize">
-                    {quote.detectedSkillLevel}
+                    {selectedQuoteOption?.tier ? TIER_LABELS[selectedQuoteOption.tier] || selectedQuoteOption.tier : 'Standard'}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-gray-100">
                   <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-500">
-                    {quote.engine === 'gemini' ? '✨ AI-Powered Estimate' : '📊 Market Rate Estimate'} • {Math.round(quote.confidence * 100)}% confidence
+                    {quote.engine === 'gemini' ? '✨ AI-Powered Estimate' : '📊 Market Rate Estimate'} • {Math.round((selectedQuoteOption?.confidence ?? 0) * 100)}% confidence
                   </span>
                 </div>
               </div>

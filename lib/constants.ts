@@ -1,5 +1,6 @@
 import type { TradieCategory, JobCategory, JobStatus, DocumentType } from './types'
 
+// ─── API Base URL ───────────────────────────────────────────────────────────────
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
@@ -43,6 +44,7 @@ export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   completed: 'Completed',
   cancelled: 'Cancelled',
   disputed: 'Disputed',
+  in_scope_review: 'In Scope Review',
 }
 
 export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
@@ -57,6 +59,14 @@ export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   completed: 'bg-green-100 text-green-700',
   cancelled: 'bg-gray-100 text-gray-500',
   disputed: 'bg-red-100 text-red-700',
+  in_scope_review: 'bg-orange-100 text-orange-700',
+}
+
+
+export const TIER_LABELS: Record<string, string> = {
+  junior: 'Standard',
+  senior: 'Premium',
+  specialist: 'Expert',
 }
 
 

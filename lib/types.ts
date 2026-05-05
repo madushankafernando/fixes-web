@@ -93,7 +93,7 @@ export interface TradieProfile {
   }
   location: {
     type: 'Point'
-    coordinates: [number, number]
+    coordinates: [number, number] 
   }
   serviceRadiusKm: number
   stripeAccountId: string | null
@@ -115,6 +115,7 @@ export type JobStatus =
   | 'accepted'
   | 'on_the_way'
   | 'in_progress'
+  | 'in_scope_review'
   | 'completed'
   | 'cancelled'
   | 'disputed'
@@ -155,6 +156,8 @@ export interface Job {
   preferredTime: PreferredTime
   scheduledFor: string | null
   status: JobStatus
+  selectedTier: SkillLevel | null  
+  isAfterHours: boolean            
   quote: string | Quote | null
   assignedTradieId: string | User | null
   payment: string | null
@@ -162,20 +165,18 @@ export interface Job {
   tradieReview: string | Review | null
   disputeId?: string | null
   completedAt: string | null
-  completionOtpExpiry: string | null  
+  completionOtpExpiry: string | null
   createdAt: string
   updatedAt: string
 }
 
 
-export type SkillLevel = 'junior' | 'senior' | 'specialist'
-export type QuoteEngine = 'gemini' | 'gemini-custom-ml' | 'placeholder'
 
-export interface Quote {
-  _id: string
-  jobId: string
-  detectedCategory: string
-  detectedSkillLevel: SkillLevel
+export type SkillLevel = 'junior' | 'senior' | 'specialist'
+export type QuoteEngine = 'gemini' | 'gemini-custom-ml' | 'rule_based' | 'placeholder'
+
+export interface QuoteOption {
+  tier: SkillLevel
   estimatedHours: {
     min: number
     max: number
@@ -186,14 +187,24 @@ export interface Quote {
     currency: string
   }
   suggestedFixedPrice: number
-  engine: QuoteEngine
   confidence: number
   reasoning: string
+}
+
+export interface Quote {
+  _id: string
+  jobId: string
+  detectedCategory: string
+  options: QuoteOption[]          
+  selectedTier: SkillLevel | null 
+  engine: QuoteEngine
   clientAccepted: boolean | null
   respondedAt: string | null
   createdAt: string
   updatedAt: string
 }
+
+
 
 
 export type MessageType = 'text' | 'image' | 'system'
