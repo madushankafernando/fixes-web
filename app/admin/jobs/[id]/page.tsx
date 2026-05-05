@@ -2,6 +2,7 @@
 
 'use client'
 
+
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
@@ -19,7 +20,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { api, ApiError } from '@/lib/api'
-import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS } from '@/lib/constants'
+import { JOB_STATUS_LABELS, JOB_STATUS_COLORS, CATEGORY_LABELS, TIER_LABELS } from '@/lib/constants'
 import type { Job, Quote, User as UserType } from '@/lib/types'
 
 interface Payment {
@@ -200,7 +201,17 @@ export default function AdminJobDetailPage() {
             </div>
             <div className="flex justify-between">
               <dt className="text-xs text-gray-500">Quote Price</dt>
-              <dd className="text-xs font-semibold text-gray-900">{quote ? `$${quote.suggestedFixedPrice} AUD` : '—'}</dd>
+              <dd className="text-xs font-semibold text-gray-900">
+                {quote
+                  ? `$${(quote.options?.find(o => o.tier === job.selectedTier) || quote.options?.[0])?.suggestedFixedPrice ?? '—'} AUD`
+                  : '—'}
+              </dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-xs text-gray-500">Tier Selected</dt>
+              <dd className="text-xs font-semibold text-gray-900 capitalize">
+                {job.selectedTier ? (TIER_LABELS[job.selectedTier] ?? job.selectedTier) : '—'}
+              </dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-xs text-gray-500">Location</dt>

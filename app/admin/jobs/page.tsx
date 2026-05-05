@@ -151,7 +151,11 @@ export default function AdminJobsPage() {
                         <span className="text-[10px] text-gray-400">{CATEGORY_LABELS[job.category as JobCategory] || job.category}</span>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
-                        <span className="text-xs text-gray-600">{quote ? `$${quote.suggestedFixedPrice}` : '—'}</span>
+                        <span className="text-xs text-gray-600">
+                          {quote
+                            ? `$${(quote.options?.find(o => o.tier === job.selectedTier) || quote.options?.[0])?.suggestedFixedPrice ?? '—'}`
+                            : '—'}
+                        </span>
                       </td>
                       <td className="px-4 py-3 hidden md:table-cell">
                         <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${JOB_STATUS_COLORS[job.status]}`}>
