@@ -21,6 +21,8 @@ import {
   Star,
   Zap,
   Moon,
+  Sunrise,
+  Calendar,
 } from 'lucide-react'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useAuth } from '@/contexts/auth-context'
@@ -67,8 +69,8 @@ function StepCategory({
             key={cat}
             onClick={() => onSelectCategory(cat)}
             className={`px-4 py-3.5 rounded-xl border text-sm font-medium transition-all text-left ${selectedCategory === cat
-                ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
-                : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
+              ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
+              : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
               }`}
           >
             <span className="flex items-center justify-between">
@@ -189,8 +191,8 @@ function StepPhotos({
       <label
         htmlFor="photo-upload"
         className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-2xl cursor-pointer transition-colors mb-6 ${isUploading
-            ? 'border-[var(--upwork-green)] bg-green-50'
-            : 'border-gray-300 hover:border-[var(--upwork-green)] bg-gray-50 hover:bg-green-50'
+          ? 'border-[var(--upwork-green)] bg-green-50'
+          : 'border-gray-300 hover:border-[var(--upwork-green)] bg-gray-50 hover:bg-green-50'
           }`}
       >
         {isUploading ? (
@@ -388,10 +390,10 @@ function StepTime({
     new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16)
 
   const options: { value: PreferredTime; label: string; desc: string; icon: string }[] = [
-    { value: 'now',       label: 'Now',               desc: 'Dispatch a tradie immediately', icon: '⚡' },
+    { value: 'now', label: 'Now', desc: 'Dispatch a tradie immediately', icon: '⚡' },
     { value: 'scheduled', label: 'Schedule for Later', desc: 'Choose a time (up to 24h ahead)', icon: '🗓️' },
-    { value: '1-2weeks',  label: 'In 1–2 Weeks',      desc: 'Flexible timing',                 icon: '📅' },
-    { value: 'no-rush',   label: 'No Rush',            desc: 'Whenever available',              icon: '😌' },
+    { value: '1-2weeks', label: 'In 1–2 Weeks', desc: 'Flexible timing', icon: '📅' },
+    { value: 'no-rush', label: 'No Rush', desc: 'Whenever available', icon: '😌' },
   ]
 
   const scheduledValid = selected !== 'scheduled' || (
@@ -414,11 +416,10 @@ function StepTime({
           <button
             key={opt.value}
             onClick={() => onSelect(opt.value)}
-            className={`px-5 py-4 rounded-xl border text-left transition-all ${
-              selected === opt.value
+            className={`px-5 py-4 rounded-xl border text-left transition-all ${selected === opt.value
                 ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
                 : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
-            }`}
+              }`}
           >
             <div className="text-xl mb-1">{opt.icon}</div>
             <div className="font-semibold text-sm">{opt.label}</div>
@@ -486,9 +487,9 @@ function StepAnalyzing() {
 
 
 const TIER_CONFIG: Record<SkillLevel, { label: string; icon: React.ElementType; colorClass: string; bgClass: string; borderClass: string }> = {
-  junior:     { label: 'Standard',    icon: Zap,   colorClass: 'text-blue-600',   bgClass: 'bg-blue-50',   borderClass: 'border-blue-200' },
-  senior:     { label: 'Premium',     icon: Star,  colorClass: 'text-amber-600',  bgClass: 'bg-amber-50',  borderClass: 'border-amber-200' },
-  specialist: { label: 'Expert',      icon: Award, colorClass: 'text-purple-600', bgClass: 'bg-purple-50', borderClass: 'border-purple-200' },
+  junior: { label: 'Standard', icon: Zap, colorClass: 'text-blue-600', bgClass: 'bg-blue-50', borderClass: 'border-blue-200' },
+  senior: { label: 'Premium', icon: Star, colorClass: 'text-amber-600', bgClass: 'bg-amber-50', borderClass: 'border-amber-200' },
+  specialist: { label: 'Expert', icon: Award, colorClass: 'text-purple-600', bgClass: 'bg-purple-50', borderClass: 'border-purple-200' },
 }
 
 function TierCard({
@@ -506,11 +507,10 @@ function TierCard({
   return (
     <button
       onClick={onSelect}
-      className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${
-        isSelected
+      className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${isSelected
           ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
           : `${cfg.borderClass} bg-white hover:border-[var(--upwork-green)] hover:shadow-sm`
-      }`}
+        }`}
     >
       <div className="flex items-center justify-between mb-3">
         <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${cfg.bgClass}`}>
@@ -556,6 +556,32 @@ function TierCard({
   )
 }
 
+const STATE_TZ: Record<string, string> = {
+  NSW: 'Australia/Sydney', ACT: 'Australia/Sydney',
+  VIC: 'Australia/Melbourne', TAS: 'Australia/Hobart',
+  QLD: 'Australia/Brisbane', SA: 'Australia/Adelaide',
+  WA: 'Australia/Perth', NT: 'Australia/Darwin',
+}
+
+
+function datetimeLocalToAuISO(localStr: string, tz: string): string {
+  const provisional = new Date(localStr + 'Z')
+
+  const dtf = new Intl.DateTimeFormat('en-AU', {
+    timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false,
+  })
+  const [auH, auM] = dtf.format(provisional).split(':').map(Number)
+
+  const [, timePart] = localStr.split('T')
+  const [wantH, wantM] = timePart.split(':').map(Number)
+  let diffMinutes = (wantH * 60 + wantM) - (auH * 60 + auM)
+
+  if (diffMinutes > 12 * 60)  diffMinutes -= 24 * 60
+  if (diffMinutes < -12 * 60) diffMinutes += 24 * 60
+
+  return new Date(provisional.getTime() + diffMinutes * 60_000).toISOString()
+}
+
 function StepQuote({
   quote,
   job,
@@ -563,18 +589,57 @@ function StepQuote({
   onSelectTier,
   onAccept,
   onCancel,
+  onReschedule,
   isAccepting,
+  isRescheduling,
   acceptError,
 }: {
   quote: Quote
   job: Job
   selectedTier: SkillLevel | null
-  onSelectTier: (tier: SkillLevel) => void
+  onSelectTier: (tier: SkillLevel | null) => void
   onAccept: () => void
   onCancel: () => void
+  onReschedule: (isoTime: string, tier: SkillLevel | null, price: number) => void
   isAccepting: boolean
+  isRescheduling: boolean
   acceptError: string
 }) {
+  const [showSchedulePicker, setShowSchedulePicker] = useState(false)
+  const [selectedMorningTier, setSelectedMorningTier] = useState<SkillLevel | null>(null)
+
+  const handleSelectMainTier = (tier: SkillLevel) => {
+    setSelectedMorningTier(null)
+    onSelectTier(tier)
+  }
+
+  const getTomorrowNineAM = () => {
+    const d = new Date()
+    d.setDate(d.getDate() + 1)
+    d.setHours(9, 0, 0, 0)
+    return d.toISOString().slice(0, 16)
+  }
+  const [pickedTime, setPickedTime] = useState(getTomorrowNineAM)
+
+  const isPickedTimeAfterHours = (isoTime: string): boolean => {
+    try {
+      const hour = parseInt(isoTime.split('T')[1]?.split(':')[0] ?? '12', 10)
+      return hour >= 18 || hour < 6
+    } catch { return false }
+  }
+
+  const pickedIsAfterHours = isPickedTimeAfterHours(pickedTime)
+  const morningOptions = quote.morningOptions || []
+  const showRescheduleSection = job.isAfterHours && morningOptions.length > 0
+
+  const maxSavingsPct = morningOptions.length > 0
+    ? Math.max(...morningOptions.map((mo, i) => {
+      const ev = quote.options[i]?.suggestedFixedPrice
+      if (!ev) return 0
+      return Math.round(((ev - mo.suggestedFixedPrice) / ev) * 100)
+    }))
+    : 0
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-6">
@@ -591,7 +656,7 @@ function StepQuote({
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-5">
           <Moon className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
           <p className="text-sm text-amber-700">
-            Evening Service Rate — Includes a standard after-hours premium to ensure fast dispatch outside of regular business hours.
+            After-hours pricing applied — tradies working after 6pm receive a surcharge for evening availability.
           </p>
         </div>
       )}
@@ -602,7 +667,7 @@ function StepQuote({
             key={opt.tier}
             option={opt}
             isSelected={selectedTier === opt.tier}
-            onSelect={() => onSelectTier(opt.tier)}
+            onSelect={() => handleSelectMainTier(opt.tier)}
           />
         ))}
       </div>
@@ -620,7 +685,7 @@ function StepQuote({
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <button
           onClick={onAccept}
           disabled={isAccepting || !selectedTier}
@@ -646,6 +711,122 @@ function StepQuote({
           Cancel Job
         </button>
       </div>
+
+      {showRescheduleSection && (
+        <div className="border-t border-gray-100 pt-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Sunrise className="w-4 h-4 text-blue-500" />
+            <span className="text-sm font-semibold text-blue-700">
+              Schedule for a different time &amp; save up to {maxSavingsPct}%
+            </span>
+          </div>
+
+          {showSchedulePicker && !pickedIsAfterHours && (
+            <div className="space-y-2 mb-4">
+              <p className="text-xs text-gray-500 mb-1">Select a tier to book at standard rates:</p>
+              {morningOptions.map((mo, i) => {
+                const eveningPrice = quote.options[i]?.suggestedFixedPrice ?? mo.suggestedFixedPrice
+                const savings = Math.round(((eveningPrice - mo.suggestedFixedPrice) / eveningPrice) * 100)
+                const isChosen = selectedMorningTier === mo.tier
+                return (
+                  <button
+                    key={mo.tier}
+                    onClick={() => {
+                      const next = selectedMorningTier === mo.tier ? null : mo.tier as SkillLevel
+                      setSelectedMorningTier(next)
+                      if (next) onSelectTier(null)
+                    }}
+                    className={`w-full text-left flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
+                      isChosen
+                        ? 'border-blue-500 bg-blue-50 shadow-sm'
+                        : 'border-blue-100 bg-blue-50/30 hover:border-blue-300 hover:bg-blue-50'
+                    }`}
+                  >
+                    <div>
+                      <span className="text-xs text-blue-600 font-semibold uppercase tracking-wide">
+                        {TIER_CONFIG[mo.tier as SkillLevel]?.label ?? mo.tier} Option
+                      </span>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xl font-bold text-blue-900">${mo.suggestedFixedPrice}</span>
+                        <span className="text-sm text-gray-400 line-through">${eveningPrice}</span>
+                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">
+                          Save {savings}%
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                      <span className="text-xs text-blue-400 font-medium">Standard rate</span>
+                      {isChosen && (
+                        <span className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </span>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {showSchedulePicker && pickedIsAfterHours && (
+            <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
+              <Moon className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-700">
+                <strong>After-hours rates still apply</strong> for this time slot — prices will be the same as tonight.
+                Choose a daytime slot (before 6 PM) to unlock standard rates.
+              </p>
+            </div>
+          )}
+
+          {!showSchedulePicker ? (
+            <button
+              onClick={() => setShowSchedulePicker(true)}
+              className="w-full border-2 border-blue-300 text-blue-700 font-semibold py-3 px-6 rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2"
+            >
+              <Calendar className="w-4 h-4" />
+              Choose a Different Time &amp; Save
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-700">
+                📅 Select your preferred date &amp; time:
+              </label>
+              <input
+                type="datetime-local"
+                value={pickedTime}
+                min={new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16)}
+                onChange={(e) => setPickedTime(e.target.value)}
+                className="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+              />
+              <button
+                onClick={() => {
+                  const mo = morningOptions.find(m => m.tier === selectedMorningTier)
+                  onReschedule(pickedTime, selectedMorningTier, mo?.suggestedFixedPrice ?? 0)
+                }}
+                disabled={isRescheduling || !pickedTime || (!pickedIsAfterHours && !selectedMorningTier)}
+                className="w-full font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                style={{
+                  backgroundColor: pickedIsAfterHours ? '#f59e0b' : '#3b82f6',
+                  color: 'white',
+                }}
+              >
+                {isRescheduling ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Rescheduling...</>
+                ) : pickedIsAfterHours ? (
+                  <><Moon className="w-4 h-4" /> Book at After-Hours Rate</>
+                ) : (
+                  <><Sunrise className="w-4 h-4" /> Confirm &amp; Book at Standard Rates</>
+                )}
+              </button>
+              {!pickedIsAfterHours && (
+                <p className="text-xs text-center text-gray-400">
+                  Standard rates apply · No after-hours surcharge · Dispatched at your selected time
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -735,7 +916,6 @@ function PaymentForm({
 }
 
 
-
 export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId }: PostJobWizardProps) {
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
@@ -761,7 +941,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [geocodeError, setGeocodeError] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
-  const [scheduledFor, setScheduledFor] = useState('') 
+  const [scheduledFor, setScheduledFor] = useState('')  // ISO datetime string for 'scheduled' jobs
 
   const [isUploading, setIsUploading] = useState(false)
 
@@ -775,6 +955,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [isAccepting, setIsAccepting] = useState(false)
   const [acceptError, setAcceptError] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
+  const [acceptedPrice, setAcceptedPrice] = useState<number>(0)
+  const [isRescheduling, setIsRescheduling] = useState(false)
   const [stripeInstance, setStripeInstance] = useState<any>(null)
   useEffect(() => {
     import('@stripe/stripe-js').then(({ loadStripe }) => {
@@ -795,7 +977,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           } else {
             throw new Error('No quote found for this job')
           }
-          setCurrentStep(7)
+          setCurrentStep(7) 
         } catch (err) {
           setResumeError('Could not process job quote.')
           setCurrentStep(1) 
@@ -869,7 +1051,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   }, [isAuthenticated, router])
 
 
-  const handleSubmitJob = useCallback(async (timeValue: PreferredTime) => {
+  const handleSubmitJob = useCallback(async (timeValue: PreferredTime, scheduledForOverride?: string) => {
     if (!isAuthenticated) {
       router.push('/login')
       return
@@ -882,6 +1064,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     try {
       const lat = coords?.lat ?? -37.8136
       const lng = coords?.lng ?? 144.9631
+
+    
+      const resolvedScheduledFor = scheduledForOverride ?? scheduledFor
 
       const res = await api.post<{ job: Job; quote: Quote }>('/api/jobs', {
         title,
@@ -896,8 +1081,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           coordinates: { lat, lng },
         },
         preferredTime: timeValue,
-        ...(timeValue === 'scheduled' && scheduledFor
-          ? { scheduledFor: new Date(scheduledFor).toISOString() }
+        ...(timeValue === 'scheduled' && resolvedScheduledFor
+          ? { scheduledFor: new Date(resolvedScheduledFor).toISOString() }
           : {}),
       })
 
@@ -929,6 +1114,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       )
       const secret = res.data.clientSecret
       if (!secret) throw new Error('No client secret returned from server')
+
+      const selectedOption = createdQuote?.options.find(o => o.tier === selectedTier)
+      setAcceptedPrice(selectedOption?.suggestedFixedPrice ?? 0)
+
       setClientSecret(secret)
       setCurrentStep(8) 
     } catch (err) {
@@ -949,9 +1138,47 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     try {
       await api.patch(`/api/jobs/${createdJob._id}/cancel`)
     } catch {
+      // Silent
     }
     router.back()
   }, [createdJob, router])
+
+
+
+  const handleRescheduleToScheduled = useCallback(async (isoTime: string, tier: SkillLevel | null, price: number) => {
+    console.log('[Reschedule] Calling handleRescheduleToScheduled:', { isoTime, tier, price })
+    if (!createdJob || !tier || price <= 0) {
+      console.warn('[Reschedule] Missing requirements:', { createdJob: !!createdJob, tier, price })
+      return
+    }
+    setIsRescheduling(true)
+    setAcceptError('')
+
+    try {
+      const auISO = datetimeLocalToAuISO(
+        isoTime,
+        STATE_TZ[(createdJob.location as any)?.state?.toUpperCase?.()] ?? 'Australia/Sydney'
+      )
+
+     
+      const acceptRes = await api.post<{ clientSecret: string }>(
+        `/api/jobs/${createdJob._id}/accept-quote`,
+        { tier, scheduledFor: auISO, priceOverride: price }
+      )
+      const secret = acceptRes.data.clientSecret
+      if (!secret) throw new Error('No client secret returned.')
+
+      setSelectedTier(tier)
+      setAcceptedPrice(price) 
+      setClientSecret(secret)
+      setCurrentStep(8) 
+
+    } catch (err) {
+      setAcceptError(err instanceof ApiError ? err.message : 'Failed to book at standard rates. Please try again.')
+    } finally {
+      setIsRescheduling(false)
+    }
+  }, [createdJob])
 
 
   const handleBack = () => {
@@ -1062,9 +1289,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     return (
       <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white flex items-center justify-center">
         <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-           <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
-           <p className="text-[var(--upwork-navy)] font-semibold mb-2">{resumeError}</p>
-           <button onClick={() => router.push('/dashboard/jobs')} className="text-[var(--upwork-green)] text-sm underline hover:opacity-80">Back to Dashboard</button>
+          <AlertCircle className="w-10 h-10 text-red-500 mx-auto mb-4" />
+          <p className="text-[var(--upwork-navy)] font-semibold mb-2">{resumeError}</p>
+          <button onClick={() => router.push('/dashboard/jobs')} className="text-[var(--upwork-green)] text-sm underline hover:opacity-80">Back to Dashboard</button>
         </div>
       </div>
     )
@@ -1098,7 +1325,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             onSelectTier={setSelectedTier}
             onAccept={handleAcceptQuote}
             onCancel={handleCancelJob}
+            onReschedule={handleRescheduleToScheduled}
             isAccepting={isAccepting}
+            isRescheduling={isRescheduling}
             acceptError={acceptError}
           />
         </main>
@@ -1126,7 +1355,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             <p className="text-[var(--upwork-gray)] text-sm">
               Your payment of{' '}
               <span className="font-semibold text-[var(--upwork-navy)]">
-                ${(createdQuote.options.find(o => o.tier === selectedTier) ?? createdQuote.options[0])?.suggestedFixedPrice ?? 0} AUD
+                ${acceptedPrice} AUD
               </span>{' '}
               is held in escrow until your job is completed.
             </p>
@@ -1148,7 +1377,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             }}
           >
             <PaymentForm
-              amount={(createdQuote.options.find(o => o.tier === selectedTier) ?? createdQuote.options[0])?.suggestedFixedPrice ?? 0}
+              amount={acceptedPrice}
               onSuccess={() => router.push('/dashboard')}
               onCancel={handleCancelJob}
             />

@@ -36,6 +36,8 @@ export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   analyzing: 'Analyzing',
   quoted: 'Quote Ready',
   payment_pending: 'Awaiting Payment',
+    scheduled: 'Scheduled',
+
   dispatching: 'Finding Tradie',
   no_tradie_found: 'No Tradie Found',
   accepted: 'Tradie Assigned',
@@ -44,6 +46,8 @@ export const JOB_STATUS_LABELS: Record<JobStatus, string> = {
   completed: 'Completed',
   cancelled: 'Cancelled',
   disputed: 'Disputed',
+    rescheduled: 'Reschedule Requested',
+
   in_scope_review: 'In Scope Review',
 }
 
@@ -51,6 +55,8 @@ export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   analyzing: 'bg-blue-100 text-blue-700',
   quoted: 'bg-amber-100 text-amber-700',
   payment_pending: 'bg-purple-100 text-purple-700',
+    scheduled: 'bg-blue-100 text-blue-700',
+
   dispatching: 'bg-indigo-100 text-indigo-700',
   no_tradie_found: 'bg-red-100 text-red-700',
   accepted: 'bg-emerald-100 text-emerald-700',
@@ -59,6 +65,8 @@ export const JOB_STATUS_COLORS: Record<JobStatus, string> = {
   completed: 'bg-green-100 text-green-700',
   cancelled: 'bg-gray-100 text-gray-500',
   disputed: 'bg-red-100 text-red-700',
+    rescheduled: 'bg-blue-100 text-blue-700',
+
   in_scope_review: 'bg-orange-100 text-orange-700',
 }
 

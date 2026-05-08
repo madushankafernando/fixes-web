@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   UploadCloud,
   X,
+  Calendar,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { api, ApiError } from '@/lib/api'
@@ -58,6 +59,7 @@ function AutoRefresh({ onRefresh, intervalMs }: { onRefresh: () => void; interva
 const STATUS_STEPS: { status: JobStatus; label: string; icon: React.ElementType }[] = [
   { status: 'quoted', label: 'Quoted', icon: DollarSign },
   { status: 'payment_pending', label: 'Payment', icon: DollarSign },
+  { status: 'scheduled', label: 'Scheduled', icon: Calendar },
   { status: 'dispatching', label: 'Finding Tradie', icon: Search },
   { status: 'accepted', label: 'Accepted', icon: CheckCircle2 },
   { status: 'on_the_way', label: 'On the Way', icon: Truck },
@@ -363,6 +365,76 @@ function ReviewForm({ jobId, onSubmitted }: { jobId: string; onSubmitted: () => 
   )
 }
 
+function StepScheduled({ job, fetchJob, handleCancelJob, isCancelling, cancelError }: {
+  job: Job
+  fetchJob: () => Promise<void>
+  handleCancelJob: () => Promise<void>
+  isCancelling: boolean
+  cancelError: string
+}) {
+  const [isDispatchingNow, setIsDispatchingNow] = useState(false)
+  const router = useRouter()
+
+  const handleDispatchNow = async () => {
+    if (!window.confirm('Start searching for a tradie immediately? This will ignore the scheduled time.')) return
+    setIsDispatchingNow(true)
+    try {
+      await api.post(`/api/jobs/${job._id}/dispatch-now`)
+      await fetchJob()
+    } catch (err) {
+      alert('Failed to start dispatch. Please try again.')
+    } finally {
+      setIsDispatchingNow(false)
+    }
+  }
+
+  const scheduledDate = new Date(job.scheduledFor!)
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
+      <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+        <Calendar className="w-10 h-10 text-blue-500" />
+      </div>
+      <h1 className="text-2xl font-bold text-(--upwork-navy) mb-2">Job Scheduled</h1>
+      <p className="text-(--upwork-gray) text-sm max-w-sm mb-8">
+        Your job is set for <span className="font-semibold text-(--upwork-navy)">{scheduledDate.toLocaleString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}</span>.
+        <br /><br />
+        We'll start searching for nearby tradies 15 minutes before your chosen time.
+      </p>
+
+      <div className="flex flex-col gap-3 w-full max-w-xs">
+        <button
+          onClick={handleDispatchNow}
+          disabled={isDispatchingNow}
+          className="w-full bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white font-semibold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-sm"
+        >
+          {isDispatchingNow ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+          Dispatch Now
+        </button>
+
+        <button
+          onClick={handleCancelJob}
+          disabled={isCancelling}
+          className="w-full bg-white border border-red-200 text-red-600 hover:bg-red-50 font-semibold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2"
+        >
+          {isCancelling ? <Loader2 className="w-5 h-5 animate-spin" /> : <XCircle className="w-5 h-5" />}
+          Cancel Job
+        </button>
+        {cancelError && <p className="text-xs text-red-500 mt-1">{cancelError}</p>}
+      </div>
+
+      <button
+        onClick={() => router.push('/dashboard/jobs')}
+        className="mt-10 text-sm text-(--upwork-gray) hover:text-(--upwork-navy) transition-colors underline underline-offset-2"
+      >
+        View all my jobs
+      </button>
+
+      <AutoRefresh onRefresh={fetchJob} intervalMs={30000} />
+    </div>
+  )
+}
+
 
 const GOOGLE_MAPS_LIBRARIES: ('geometry' | 'places')[] = ['geometry']
 const MIN_MOVE_METRES = 30
@@ -481,6 +553,7 @@ function LiveTrackingMap({ jobId, jobCode, jobLocation, initialTradieLocation, i
     if (isLoaded && tradiePos) fetchRoute(tradiePos)
   }, [isLoaded, tradiePos]) // eslint-disable-line
 
+ 
   const joinedRef = useRef(false)
   useEffect(() => {
     const socket = connectSocket()
@@ -800,7 +873,6 @@ function DisputeEvidenceSection({ job, user }: { job: Job; user: any }) {
 }
 
 
-
 export default function JobDetailPage() {
   const params = useParams()
   const router = useRouter()
@@ -829,8 +901,11 @@ export default function JobDetailPage() {
   const [tradieLocation, setTradieLocation] = useState<{ lat: number; lng: number } | null>(null)
 
   const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null) 
-  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)      
+  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null)  
+
+  const [isRespondingReschedule, setIsRespondingReschedule] = useState(false)
+  const [rescheduleError, setRescheduleError] = useState('')
 
   const fetchJob = useCallback(async () => {
     try {
@@ -858,7 +933,6 @@ export default function JobDetailPage() {
     }
   }, [job?.status, jobId]) // eslint-disable-line
 
-  
   useEffect(() => {
     if (job?.status !== 'dispatching') {
       setDispatchElapsedSecs(0)
@@ -915,14 +989,14 @@ export default function JobDetailPage() {
       setSecondsLeft((prev) => {
         if (prev === null || prev <= 1) {
           clearInterval(id)
-          return 0  
+          return 0 
         }
         return prev - 1
       })
     }, 1000)
 
     return () => clearInterval(id)
-  }, [dispatchCycleAt]) 
+  }, [dispatchCycleAt])  
 
   if (isLoading) {
     return <SkeletonJobDetail />
@@ -943,9 +1017,9 @@ export default function JobDetailPage() {
     )
   }
 
-
+ 
   const CANCEL_MATRIX: Record<string, { clientLoss: number }> = {
-    dispatching: { clientLoss: 0.00 }, 
+    dispatching: { clientLoss: 0.00 },
     accepted:    { clientLoss: 0.03 },
     on_the_way:  { clientLoss: 0.08 },
     in_progress: { clientLoss: 0.10 },
@@ -1021,6 +1095,18 @@ export default function JobDetailPage() {
     } finally {
       setIsCancelling(false)
     }
+  }
+
+  if (job.status === 'scheduled' && !cancelResult) {
+    return (
+      <StepScheduled
+        job={job}
+        fetchJob={fetchJob}
+        handleCancelJob={handleCancelJob}
+        isCancelling={isCancelling}
+        cancelError={cancelError}
+      />
+    )
   }
 
   if (job.status === 'payment_pending' || job.status === 'dispatching') {
@@ -1169,6 +1255,36 @@ export default function JobDetailPage() {
     }
   }
 
+
+
+  const handleApproveReschedule = async () => {
+    if (!job) return
+    setIsRespondingReschedule(true)
+    setRescheduleError('')
+    try {
+      await api.patch(`/api/jobs/${job._id}/reschedule-approve`)
+      await fetchJob()
+    } catch (err) {
+      setRescheduleError(err instanceof ApiError ? err.message : 'Failed to approve reschedule.')
+    } finally {
+      setIsRespondingReschedule(false)
+    }
+  }
+
+  const handleDeclineReschedule = async () => {
+    if (!job) return
+    setIsRespondingReschedule(true)
+    setRescheduleError('')
+    try {
+      await api.patch(`/api/jobs/${job._id}/reschedule-decline`)
+      await fetchJob()
+    } catch (err) {
+      setRescheduleError(err instanceof ApiError ? err.message : 'Failed to decline reschedule.')
+    } finally {
+      setIsRespondingReschedule(false)
+    }
+  }
+
   return (
     <div>
       <div className="mb-6">
@@ -1198,6 +1314,56 @@ export default function JobDetailPage() {
       </div>
 
       {job.status === 'in_scope_review' && <ScopeChangeBanner job={job} />}
+
+      {job.status === 'rescheduled' && (job as any).rescheduleFor && (
+        <div className="mb-5 bg-blue-50 border border-blue-200 rounded-xl p-4 sm:p-5">
+          <div className="flex items-start gap-3">
+            <Calendar className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-blue-800 mb-1">Your tradie requested a reschedule</p>
+              <p className="text-sm text-blue-700 mb-1">
+                New requested time:{' '}
+                <strong>
+                  {new Date((job as any).rescheduleFor).toLocaleString('en-AU', {
+                    weekday: 'long', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+                  })}
+                </strong>
+              </p>
+              {(job as any).rescheduleReason && (
+                <p className="text-xs text-blue-600 bg-blue-100 rounded-lg px-3 py-2 mb-3">
+                  <strong>Reason:</strong> {(job as any).rescheduleReason}
+                </p>
+              )}
+              <p className="text-xs text-blue-500 mb-3">
+                If you don't respond within 24 hours, the reschedule will be auto-approved and a new tradie dispatched.
+              </p>
+              {rescheduleError && (
+                <p className="text-xs text-red-500 mb-2 flex items-center gap-1">
+                  <AlertCircle className="w-3.5 h-3.5" />{rescheduleError}
+                </p>
+              )}
+              <div className="flex flex-col sm:flex-row gap-2">
+                <button
+                  onClick={handleApproveReschedule}
+                  disabled={isRespondingReschedule}
+                  className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
+                >
+                  {isRespondingReschedule ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                  Approve Reschedule
+                </button>
+                <button
+                  onClick={handleDeclineReschedule}
+                  disabled={isRespondingReschedule}
+                  className="flex items-center justify-center gap-2 px-4 py-2 border border-red-300 bg-red-50 hover:bg-red-100 disabled:opacity-50 text-red-600 text-sm font-semibold rounded-xl transition-colors"
+                >
+                  {isRespondingReschedule ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <XCircle className="w-3.5 h-3.5" />}
+                  Decline — Keep Original Schedule
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {job.preferredTime === 'scheduled' && job.scheduledFor && (
         <div className="mb-4 flex items-center gap-2 px-4 py-2.5 bg-blue-50 border border-blue-200 rounded-xl text-sm text-blue-700">

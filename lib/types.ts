@@ -110,12 +110,15 @@ export type JobStatus =
   | 'analyzing'
   | 'quoted'
   | 'payment_pending'
+    | 'scheduled'
+
   | 'dispatching'
   | 'no_tradie_found'
   | 'accepted'
   | 'on_the_way'
   | 'in_progress'
   | 'in_scope_review'
+    | 'rescheduled'
   | 'completed'
   | 'cancelled'
   | 'disputed'
@@ -168,6 +171,12 @@ export interface Job {
   completionOtpExpiry: string | null
 activeScopeChangeId: string | ScopeChange | null
   scopeChangeHistory: (string | ScopeChange)[]
+   rescheduleFor: string | null          
+  rescheduleReason: string | null
+  rescheduleRequestedAt: string | null
+  rescheduleRequestedBy: string | null
+  rescheduleApprovedAt: string | null
+  rescheduleDeclinedAt: string | null
   createdAt: string
   updatedAt: string
 }
@@ -218,7 +227,9 @@ export interface Quote {
   _id: string
   jobId: string
   detectedCategory: string
-  options: QuoteOption[]          
+  options: QuoteOption[]
+    morningOptions: QuoteOption[]   
+          
   selectedTier: SkillLevel | null 
   engine: QuoteEngine
   clientAccepted: boolean | null
