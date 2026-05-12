@@ -164,7 +164,6 @@ function StepDescription({
   )
 }
 
-
 function StepDiagnosticQuestions({
   questions,
   answers,
@@ -553,6 +552,7 @@ function StepTime({
         ))}
       </div>
 
+      {/* Datetime picker — only visible when 'scheduled' is selected */}
       {selected === 'scheduled' && (
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 text-left">
           <label htmlFor="scheduled-time" className="block text-sm font-medium text-[var(--upwork-navy)] mb-2">
@@ -575,6 +575,7 @@ function StepTime({
               Please choose a time at least 5 minutes from now and within 24 hours.
             </p>
           )}
+          {/* Confirm button */}
           <button
             onClick={onScheduledSubmit}
             disabled={!scheduledFor || !scheduledValid}
@@ -608,6 +609,7 @@ function StepAnalyzing() {
   )
 }
 
+// ─── Step 7: Multi-Tier Quote Selection ─────────────────────────────────────────
 
 const TIER_CONFIG: Record<SkillLevel, { label: string; icon: React.ElementType; colorClass: string; bgClass: string; borderClass: string }> = {
   junior: { label: 'Standard', icon: Zap, colorClass: 'text-blue-600', bgClass: 'bg-blue-50', borderClass: 'border-blue-200' },
@@ -635,6 +637,7 @@ function TierCard({
           : `${cfg.borderClass} bg-white hover:border-[var(--upwork-green)] hover:shadow-sm`
         }`}
     >
+      {/* Tier header */}
       <div className="flex items-center justify-between mb-3">
         <div className={`flex items-center gap-2 px-3 py-1 rounded-full ${cfg.bgClass}`}>
           <Icon className={`w-4 h-4 ${cfg.colorClass}`} />
@@ -647,6 +650,7 @@ function TierCard({
         )}
       </div>
 
+      {/* Price */}
       <div className="mb-3">
         <div className="text-2xl font-bold text-[var(--upwork-navy)]">
           ${option.suggestedFixedPrice}
@@ -657,15 +661,18 @@ function TierCard({
         </div>
       </div>
 
+      {/* Hours */}
       <div className="flex items-center gap-1.5 text-sm text-[var(--upwork-gray)] mb-3">
         <Clock className="w-3.5 h-3.5" />
         <span>{option.estimatedHours.min}–{option.estimatedHours.max} hours estimated</span>
       </div>
 
+      {/* AI reasoning */}
       {option.reasoning && (
         <p className="text-xs text-gray-500 leading-relaxed line-clamp-3 mb-3">{option.reasoning}</p>
       )}
 
+      {/* Confidence bar */}
       <div className="flex items-center gap-1.5">
         <div className="flex-1 h-1 bg-gray-100 rounded-full">
           <div
@@ -679,6 +686,7 @@ function TierCard({
   )
 }
 
+// ─── AU timezone map ──────────────────────────────────────────────────────────
 const STATE_TZ: Record<string, string> = {
   NSW: 'Australia/Sydney', ACT: 'Australia/Sydney',
   VIC: 'Australia/Melbourne', TAS: 'Australia/Hobart',
@@ -686,19 +694,28 @@ const STATE_TZ: Record<string, string> = {
   WA: 'Australia/Perth', NT: 'Australia/Darwin',
 }
 
-
+/**
+ * Convert a datetime-local string ("YYYY-MM-DDTHH:MM", no timezone) to a UTC
+ * ISO string, treating the input as a time in the given IANA timezone.
+ * This avoids the bug where `new Date(localStr)` is parsed as browser-local
+ * time (e.g. IST) and shifted into after-hours when converted to Melbourne time.
+ */
 function datetimeLocalToAuISO(localStr: string, tz: string): string {
+  // Step 1: Provisionally treat the string as UTC
   const provisional = new Date(localStr + 'Z')
 
+  // Step 2: Find out what hour/minute that provisional UTC maps to in target TZ
   const dtf = new Intl.DateTimeFormat('en-AU', {
     timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false,
   })
   const [auH, auM] = dtf.format(provisional).split(':').map(Number)
 
+  // Step 3: Compute the delta between what we want (the typed time) and what we got
   const [, timePart] = localStr.split('T')
   const [wantH, wantM] = timePart.split(':').map(Number)
   let diffMinutes = (wantH * 60 + wantM) - (auH * 60 + auM)
 
+  // Step 4: Fix day-boundary wrap (AU is always ahead of UTC)
   if (diffMinutes > 12 * 60)  diffMinutes -= 24 * 60
   if (diffMinutes < -12 * 60) diffMinutes += 24 * 60
 
@@ -731,20 +748,26 @@ function StepQuote({
   const [showSchedulePicker, setShowSchedulePicker] = useState(false)
   const [selectedMorningTier, setSelectedMorningTier] = useState<SkillLevel | null>(null)
 
+  // Selecting a main tier clears the morning tile, and vice versa — only one group active at a time
   const handleSelectMainTier = (tier: SkillLevel) => {
     setSelectedMorningTier(null)
     onSelectTier(tier)
   }
 
+  // Pre-fill with tomorrow 9:00 AM in local browser time (good enough default)
   const getTomorrowNineAM = () => {
     const d = new Date()
     d.setDate(d.getDate() + 1)
     d.setHours(9, 0, 0, 0)
+    // datetime-local format: YYYY-MM-DDTHH:MM
     return d.toISOString().slice(0, 16)
   }
   const [pickedTime, setPickedTime] = useState(getTomorrowNineAM)
 
-  
+  // Determine if the picked time is after-hours (6 PM–6 AM AU time).
+  // datetime-local returns "YYYY-MM-DDTHH:MM" with no timezone, so we read
+  // the hour directly from the string — avoids incorrect offset when the
+  // browser is in a non-AU timezone during testing/development.
   const isPickedTimeAfterHours = (isoTime: string): boolean => {
     try {
       const hour = parseInt(isoTime.split('T')[1]?.split(':')[0] ?? '12', 10)
@@ -756,6 +779,7 @@ function StepQuote({
   const morningOptions = quote.morningOptions || []
   const showRescheduleSection = job.isAfterHours && morningOptions.length > 0
 
+  // Max savings % across all morning options
   const maxSavingsPct = morningOptions.length > 0
     ? Math.max(...morningOptions.map((mo, i) => {
       const ev = quote.options[i]?.suggestedFixedPrice
@@ -776,6 +800,7 @@ function StepQuote({
         </p>
       </div>
 
+      {/* After-hours banner */}
       {job.isAfterHours && (
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-5">
           <Moon className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
@@ -785,6 +810,7 @@ function StepQuote({
         </div>
       )}
 
+      {/* Large project banner */}
       {quote.isLargeProject && (
         <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-5">
           <HelpCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
@@ -797,6 +823,7 @@ function StepQuote({
         </div>
       )}
 
+      {/* Tier selection cards */}
       <div className="space-y-3 mb-5">
         {quote.options.map((opt) => (
           <TierCard
@@ -808,6 +835,7 @@ function StepQuote({
         ))}
       </div>
 
+      {/* Engine badge */}
       <div className="flex justify-center mb-5">
         <span className="text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-500 font-medium">
           {quote.engine === 'gemini' ? 'AI-Powered Estimate' : 'Market Rate Estimate'}
@@ -848,6 +876,7 @@ function StepQuote({
         </button>
       </div>
 
+      {/* ── Schedule for a different time (after-hours only) ─────────────────── */}
       {showRescheduleSection && (
         <div className="border-t border-gray-100 pt-6">
           <div className="flex items-center gap-2 mb-3">
@@ -857,6 +886,7 @@ function StepQuote({
             </span>
           </div>
 
+          {/* Morning tier comparison — only shown when picker is at a standard-rate time */}
           {showSchedulePicker && !pickedIsAfterHours && (
             <div className="space-y-2 mb-4">
               <p className="text-xs text-gray-500 mb-1">Select a tier to book at standard rates:</p>
@@ -870,6 +900,7 @@ function StepQuote({
                     onClick={() => {
                       const next = selectedMorningTier === mo.tier ? null : mo.tier as SkillLevel
                       setSelectedMorningTier(next)
+                      // Clear the main tier selection when a morning tile is picked
                       if (next) onSelectTier(null)
                     }}
                     className={`w-full text-left flex items-center justify-between rounded-xl border-2 px-4 py-3 transition-all ${
@@ -904,6 +935,7 @@ function StepQuote({
             </div>
           )}
 
+          {/* After-hours warning when picker is at an after-hours time */}
           {showSchedulePicker && pickedIsAfterHours && (
             <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
               <Moon className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
@@ -914,6 +946,7 @@ function StepQuote({
             </div>
           )}
 
+          {/* Initial CTA or datetime picker */}
           {!showSchedulePicker ? (
             <button
               onClick={() => setShowSchedulePicker(true)}
@@ -936,6 +969,7 @@ function StepQuote({
               />
               <button
                 onClick={() => {
+                  // Find the selected morning option's price so we pass it directly
                   const mo = morningOptions.find(m => m.tier === selectedMorningTier)
                   onReschedule(pickedTime, selectedMorningTier, mo?.suggestedFixedPrice ?? 0)
                 }}
@@ -968,6 +1002,7 @@ function StepQuote({
 }
 
 
+// ─── Payment Form (must be inside <Elements>) ────────────────────────────────
 
 function PaymentForm({
   amount,
@@ -991,15 +1026,17 @@ function PaymentForm({
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
+        // Redirect URL after 3DS — we handle redirect in the dashboard
         return_url: `${window.location.origin}/dashboard`,
       },
-      redirect: 'if_required',
+      redirect: 'if_required', // Only redirect if 3DS needed
     })
 
     if (error) {
       setPayError(error.message || 'Payment failed. Please try again.')
       setIsConfirming(false)
     } else {
+      // Payment authorized successfully
       onSuccess()
     }
   }
@@ -1051,18 +1088,25 @@ function PaymentForm({
   )
 }
 
+// ═════════════════════════════════════════════════════════════════════════════════
+// MAIN WIZARD
+// ═════════════════════════════════════════════════════════════════════════════════
 
 export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId }: PostJobWizardProps) {
   const router = useRouter()
   const { isAuthenticated, user } = useAuth()
 
+  // State to handle direct jumping from dashboard
   const [isResuming, setIsResuming] = useState(!!existingJobId)
   const [resumeError, setResumeError] = useState('')
 
+  // If category is preselected from landing page, skip step 1
   const hasPreselectedCategory = VALID_CATEGORIES.includes(preselectedCategory as TradieCategory)
+  // If we are resuming an existing job, we target Step 7 (Quote Preview)
   const [currentStep, setCurrentStep] = useState(existingJobId ? 7 : (hasPreselectedCategory ? 2 : 1))
   const totalSteps = 5
 
+  // Form data
   const [category, setCategory] = useState<TradieCategory | ''>(
     hasPreselectedCategory ? (preselectedCategory as TradieCategory) : ''
   )
@@ -1077,26 +1121,32 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [geocodeError, setGeocodeError] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
-  const [scheduledFor, setScheduledFor] = useState('')  
+  const [scheduledFor, setScheduledFor] = useState('')  // ISO datetime string for 'scheduled' jobs
 
+  // Diagnostic questions (Step 2.5)
   const [diagnosticQuestions, setDiagnosticQuestions] = useState<DiagnosticQuestion[]>([])
   const [diagnosticAnswers, setDiagnosticAnswers] = useState<Record<string, string>>({})
   const [isDiagnosticLoading, setIsDiagnosticLoading] = useState(false)
 
+  // Upload
   const [isUploading, setIsUploading] = useState(false)
 
+  // Submission
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
   const [createdQuote, setCreatedQuote] = useState<Quote | null>(null)
 
+  // Multi-tier selection — which tier the client picked on the quote screen
   const [selectedTier, setSelectedTier] = useState<SkillLevel | null>(null)
 
+  // Accept + payment
   const [isAccepting, setIsAccepting] = useState(false)
   const [acceptError, setAcceptError] = useState('')
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [acceptedPrice, setAcceptedPrice] = useState<number>(0)
   const [isRescheduling, setIsRescheduling] = useState(false)
+  // Preload Stripe.js when wizard mounts — ensures it’s ready before step 8
   const [stripeInstance, setStripeInstance] = useState<any>(null)
   useEffect(() => {
     import('@stripe/stripe-js').then(({ loadStripe }) => {
@@ -1106,21 +1156,23 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     })
   }, [])
 
+  // Resume existing job logic
   useEffect(() => {
     if (existingJobId) {
       const loadExistingJob = async () => {
         try {
           const res = await api.get<{ job: Job }>(`/api/jobs/${existingJobId}`)
           setCreatedJob(res.data.job)
+          // The quote is embedded in the populated job object
           if (res.data.job.quote) {
             setCreatedQuote(res.data.job.quote as Quote)
           } else {
             throw new Error('No quote found for this job')
           }
-          setCurrentStep(7) 
+          setCurrentStep(7) // Jump straight to Quote summary screen
         } catch (err) {
           setResumeError('Could not process job quote.')
-          setCurrentStep(1) 
+          setCurrentStep(1) // Drop back to start
         } finally {
           setIsResuming(false)
         }
@@ -1132,15 +1184,17 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const progress = Math.min((currentStep / totalSteps) * 100, 100)
 
+  // ─── Category select (step 1) auto-advances ─────────────────────────────────
 
   const handleCategorySelect = (cat: TradieCategory) => {
     setCategory(cat)
     setCurrentStep(2)
   }
 
+  // ─── Step 2 → 2.5: fetch AI questions after title/description entered ────────────
 
   const handleDescriptionNext = async () => {
-    setCurrentStep(25)   
+    setCurrentStep(25)   // 25 = Step 2.5
     setIsDiagnosticLoading(true)
     try {
       const res = await api.post<{ questions: DiagnosticQuestion[] }>('/api/jobs/preflight-questions', {
@@ -1150,12 +1204,14 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       })
       setDiagnosticQuestions(res.data.questions || [])
     } catch {
+      // If AI call fails, simply show no questions — user skips straight through
       setDiagnosticQuestions([])
     } finally {
       setIsDiagnosticLoading(false)
     }
   }
 
+  // ─── Upload handler ─────────────────────────────────────────────────────────
 
   const handleUploadFiles = useCallback(async (files: FileList) => {
     if (!isAuthenticated) {
@@ -1169,9 +1225,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       const uploaded: JobImage[] = []
 
       for (const file of Array.from(files)) {
+        // 1. Get signed params (POST, not GET)
         const signRes = await api.post<SignedUploadResponse>('/api/uploads/sign', { folder: 'jobs' })
         const signed = signRes.data
 
+        // 2. Upload directly to Cloudinary
         const formData = new FormData()
         formData.append('file', file)
         formData.append('api_key', signed.apiKey)
@@ -1188,6 +1246,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
         const cloudData = await cloudRes.json()
 
+        // 3. Confirm with backend
         await api.post('/api/uploads/confirm', {
           publicId: cloudData.public_id,
           url: cloudData.secure_url,
@@ -1208,6 +1267,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     }
   }, [isAuthenticated, router])
 
+  // ─── Submit job ─────────────────────────────────────────────────────────────
 
   const handleSubmitJob = useCallback(async (timeValue: PreferredTime, scheduledForOverride?: string) => {
     if (!isAuthenticated) {
@@ -1217,12 +1277,16 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
     setIsSubmitting(true)
     setSubmitError('')
-    setCurrentStep(6) 
+    setCurrentStep(6) // Analyzing screen
 
     try {
+      // Use geocoded coords from Step 4; fallback to Melbourne CBD only in dev
       const lat = coords?.lat ?? -37.8136
       const lng = coords?.lng ?? 144.9631
 
+      // scheduledForOverride lets callers pass the time directly to avoid
+      // React async state lag (setScheduledFor is async, so reading scheduledFor
+      // right after setting it would give the old value)
       const resolvedScheduledFor = scheduledForOverride ?? scheduledFor
 
       const res = await api.post<{ job: Job; quote: Quote }>('/api/jobs', {
@@ -1238,8 +1302,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           coordinates: { lat, lng },
         },
         preferredTime: timeValue,
-        diagnosticAnswers,   
-        
+        diagnosticAnswers,   // Send client's property answers to enrich AI quote
+        // Only send scheduledFor when client chose 'scheduled'
         ...(timeValue === 'scheduled' && resolvedScheduledFor
           ? { scheduledFor: new Date(resolvedScheduledFor).toISOString() }
           : {}),
@@ -1247,9 +1311,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
       setCreatedJob(res.data.job)
       setCreatedQuote(res.data.quote)
-      setCurrentStep(7)
+      setCurrentStep(7) // Quote screen
     } catch (err) {
-      setCurrentStep(5) 
+      setCurrentStep(5) // Go back
       if (err instanceof ApiError) {
         setSubmitError(err.message)
       } else {
@@ -1260,6 +1324,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     }
   }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState, coords, scheduledFor, diagnosticAnswers])
 
+  // ─── Accept quote ───────────────────────────────────────────────────────────
 
   const handleAcceptQuote = useCallback(async () => {
     if (!createdJob || !selectedTier) return
@@ -1269,16 +1334,17 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     try {
       const res = await api.post<{ job: Job; payment: unknown; clientSecret: string }>(
         `/api/jobs/${createdJob._id}/accept-quote`,
-        { tier: selectedTier }   
+        { tier: selectedTier }   // Send selected tier to backend
       )
       const secret = res.data.clientSecret
       if (!secret) throw new Error('No client secret returned from server')
 
+      // Store the final price for display on payment screen
       const selectedOption = createdQuote?.options.find(o => o.tier === selectedTier)
       setAcceptedPrice(selectedOption?.suggestedFixedPrice ?? 0)
 
       setClientSecret(secret)
-      setCurrentStep(8) 
+      setCurrentStep(8) // Payment step
     } catch (err) {
       if (err instanceof ApiError) {
         setAcceptError(err.message)
@@ -1291,17 +1357,22 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   }, [createdJob, selectedTier])
 
 
+  // ─── Cancel job ─────────────────────────────────────────────────────────────
 
   const handleCancelJob = useCallback(async () => {
     if (!createdJob) return
     try {
       await api.patch(`/api/jobs/${createdJob._id}/cancel`)
     } catch {
+      // Silent
     }
     router.back()
   }, [createdJob, router])
 
- 
+  // ─── Reschedule to a different time ─────────────────────────────────────────
+  // Accepts the EXISTING job at the morning option price.
+  // No cancel, no new job creation, no AI re-run.
+  // → Straight to payment at the exact price shown in the morning tiles.
 
   const handleRescheduleToScheduled = useCallback(async (isoTime: string, tier: SkillLevel | null, price: number) => {
     console.log('[Reschedule] Calling handleRescheduleToScheduled:', { isoTime, tier, price })
@@ -1318,7 +1389,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         STATE_TZ[(createdJob.location as any)?.state?.toUpperCase?.()] ?? 'Australia/Sydney'
       )
 
-     
+      // Accept the existing quoted job:
+      //  - scheduledFor  → backend updates job.scheduledFor + preferredTime
+      //  - priceOverride → backend uses the morning option price (not after-hours price)
+      // No new job is created. No AI recalculation.
       const acceptRes = await api.post<{ clientSecret: string }>(
         `/api/jobs/${createdJob._id}/accept-quote`,
         { tier, scheduledFor: auISO, priceOverride: price }
@@ -1327,9 +1401,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       if (!secret) throw new Error('No client secret returned.')
 
       setSelectedTier(tier)
-      setAcceptedPrice(price) 
+      setAcceptedPrice(price) // Use the morning option price specifically
       setClientSecret(secret)
-      setCurrentStep(8) 
+      setCurrentStep(8) // → Payment at the exact morning option price, no detours
 
     } catch (err) {
       setAcceptError(err instanceof ApiError ? err.message : 'Failed to book at standard rates. Please try again.')
@@ -1338,10 +1412,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     }
   }, [createdJob])
 
+  // ─── Navigation ─────────────────────────────────────────────────────────────
 
   const handleBack = () => {
     if (currentStep === 25) {
-      setCurrentStep(2)  
+      setCurrentStep(2)  // Step 2.5 → back to Step 2 (description)
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     } else {
@@ -1351,6 +1426,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const handleTimeSelect = (val: PreferredTime) => {
     setPreferredTime(val)
+    // 'scheduled' needs a time picker before submitting — do not auto-submit
     if (val !== 'scheduled') {
       handleSubmitJob(val)
     }
@@ -1369,30 +1445,62 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       case 'postcode': setPostcode(value); break
       case 'state': setLocationState(value); break
     }
+    // Clear cached coords when address changes
     setCoords(null)
     setGeocodeError('')
   }
 
+  // ─── Geocode on location step Next ──────────────────────────────────────────
 
   const handleLocationNext = async () => {
     setIsGeocoding(true)
     setGeocodeError('')
     try {
-      const q = encodeURIComponent(`${address}, ${suburb} ${postcode} ${locationState}, Australia`)
+      // Strip unit/apartment/lot prefixes for geocoding — they confuse Nominatim
+      // but the full address (with unit) is still stored on the job for the tradie.
+      const streetForGeocode = address
+        .replace(/^(unit|apt|apartment|suite|lot|flat|shop|level)\s*\d+[a-z]?\s*[,/\\-]?\s*/i, '')
+        .replace(/^\d+\s*[/\\-]\s*/, '') // also handle "2/20 Vincent Cres" format
+        .trim()
+
+      // Attempt 1: free-text query with cleaned street
+      const q = encodeURIComponent(`${streetForGeocode}, ${suburb} ${postcode} ${locationState}, Australia`)
       const res = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1&countrycodes=au`,
         { headers: { 'User-Agent': 'FixesApp/1.0' } }
       )
       const data = await res.json()
+
       if (data.length > 0) {
         setCoords({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) })
       } else {
-        console.warn('[Geocode] Address not found, dispatch radius will use fallback coords')
-        setGeocodeError('Could not locate this address — please double-check the details.')
-        setIsGeocoding(false)
-        return 
+        // Attempt 2: structured query — more tolerant of partial matches
+        const structured = new URLSearchParams({
+          street: streetForGeocode,
+          city: suburb,
+          state: locationState,
+          postalcode: postcode,
+          country: 'Australia',
+          format: 'json',
+          limit: '1',
+        })
+        const res2 = await fetch(
+          `https://nominatim.openstreetmap.org/search?${structured}`,
+          { headers: { 'User-Agent': 'FixesApp/1.0' } }
+        )
+        const data2 = await res2.json()
+
+        if (data2.length > 0) {
+          setCoords({ lat: parseFloat(data2[0].lat), lng: parseFloat(data2[0].lon) })
+        } else {
+          console.warn('[Geocode] Address not found after 2 attempts')
+          setGeocodeError('Could not locate this address — please double-check the details.')
+          setIsGeocoding(false)
+          return
+        }
       }
     } catch {
+      // Network error — still advance, job creation will use fallback
       console.warn('[Geocode] Nominatim unreachable, using fallback coords')
     } finally {
       setIsGeocoding(false)
@@ -1400,7 +1508,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     setCurrentStep(5)
   }
 
+  // ─── Early return blocks must go strictly AFTER all hooks are defined ───────
 
+  // Email verification gate — clients must verify before posting
   if (isAuthenticated && user?.role === 'client' && !user?.isEmailVerified) {
     return (
       <div className="min-h-screen bg-[#f9faf9] flex items-center justify-center px-4">
@@ -1457,6 +1567,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     )
   }
 
+  // ─── Analyzing screen (no header) ───────────────────────────────────────────
 
   if (currentStep === 6) {
     return (
@@ -1466,6 +1577,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     )
   }
 
+  // ─── Quote screen ───────────────────────────────────────────────────────────
 
   if (currentStep === 7 && createdQuote && createdJob) {
     return (
@@ -1495,6 +1607,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     )
   }
 
+  // ─── Payment screen ─────────────────────────────────────────────────────────
 
   if (currentStep === 8 && clientSecret && createdQuote) {
     return (
@@ -1551,9 +1664,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     )
   }
 
+  // ─── Standard wizard ────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-[#f2f7f2] to-white">
+      {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4 flex items-center justify-between">
           <button
@@ -1575,6 +1690,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         </div>
       </header>
 
+      {/* Error */}
       {submitError && (
         <div className="max-w-4xl mx-auto px-4 lg:px-6 mt-6">
           <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -1584,6 +1700,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         </div>
       )}
 
+      {/* Content */}
       <main className="max-w-4xl mx-auto px-4 lg:px-6 py-12 md:py-20">
         {currentStep === 1 && (
           <StepCategory
