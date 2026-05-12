@@ -23,6 +23,7 @@ import {
   Moon,
   Sunrise,
   Calendar,
+  HelpCircle,
 } from 'lucide-react'
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useAuth } from '@/contexts/auth-context'
@@ -38,6 +39,8 @@ import type {
   PreferredTime,
   SignedUploadResponse,
   JobImage,
+  DiagnosticQuestion,
+  PreflightQuestionsResponse,
 } from '@/lib/types'
 
 interface PostJobWizardProps {
@@ -157,6 +160,126 @@ function StepDescription({
       >
         Next
       </button>
+    </div>
+  )
+}
+
+
+function StepDiagnosticQuestions({
+  questions,
+  answers,
+  onAnswerChange,
+  onNext,
+  isLoading,
+  categoryLabel,
+}: {
+  questions: DiagnosticQuestion[]
+  answers: Record<string, string>
+  onAnswerChange: (questionId: string, answer: string) => void
+  onNext: () => void
+  isLoading: boolean
+  categoryLabel: string
+}) {
+  const answeredCount = Object.keys(answers).length
+  const totalQuestions = questions.length
+  const canProceed = !isLoading 
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="text-center mb-8">
+        <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <HelpCircle className="w-7 h-7 text-[var(--upwork-green)]" />
+        </div>
+        {categoryLabel && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[var(--upwork-green)] text-sm font-medium rounded-full mb-3">
+            <Check className="w-3.5 h-3.5" />
+            {categoryLabel}
+          </span>
+        )}
+        <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] mb-2">
+          A few quick questions
+        </h1>
+        <p className="text-[var(--upwork-gray)] text-sm">
+          These help our AI give you a more accurate price estimate.
+          All questions are optional — answer what you can.
+        </p>
+      </div>
+
+      {isLoading ? (
+        <div className="flex flex-col items-center gap-4 py-16">
+          <Loader2 className="w-8 h-8 text-[var(--upwork-green)] animate-spin" />
+          <p className="text-sm text-[var(--upwork-gray)]">Preparing your questions…</p>
+        </div>
+      ) : questions.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-[var(--upwork-gray)] text-sm mb-6">No additional questions needed for this job.</p>
+          <button
+            onClick={onNext}
+            className="inline-flex items-center gap-2 bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] text-white font-medium py-3 px-8 rounded-xl transition-colors"
+          >
+            Continue <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between text-xs text-[var(--upwork-gray)] mb-6">
+            <span>{answeredCount} of {totalQuestions} answered</span>
+            <span className="text-[var(--upwork-green)] font-medium">All optional</span>
+          </div>
+
+          <div className="space-y-6">
+            {questions.map((q, idx) => (
+              <div
+                key={q.id}
+                className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm"
+              >
+                <p className="text-sm font-semibold text-[var(--upwork-navy)] mb-3">
+                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--upwork-green)] text-white text-xs font-bold mr-2">
+                    {idx + 1}
+                  </span>
+                  {q.text}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {q.options.map((opt) => {
+                    const selected = answers[q.id] === opt
+                    return (
+                      <button
+                        key={opt}
+                        onClick={() => onAnswerChange(q.id, selected ? '' : opt)}
+                        className={`px-3 py-2.5 rounded-xl text-sm font-medium border transition-all text-left ${
+                          selected
+                            ? 'bg-[var(--upwork-green)] border-[var(--upwork-green)] text-white shadow-sm'
+                            : 'bg-gray-50 border-gray-200 text-[var(--upwork-navy)] hover:border-[var(--upwork-green)] hover:bg-green-50'
+                        }`}
+                      >
+                        {selected && <Check className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />}
+                        {opt}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <button
+              onClick={onNext}
+              disabled={!canProceed}
+              className="w-full max-w-sm bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              Continue to Photos
+              <ChevronRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onNext}
+              className="text-sm text-[var(--upwork-gray)] hover:text-[var(--upwork-navy)] underline underline-offset-2 transition-colors"
+            >
+              Skip all questions
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }
@@ -621,6 +744,7 @@ function StepQuote({
   }
   const [pickedTime, setPickedTime] = useState(getTomorrowNineAM)
 
+  
   const isPickedTimeAfterHours = (isoTime: string): boolean => {
     try {
       const hour = parseInt(isoTime.split('T')[1]?.split(':')[0] ?? '12', 10)
@@ -658,6 +782,18 @@ function StepQuote({
           <p className="text-sm text-amber-700">
             After-hours pricing applied — tradies working after 6pm receive a surcharge for evening availability.
           </p>
+        </div>
+      )}
+
+      {quote.isLargeProject && (
+        <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-5">
+          <HelpCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-blue-800 mb-0.5">Large project — includes materials &amp; equipment</p>
+            <p className="text-xs text-blue-600">
+              This estimate includes estimated equipment and material costs. The final price may be adjusted after your tradie completes an on-site inspection.
+            </p>
+          </div>
         </div>
       )}
 
@@ -857,7 +993,7 @@ function PaymentForm({
       confirmParams: {
         return_url: `${window.location.origin}/dashboard`,
       },
-      redirect: 'if_required', 
+      redirect: 'if_required',
     })
 
     if (error) {
@@ -941,7 +1077,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [geocodeError, setGeocodeError] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
-  const [scheduledFor, setScheduledFor] = useState('')  // ISO datetime string for 'scheduled' jobs
+  const [scheduledFor, setScheduledFor] = useState('')  
+
+  const [diagnosticQuestions, setDiagnosticQuestions] = useState<DiagnosticQuestion[]>([])
+  const [diagnosticAnswers, setDiagnosticAnswers] = useState<Record<string, string>>({})
+  const [isDiagnosticLoading, setIsDiagnosticLoading] = useState(false)
 
   const [isUploading, setIsUploading] = useState(false)
 
@@ -996,6 +1136,24 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const handleCategorySelect = (cat: TradieCategory) => {
     setCategory(cat)
     setCurrentStep(2)
+  }
+
+
+  const handleDescriptionNext = async () => {
+    setCurrentStep(25)   
+    setIsDiagnosticLoading(true)
+    try {
+      const res = await api.post<{ questions: DiagnosticQuestion[] }>('/api/jobs/preflight-questions', {
+        title,
+        description,
+        category: category || 'other',
+      })
+      setDiagnosticQuestions(res.data.questions || [])
+    } catch {
+      setDiagnosticQuestions([])
+    } finally {
+      setIsDiagnosticLoading(false)
+    }
   }
 
 
@@ -1065,7 +1223,6 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       const lat = coords?.lat ?? -37.8136
       const lng = coords?.lng ?? 144.9631
 
-    
       const resolvedScheduledFor = scheduledForOverride ?? scheduledFor
 
       const res = await api.post<{ job: Job; quote: Quote }>('/api/jobs', {
@@ -1081,6 +1238,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           coordinates: { lat, lng },
         },
         preferredTime: timeValue,
+        diagnosticAnswers,   
+        
         ...(timeValue === 'scheduled' && resolvedScheduledFor
           ? { scheduledFor: new Date(resolvedScheduledFor).toISOString() }
           : {}),
@@ -1088,7 +1247,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
       setCreatedJob(res.data.job)
       setCreatedQuote(res.data.quote)
-      setCurrentStep(7) 
+      setCurrentStep(7)
     } catch (err) {
       setCurrentStep(5) 
       if (err instanceof ApiError) {
@@ -1099,7 +1258,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     } finally {
       setIsSubmitting(false)
     }
-  }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState, coords, scheduledFor])
+  }, [isAuthenticated, router, title, description, category, images, address, suburb, postcode, locationState, coords, scheduledFor, diagnosticAnswers])
 
 
   const handleAcceptQuote = useCallback(async () => {
@@ -1138,12 +1297,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     try {
       await api.patch(`/api/jobs/${createdJob._id}/cancel`)
     } catch {
-      // Silent
     }
     router.back()
   }, [createdJob, router])
 
-
+ 
 
   const handleRescheduleToScheduled = useCallback(async (isoTime: string, tier: SkillLevel | null, price: number) => {
     console.log('[Reschedule] Calling handleRescheduleToScheduled:', { isoTime, tier, price })
@@ -1182,7 +1340,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
 
   const handleBack = () => {
-    if (currentStep > 1) {
+    if (currentStep === 25) {
+      setCurrentStep(2)  
+    } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     } else {
       router.back()
@@ -1404,7 +1564,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             Back
           </button>
           <span className="text-sm text-[var(--upwork-gray)]">
-            Step {currentStep} of {totalSteps}
+            Step {currentStep === 25 ? '2.5' : currentStep} of {totalSteps}
           </span>
         </div>
         <div className="h-1 bg-gray-200">
@@ -1439,7 +1599,18 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             title={title}
             onTitleChange={setTitle}
             categoryLabel={category ? CATEGORY_LABELS[category] : ''}
+            onNext={handleDescriptionNext}
+          />
+        )}
+
+        {currentStep === 25 && (
+          <StepDiagnosticQuestions
+            questions={diagnosticQuestions}
+            answers={diagnosticAnswers}
+            onAnswerChange={(qId, ans) => setDiagnosticAnswers(prev => ({ ...prev, [qId]: ans }))}
             onNext={() => setCurrentStep(3)}
+            isLoading={isDiagnosticLoading}
+            categoryLabel={category ? CATEGORY_LABELS[category] : ''}
           />
         )}
 

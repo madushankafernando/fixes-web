@@ -110,15 +110,14 @@ export type JobStatus =
   | 'analyzing'
   | 'quoted'
   | 'payment_pending'
-    | 'scheduled'
-
+  | 'scheduled'
   | 'dispatching'
   | 'no_tradie_found'
   | 'accepted'
   | 'on_the_way'
   | 'in_progress'
   | 'in_scope_review'
-    | 'rescheduled'
+  | 'rescheduled'
   | 'completed'
   | 'cancelled'
   | 'disputed'
@@ -160,7 +159,7 @@ export interface Job {
   scheduledFor: string | null
   status: JobStatus
   selectedTier: SkillLevel | null  
-  isAfterHours: boolean           
+  isAfterHours: boolean            
   quote: string | Quote | null
   assignedTradieId: string | User | null
   payment: string | null
@@ -169,14 +168,15 @@ export interface Job {
   disputeId?: string | null
   completedAt: string | null
   completionOtpExpiry: string | null
-activeScopeChangeId: string | ScopeChange | null
+  activeScopeChangeId: string | ScopeChange | null
   scopeChangeHistory: (string | ScopeChange)[]
-   rescheduleFor: string | null          
+  rescheduleFor: string | null          
   rescheduleReason: string | null
   rescheduleRequestedAt: string | null
   rescheduleRequestedBy: string | null
   rescheduleApprovedAt: string | null
   rescheduleDeclinedAt: string | null
+  diagnosticAnswers: Record<string, string>
   createdAt: string
   updatedAt: string
 }
@@ -204,6 +204,7 @@ export interface ScopeChange {
 
 
 
+
 export type SkillLevel = 'junior' | 'senior' | 'specialist'
 export type QuoteEngine = 'gemini' | 'gemini-custom-ml' | 'rule_based' | 'placeholder'
 
@@ -227,11 +228,11 @@ export interface Quote {
   _id: string
   jobId: string
   detectedCategory: string
-  options: QuoteOption[]
-    morningOptions: QuoteOption[]   
-          
+  options: QuoteOption[]          
+  morningOptions: QuoteOption[]   
   selectedTier: SkillLevel | null 
   engine: QuoteEngine
+  isLargeProject: boolean        
   clientAccepted: boolean | null
   respondedAt: string | null
   createdAt: string
@@ -243,10 +244,73 @@ export interface CancelJobResponse {
   cancellationFeeAmount: number   
   tradiePayout: number      
   platformRevenue: number   
-  refundAmount: number      
+  refundAmount: number    
   currency: 'AUD'
 }
 
+
+
+export interface DiagnosticQuestion {
+  id: string
+  text: string
+  options: string[]
+}
+
+export interface PreflightQuestionsResponse {
+  questions: DiagnosticQuestion[]
+}
+
+
+export interface ScopeChangePreviewResponse {
+  originalPrice: number
+  estimatedNewPrice: number
+  priceDifference: number              
+  direction: 'increase' | 'decrease' | 'unchanged'
+  reasoning: string
+  confidence: number                   
+}
+
+
+export type AiEngine = 'gemini' | 'gemini-custom-ml' | 'rule_based' | 'placeholder'
+
+export interface TierPriceSnapshot {
+  tier: SkillLevel
+  price: number  
+}
+
+export interface AiAnalysisLog {
+  _id: string
+  jobId: string
+  inputTitle: string
+  inputCategory: string
+  inputLocation: { suburb: string; state: string }
+  imageCount: number
+  isAfterHours?: boolean
+  isScopeChange: boolean
+  success: boolean
+  engine: AiEngine
+  outputCategory: string | null
+  outputPriceMin: number | null
+  outputPriceMax: number | null
+  outputFixedPrice: number | null
+  outputConfidence: number | null
+  outputReasoning: string | null
+  modelVersion: string | null
+  latencyMs: number | null
+  finishReason: string | null
+  tokensIn: number | null
+  tokensOut: number | null
+  tokensTotal: number | null
+  rawOutputPreview: string | null
+  thinkingSteps: string[]
+  allTierPrices: TierPriceSnapshot[]
+  diagnosticAnswersUsed: boolean
+  partsDetected: string[]             
+  errorMessage: string | null
+  safetyRatings: Array<{ category: string; probability: string }>
+  createdAt: string
+  updatedAt: string
+}
 
 
 export type MessageType = 'text' | 'image' | 'system'
@@ -402,28 +466,3 @@ export interface TradieLocationUpdatePayload {
   updatedAt: number
 }
 
-
-export interface AdminStats {
-  users: { total: number; clients: number; tradies: number }
-  jobs: { total: number; completed: number; cancelled: number; active: number }
-  tradies: { pendingVerification: number; fullyVerified: number }
-  revenue: {
-    totalRevenue: number
-    platformFee: number
-    tradieEarnings: number
-    completedPayments: number
-  }
-}
-
-export interface AdminUserDetail {
-  user: User
-  profile: TradieProfile | null
-  recentJobs: Job[]
-}
-
-
-export interface ReviewStats {
-  average: number
-  total: number
-  breakdown: Record<number, number>
-}
