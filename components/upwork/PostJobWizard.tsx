@@ -96,6 +96,9 @@ function StepDescription({
   onTitleChange,
   categoryLabel,
   onNext,
+  classifySuggestion,
+  onSwitchCategory,
+  onDismissClassify,
 }: {
   description: string
   onDescriptionChange: (val: string) => void
@@ -103,6 +106,9 @@ function StepDescription({
   onTitleChange: (val: string) => void
   categoryLabel: string
   onNext: () => void
+  classifySuggestion?: { suggestedCategory: TradieCategory; confidence: number; reason: string } | null
+  onSwitchCategory?: (cat: TradieCategory) => void
+  onDismissClassify?: () => void
 }) {
   return (
     <div className="max-w-2xl mx-auto">
@@ -153,6 +159,33 @@ function StepDescription({
         />
         <p className="text-xs text-gray-400 mt-1 text-right">{description.length}/2000</p>
       </div>
+
+      {classifySuggestion && (
+        <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-5">
+          <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm text-amber-800">
+              This sounds like a <strong>{CATEGORY_LABELS[classifySuggestion.suggestedCategory]}</strong> job. Switch category?
+            </p>
+            <div className="flex gap-2 mt-2">
+              <button
+                type="button"
+                onClick={() => onSwitchCategory?.(classifySuggestion.suggestedCategory)}
+                className="text-xs font-medium px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white transition-colors"
+              >
+                Switch to {CATEGORY_LABELS[classifySuggestion.suggestedCategory]}
+              </button>
+              <button
+                type="button"
+                onClick={onDismissClassify}
+                className="text-xs font-medium px-3 py-1.5 rounded-lg border border-amber-300 text-amber-700 hover:bg-amber-100 transition-colors"
+              >
+                Keep {categoryLabel || 'current'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <button
         onClick={onNext}
@@ -1197,12 +1230,41 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [diagnosticAnswers, setDiagnosticAnswers] = useState<Record<string, string>>({})
   const [isDiagnosticLoading, setIsDiagnosticLoading] = useState(false)
 
+  const [classifySuggestion, setClassifySuggestion] = useState<{
+    suggestedCategory: TradieCategory
+    confidence: number
+    reason: string
+  } | null>(null)
+  const [classifyDismissed, setClassifyDismissed] = useState(false)
+
   const [isUploading, setIsUploading] = useState(false)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
   const [createdQuote, setCreatedQuote] = useState<Quote | null>(null)
+
+ 
+  useEffect(() => {
+    if (currentStep !== 2 || !title || title.trim().length < 5) return
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api.post<{ suggestedCategory: TradieCategory; confidence: number; reason: string }>(
+          '/api/jobs/classify',
+          { title, description }
+        )
+        const { suggestedCategory, confidence } = res.data
+        if (confidence > 0.8 && suggestedCategory && suggestedCategory !== category) {
+          setClassifySuggestion(res.data)
+          setClassifyDismissed(false)
+        } else {
+          setClassifySuggestion(null)
+        }
+      } catch {
+      }
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [title, description, currentStep]) // eslint-disable-line
 
   const [selectedTier, setSelectedTier] = useState<SkillLevel | null>(null)
 
@@ -1267,7 +1329,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         title,
         description,
         category: category || 'other',
-        imageUrls: images.map(img => img.url), 
+        imageUrls: images.map(img => img.url),  
       })
       setDiagnosticQuestions(res.data.questions || [])
     } catch {
@@ -1344,7 +1406,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       const lat = coords?.lat ?? -37.8136
       const lng = coords?.lng ?? 144.9631
 
-     
+      
       const resolvedScheduledFor = scheduledForOverride ?? scheduledFor
 
       
@@ -1472,9 +1534,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const handleBack = () => {
     if (currentStep === 25) {
-      setCurrentStep(3) 
+      setCurrentStep(3)  
     } else if (currentStep === 4) {
-      setCurrentStep(25)  
+      setCurrentStep(25) 
     } else if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     } else {
@@ -1772,6 +1834,13 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             onTitleChange={setTitle}
             categoryLabel={category ? CATEGORY_LABELS[category] : ''}
             onNext={handleDescriptionNext}
+            classifySuggestion={!classifyDismissed ? classifySuggestion : null}
+            onSwitchCategory={(cat) => {
+              setCategory(cat)
+              setClassifySuggestion(null)
+              setClassifyDismissed(true)
+            }}
+            onDismissClassify={() => setClassifyDismissed(true)}
           />
         )}
 

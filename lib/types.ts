@@ -178,6 +178,7 @@ export interface Job {
   rescheduleApprovedAt: string | null
   rescheduleDeclinedAt: string | null
   diagnosticAnswers: Record<string, string>
+  completionFeedback?: { submittedAt: string | null } | null
   createdAt: string
   updatedAt: string
 }
@@ -250,7 +251,13 @@ export interface CancelJobResponse {
   currency: 'AUD'
 }
 
-
+export interface CompletionFeedback {
+  actualHours: number | null
+  actualMaterialCost: number | null
+  quoteAccuracy: 'too_low' | 'about_right' | 'too_high' | null
+  notes: string | null
+  submittedAt: string | null
+}
 
 export interface DiagnosticQuestion {
   id: string
@@ -310,6 +317,7 @@ export interface AiAnalysisLog {
   partsDetected: string[]             
   errorMessage: string | null
   safetyRatings: Array<{ category: string; probability: string }>
+  completionFeedback?: CompletionFeedback | null
   createdAt: string
   updatedAt: string
 }
