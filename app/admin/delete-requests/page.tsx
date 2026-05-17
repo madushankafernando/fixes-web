@@ -54,11 +54,11 @@ export default function DeleteRequestsPage() {
     try {
       const qs = new URLSearchParams({ limit: '50' })
       if (status !== 'all') qs.set('status', status)
-      const res = await api.get<ApiResult>(`/api/admin/delete-requests?${qs}`)
+      const res = await api.raw<ApiResult>(`/api/admin/delete-requests?${qs}`)
       
-      const list = Array.isArray(res.data.data) ? res.data.data : []
+      const list = Array.isArray(res.data) ? res.data : []
       setRequests(list)
-      setTotal(res.data.pagination?.total || 0)
+      setTotal(res.pagination?.total || 0)
     } catch { /* silent */ } finally {
       setLoading(false)
     }
@@ -76,12 +76,11 @@ export default function DeleteRequestsPage() {
     
     setUpdating(id)
     try {
-      await api.patch(`/api/admin/delete-requests/${id}/${newStatus}`)
-      setRequests(prev =>
-        prev.map(r => r._id === id ? { ...r, status: newStatus as DeleteRequest['status'] } : r)
-      )
+      const endpointAction = newStatus === 'approved' ? 'approve' : 'reject'
+      await api.patch(`/api/admin/delete-requests/${id}/${endpointAction}`)
+      setRequests(prev => prev.map(r => r._id === id ? { ...r, status: newStatus } : r))
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to update request')
+      alert(err.message || 'Failed to update request')
     } finally {
       setUpdating(null)
     }
