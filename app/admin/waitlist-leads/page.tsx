@@ -8,6 +8,7 @@ interface WaitlistLead {
   _id: string
   name: string
   email: string
+  phone?: string
   suburb: string
   postcode: string
   type: 'client' | 'tradie'
@@ -45,7 +46,8 @@ export default function WaitlistLeadsPage() {
   }, [page, typeFilter, search])
 
   const handleExport = () => {
-    const headers = ['Name', 'Email', 'Type', 'Suburb', 'Postcode', 'Status', 'Date Joined', 'Q1', 'A1', 'Q2', 'A2', 'Q3', 'A3', 'Q4', 'A4', 'Q5', 'A5']
+    // Generate CSV including Questionnaire Data
+    const headers = ['Name', 'Email', 'Phone', 'Type', 'Suburb', 'Postcode', 'Status', 'Date Joined', 'Q1', 'A1', 'Q2', 'A2', 'Q3', 'A3', 'Q4', 'A4', 'Q5', 'A5']
     const csvContent = [
       headers.join(','),
       ...leads.map(lead => {
@@ -55,11 +57,13 @@ export default function WaitlistLeadsPage() {
           `"${(q.answer || '').replace(/"/g, '""')}"`
         ])
         
+        // Pad to exactly 10 columns (5 questions * 2 fields) if missing
         while (qFields.length < 10) qFields.push('""')
         
         return [
           `"${lead.name}"`,
           `"${lead.email}"`,
+          `"${lead.phone || ''}"`,
           lead.type,
           `"${lead.suburb}"`,
           lead.postcode,
@@ -99,6 +103,7 @@ export default function WaitlistLeadsPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Filters and Search */}
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row gap-4 justify-between items-center bg-gray-50/50">
           <div className="flex items-center bg-white border border-gray-200 rounded-lg p-1 w-full sm:w-auto">
             <button
@@ -133,6 +138,7 @@ export default function WaitlistLeadsPage() {
           </div>
         </div>
 
+        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
@@ -167,6 +173,7 @@ export default function WaitlistLeadsPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <p className="font-medium text-gray-900">{lead.name}</p>
                         <p className="text-xs text-gray-500 mt-0.5">{lead.email}</p>
+                        {lead.phone && <p className="text-xs text-gray-400 mt-0.5">{lead.phone}</p>}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
@@ -211,6 +218,7 @@ export default function WaitlistLeadsPage() {
                       </td>
                     </tr>
                     
+                    {/* Expandable Questionnaire Row */}
                     {expandedLead === lead._id && lead.questionnaire && lead.questionnaire.length > 0 && (
                       <tr className="bg-[#f8fafc]">
                         <td colSpan={5} className="px-6 py-6 border-b border-gray-100 shadow-inner">
@@ -240,6 +248,7 @@ export default function WaitlistLeadsPage() {
           </table>
         </div>
 
+        {/* Pagination */}
         {!loading && leads.length > 0 && (
           <div className="px-6 py-4 border-t border-gray-200 bg-gray-50/50 flex items-center justify-between">
             <p className="text-sm text-gray-500">
