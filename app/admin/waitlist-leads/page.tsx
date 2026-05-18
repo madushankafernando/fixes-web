@@ -12,6 +12,8 @@ interface WaitlistLead {
   suburb: string
   postcode: string
   type: 'client' | 'tradie'
+    tradeCategory?: string
+
   status: string
   createdAt: string
   questionnaire?: { question: string; answer: string }[]
@@ -45,9 +47,21 @@ export default function WaitlistLeadsPage() {
     fetchLeads(page, typeFilter, search)
   }, [page, typeFilter, search])
 
+   const CATEGORY_LABELS: Record<string, string> = {
+    electrical: 'Electrical',
+    plumbing: 'Plumbing',
+    hvac: 'HVAC / Air Conditioning',
+    plastering: 'Plastering',
+    painting: 'Painting',
+    flooring: 'Flooring',
+    carpentry: 'Carpentry',
+    emergency_make_safe: 'Emergency Make Safe',
+    general_labourer: 'General Labourer',
+    other: 'Other Trade',
+  }
+
   const handleExport = () => {
-    // Generate CSV including Questionnaire Data
-    const headers = ['Name', 'Email', 'Phone', 'Type', 'Suburb', 'Postcode', 'Status', 'Date Joined', 'Q1', 'A1', 'Q2', 'A2', 'Q3', 'A3', 'Q4', 'A4', 'Q5', 'A5']
+    const headers = ['Name', 'Email', 'Phone', 'Type', 'Trade Category', 'Suburb', 'Postcode', 'Status', 'Date Joined', 'Q1', 'A1', 'Q2', 'A2', 'Q3', 'A3', 'Q4', 'A4', 'Q5', 'A5']
     const csvContent = [
       headers.join(','),
       ...leads.map(lead => {
@@ -57,7 +71,6 @@ export default function WaitlistLeadsPage() {
           `"${(q.answer || '').replace(/"/g, '""')}"`
         ])
         
-        // Pad to exactly 10 columns (5 questions * 2 fields) if missing
         while (qFields.length < 10) qFields.push('""')
         
         return [
@@ -65,6 +78,8 @@ export default function WaitlistLeadsPage() {
           `"${lead.email}"`,
           `"${lead.phone || ''}"`,
           lead.type,
+                    `"${lead.tradeCategory ? (CATEGORY_LABELS[lead.tradeCategory] || lead.tradeCategory) : ''}"`  ,
+
           `"${lead.suburb}"`,
           lead.postcode,
           lead.status,
@@ -103,7 +118,6 @@ export default function WaitlistLeadsPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        {/* Filters and Search */}
         <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row gap-4 justify-between items-center bg-gray-50/50">
           <div className="flex items-center bg-white border border-gray-200 rounded-lg p-1 w-full sm:w-auto">
             <button
@@ -138,7 +152,6 @@ export default function WaitlistLeadsPage() {
           </div>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-600">
             <thead className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
@@ -183,6 +196,11 @@ export default function WaitlistLeadsPage() {
                         }`}>
                           {lead.type === 'tradie' ? 'Tradie' : 'Client'}
                         </span>
+                        {lead.type === 'tradie' && lead.tradeCategory && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {CATEGORY_LABELS[lead.tradeCategory] || lead.tradeCategory}
+                          </p>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <p className="text-gray-700">{lead.suburb}</p>
@@ -218,7 +236,6 @@ export default function WaitlistLeadsPage() {
                       </td>
                     </tr>
                     
-                    {/* Expandable Questionnaire Row */}
                     {expandedLead === lead._id && lead.questionnaire && lead.questionnaire.length > 0 && (
                       <tr className="bg-[#f8fafc]">
                         <td colSpan={5} className="px-6 py-6 border-b border-gray-100 shadow-inner">
@@ -248,7 +265,6 @@ export default function WaitlistLeadsPage() {
           </table>
         </div>
 
-        {/* Pagination */}
         {!loading && leads.length > 0 && (
           <div className="px-6 py-4 border-t border-gray-200 bg-gray-50/50 flex items-center justify-between">
             <p className="text-sm text-gray-500">
