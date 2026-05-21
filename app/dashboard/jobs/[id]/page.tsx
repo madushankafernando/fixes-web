@@ -901,7 +901,7 @@ export default function JobDetailPage() {
   const [tradieLocation, setTradieLocation] = useState<{ lat: number; lng: number } | null>(null)
 
   const [dispatchCycleAt, setDispatchCycleAt] = useState<string | null>(null) 
-  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(60_000)       
+  const [dispatchTotalMs, setDispatchTotalMs] = useState<number>(240_000)       
   const [secondsLeft, setSecondsLeft] = useState<number | null>(null)  
 
   const [isRespondingReschedule, setIsRespondingReschedule] = useState(false)
@@ -1135,7 +1135,7 @@ export default function JobDetailPage() {
         </h1>
         <p className="text-(--upwork-gray) text-sm max-w-sm">
           {isSearching
-            ? 'We\'re searching for the nearest available tradie in your area. This usually takes less than a minute.'
+            ? 'We\'re searching for the nearest available tradie in your area. This can take up to 4 minutes.'
             : 'Your payment is being processed. Please wait a moment.'
           }
         </p>
