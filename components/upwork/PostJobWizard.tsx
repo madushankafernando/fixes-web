@@ -61,10 +61,10 @@ function StepCategory({
 }) {
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] text-center mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) text-center mb-3">
         What type of work do you need?
       </h1>
-      <p className="text-[var(--upwork-gray)] text-center mb-10">
+      <p className="text-(--upwork-gray) text-center mb-10">
         Select a category to get started.
       </p>
 
@@ -74,8 +74,8 @@ function StepCategory({
             key={cat}
             onClick={() => onSelectCategory(cat)}
             className={`px-4 py-3.5 rounded-xl border text-sm font-medium transition-all text-left ${selectedCategory === cat
-              ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
-              : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
+              ? 'bg-(--upwork-navy) text-white border-(--upwork-navy)'
+              : 'bg-white text-(--upwork-navy) border-gray-300 hover:border-(--upwork-navy)'
               }`}
           >
             <span className="flex items-center justify-between">
@@ -115,22 +115,22 @@ function StepDescription({
     <div className="max-w-2xl mx-auto">
       {categoryLabel && (
         <div className="text-center mb-6">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[var(--upwork-green)] text-sm font-medium rounded-full">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-(--upwork-green) text-sm font-medium rounded-full">
             <Check className="w-3.5 h-3.5" />
             {categoryLabel}
           </span>
         </div>
       )}
 
-      <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] text-center mb-3">
+      <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) text-center mb-3">
         Tell us about the job
       </h1>
-      <p className="text-[var(--upwork-gray)] text-center mb-8">
+      <p className="text-(--upwork-gray) text-center mb-8">
         A clear title and detailed description help our AI generate a better quote.
       </p>
 
       <div className="mb-5">
-        <label htmlFor="step2-title" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
+        <label htmlFor="step2-title" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
           Job Title
         </label>
         <input
@@ -140,13 +140,13 @@ function StepDescription({
           onChange={(e) => onTitleChange(e.target.value)}
           placeholder="e.g. Fix leaking kitchen tap"
           maxLength={150}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
         />
         <p className="text-xs text-gray-400 mt-1 text-right">{title.length}/150</p>
       </div>
 
       <div className="mb-5">
-        <label htmlFor="step2-desc" className="block text-sm font-medium text-[var(--upwork-navy)] mb-1.5">
+        <label htmlFor="step2-desc" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">
           Description
         </label>
         <textarea
@@ -156,7 +156,7 @@ function StepDescription({
           placeholder="Describe what needs to be done, any issues you've noticed, access details, etc."
           maxLength={2000}
           rows={6}
-          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-[var(--upwork-navy)] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--upwork-green)] focus:border-transparent resize-none"
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent resize-none"
         />
         <p className="text-xs text-gray-400 mt-1 text-right">{description.length}/2000</p>
       </div>
@@ -191,7 +191,7 @@ function StepDescription({
       <button
         onClick={onNext}
         disabled={!title.trim() || !description.trim()}
-        className="w-full max-w-sm mx-auto block bg-[var(--upwork-green)] hover:bg-[var(--upwork-green-dark)] disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors"
+        className="w-full max-w-sm mx-auto block bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors"
       >
         Next
       </button>
@@ -222,15 +222,15 @@ function StepDiagnosticQuestions({
     <div className="max-w-2xl mx-auto">
       <div className="text-center mb-8">
         <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <HelpCircle className="w-7 h-7 text-[var(--upwork-green)]" />
+          <HelpCircle className="w-7 h-7 text-(--upwork-green)" />
         </div>
         {categoryLabel && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-[var(--upwork-green)] text-sm font-medium rounded-full mb-3">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-(--upwork-green) text-sm font-medium rounded-full mb-3">
             <Check className="w-3.5 h-3.5" />
             {categoryLabel}
           </span>
         )}
-        <h1 className="text-3xl md:text-4xl font-bold text-[var(--upwork-navy)] mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-2">
           A few quick questions
         </h1>
         <p className="text-[var(--upwork-gray)] text-sm">
