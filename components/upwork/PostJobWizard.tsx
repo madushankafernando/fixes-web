@@ -887,16 +887,16 @@ function StepCleaningSchedule({
   jobCategory: TradieCategory | ''
 }) {
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-  const minDt = getMinScheduledDatetimeLocal(locationState, 60)
+  const minDt = getMinScheduledDatetimeLocal(locationState, 0)
   const maxDt = getMaxScheduledDatetimeLocal(locationState, 30)
   const stateTimeLabel = getStateTimeLabel(locationState)
 
   const handleScheduleChange = (value: string) => {
-    onScheduledForChange(applyStateScheduleChange(value, locationState, 60))
+    onScheduledForChange(applyStateScheduleChange(value, locationState, 0))
   }
 
   const handleUseNowInState = () => {
-    onScheduledForChange(snapTodayToStateNow('', locationState, 60))
+    onScheduledForChange(snapTodayToStateNow('', locationState, 0))
   }
 
   const canProceed = scheduledFor.length > 0
