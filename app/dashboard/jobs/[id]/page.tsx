@@ -990,6 +990,8 @@ export default function JobDetailPage() {
     socket.on('cleaning:task_started', handleCleaningTaskUpdate)
     socket.on('cleaning:task_completed', handleCleaningTaskUpdate)
     socket.on('cleaning:accepted', handleCleaningTaskUpdate)
+    socket.on('cleaning:job_accepted', handleCleaningTaskUpdate)
+    socket.on('cleaning:cleaner_assigned', handleCleaningTaskUpdate)
     socket.on('cleaning:scope_change', handleCleaningTaskUpdate)
 
     return () => {
@@ -999,6 +1001,8 @@ export default function JobDetailPage() {
       socket.off('cleaning:task_started', handleCleaningTaskUpdate)
       socket.off('cleaning:task_completed', handleCleaningTaskUpdate)
       socket.off('cleaning:accepted', handleCleaningTaskUpdate)
+      socket.off('cleaning:job_accepted', handleCleaningTaskUpdate)
+      socket.off('cleaning:cleaner_assigned', handleCleaningTaskUpdate)
       socket.off('cleaning:scope_change', handleCleaningTaskUpdate)
       leaveJobRoom(mongoId)
     }
@@ -1133,6 +1137,11 @@ export default function JobDetailPage() {
 
   if (job.status === 'payment_pending' || job.status === 'dispatching') {
     const isSearching = job.status === 'dispatching'
+    const agencyAwaitingAccept = job.isAgencyManaged && isSearching && !!job.assignedTradieId
+    const assignedName =
+      typeof job.assignedTradieId === 'object' && job.assignedTradieId
+        ? (job.assignedTradieId as { name?: string }).name
+        : null
     const totalSecs = Math.round(dispatchTotalMs / 1000)
     const progressRatio = secondsLeft !== null ? secondsLeft / totalSecs : 0
     const urgent = secondsLeft !== null && secondsLeft <= 10
@@ -1153,13 +1162,18 @@ export default function JobDetailPage() {
         </div>
 
         <h1 className="text-2xl font-bold text-(--upwork-navy) mb-2">
-          {isSearching ? 'Finding you a tradie\u2026' : 'Confirming payment\u2026'}
+          {agencyAwaitingAccept
+            ? 'Waiting for your cleaner to accept\u2026'
+            : isSearching
+              ? 'Finding you a tradie\u2026'
+              : 'Confirming payment\u2026'}
         </h1>
         <p className="text-(--upwork-gray) text-sm max-w-sm">
-          {isSearching
-            ? 'We\'re searching for the nearest available tradie in your area. This can take up to 4 minutes.'
-            : 'Your payment is being processed. Please wait a moment.'
-          }
+          {agencyAwaitingAccept
+            ? `${assignedName || 'Your cleaner'} has been assigned and will confirm shortly. You\'ll be notified when they\'re on the way.`
+            : isSearching
+              ? 'We\'re searching for the nearest available tradie in your area. This can take up to 4 minutes.'
+              : 'Your payment is being processed. Please wait a moment.'}
         </p>
 
         {isSearching && secondsLeft !== null && (

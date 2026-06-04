@@ -28,6 +28,7 @@ export default function InvitesPage() {
   const [formName, setFormName] = useState('')
   const [formCategory, setFormCategory] = useState<'cleaning' | 'waste_removal'>('cleaning')
   const [createError, setCreateError] = useState('')
+  const [createSuccess, setCreateSuccess] = useState('')
 
   const fetchInvites = () => {
     setIsLoading(true)
@@ -40,17 +41,31 @@ export default function InvitesPage() {
   useEffect(() => { fetchInvites() }, [])
 
   const handleCreate = async () => {
+    if (!formEmail.trim()) {
+      setCreateError('Email is required so we can send the invitation link')
+      return
+    }
     setIsCreating(true)
     setCreateError('')
+    setCreateSuccess('')
+    const recipientEmail = formEmail.trim()
     try {
-      await api.post('/api/cleaning-admin/invites', {
-        category: formCategory,
-        email: formEmail || undefined,
-        name: formName || undefined,
-      })
+      const res = await api.post<{ invite: Invite; inviteUrl: string; emailSent?: boolean }>(
+        '/api/cleaning-admin/invites',
+        {
+          category: formCategory,
+          email: recipientEmail,
+          name: formName.trim() || undefined,
+        }
+      )
       setShowForm(false)
       setFormEmail('')
       setFormName('')
+      setCreateSuccess(
+        res.data.emailSent
+          ? `Invite created and email sent to ${recipientEmail}`
+          : `Invite created for ${recipientEmail} — copy the link below (email could not be sent)`
+      )
       fetchInvites()
     } catch (err) {
       setCreateError(err instanceof ApiError ? err.message : 'Failed to create invite')
@@ -91,6 +106,12 @@ export default function InvitesPage() {
         </button>
       </div>
 
+      {createSuccess && (
+        <div className="bg-teal-50 border border-teal-200 text-teal-800 text-sm px-4 py-3 rounded-xl mb-4">
+          {createSuccess}
+        </div>
+      )}
+
       {showForm && (
         <div className="bg-white border border-gray-200 rounded-xl p-5 mb-6">
           <h2 className="text-sm font-semibold text-gray-800 mb-4">New Invite</h2>
@@ -104,13 +125,14 @@ export default function InvitesPage() {
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Email</label>
+              <label className="text-xs text-gray-500 mb-1 block">Email (required)</label>
               <input type="email" value={formEmail} onChange={(e) => setFormEmail(e.target.value)}
                 placeholder="cleaner@example.com"
+                required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Name</label>
+              <label className="text-xs text-gray-500 mb-1 block">Name (optional)</label>
               <input type="text" value={formName} onChange={(e) => setFormName(e.target.value)}
                 placeholder="Jane Smith"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" />
