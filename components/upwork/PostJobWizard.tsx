@@ -24,6 +24,7 @@ import {
   Sunrise,
   Calendar,
   HelpCircle,
+  Info,
   CreditCard,
   CheckSquare,
   Repeat,
@@ -684,20 +685,20 @@ function StepCleaningType({
 }) {
   const types: { value: CleaningType; icon: string }[] = category === 'waste_removal'
     ? [
-        { value: 'general_waste', icon: '🗑️' },
-        { value: 'green_waste', icon: '🌿' },
-      ]
+      { value: 'general_waste', icon: '🗑️' },
+      { value: 'green_waste', icon: '🌿' },
+    ]
     : [
-        { value: 'standard_clean', icon: '🧹' },
-        { value: 'deep_clean', icon: '✨' },
-        { value: 'end_of_lease', icon: '🏠' },
-        { value: 'move_in_clean', icon: '📦' },
-        { value: 'commercial_clean', icon: '🏢' },
-        { value: 'carpet_clean', icon: '🧶' },
-        { value: 'window_clean', icon: '🪟' },
-        { value: 'spring_clean', icon: '🌸' },
-        { value: 'post_renovation', icon: '🔨' },
-      ]
+      { value: 'standard_clean', icon: '🧹' },
+      { value: 'deep_clean', icon: '✨' },
+      { value: 'end_of_lease', icon: '🏠' },
+      { value: 'move_in_clean', icon: '📦' },
+      { value: 'commercial_clean', icon: '🏢' },
+      { value: 'carpet_clean', icon: '🧶' },
+      { value: 'window_clean', icon: '🪟' },
+      { value: 'spring_clean', icon: '🌸' },
+      { value: 'post_renovation', icon: '🔨' },
+    ]
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -717,11 +718,10 @@ function StepCleaningType({
           <button
             key={t.value}
             onClick={() => onSelectType(t.value)}
-            className={`px-4 py-4 rounded-xl border text-left transition-all ${
-              selectedType === t.value
+            className={`px-4 py-4 rounded-xl border text-left transition-all ${selectedType === t.value
                 ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
                 : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
-            }`}
+              }`}
           >
             <div className="text-2xl mb-2">{t.icon}</div>
             <div className="text-sm font-medium">{CLEANING_TYPE_LABELS[t.value]}</div>
@@ -778,7 +778,7 @@ function StepCleaningTasks({
   }
   const multiplier = propertyType ? PROPERTY_TYPE_MULTIPLIERS[propertyType] || 1.0 : 1.0
   let adjustedMinutes = Math.round(liveMinutes * multiplier)
-  
+
   if (propertyType) {
     const bedDiff = bedrooms - 3
     const bathDiff = bathrooms - 2
@@ -838,9 +838,8 @@ function StepCleaningTasks({
                 onClick={() => onToggleTask(idx)}
                 className="w-full flex items-center gap-3 p-4 text-left"
               >
-                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                  taskState.selected ? 'bg-[var(--upwork-green)] border-[var(--upwork-green)]' : 'border-gray-300'
-                }`}>
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${taskState.selected ? 'bg-[var(--upwork-green)] border-[var(--upwork-green)]' : 'border-gray-300'
+                  }`}>
                   {taskState.selected && <Check className="w-3 h-3 text-white" />}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -862,9 +861,8 @@ function StepCleaningTasks({
                         onClick={() => onToggleSubtask(idx, sub.title)}
                         className="flex items-center gap-2 w-full text-left"
                       >
-                        <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
-                          subSelected ? 'bg-[var(--upwork-green)] border-[var(--upwork-green)]' : 'border-gray-300'
-                        }`}>
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${subSelected ? 'bg-[var(--upwork-green)] border-[var(--upwork-green)]' : 'border-gray-300'
+                          }`}>
                           {subSelected && <Check className="w-2.5 h-2.5 text-white" />}
                         </div>
                         <span className="text-xs text-[var(--upwork-navy)] flex-1">{sub.title}</span>
@@ -1023,11 +1021,10 @@ function StepCleaningSchedule({
                   <button
                     key={f}
                     onClick={() => onFrequencyChange(f)}
-                    className={`py-2.5 px-4 rounded-xl border text-sm font-medium transition-all ${
-                      frequency === f
+                    className={`py-2.5 px-4 rounded-xl border text-sm font-medium transition-all ${frequency === f
                         ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
                         : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
-                    }`}
+                      }`}
                   >
                     {f === 'weekly' ? 'Weekly' : 'Fortnightly'}
                   </button>
@@ -1085,11 +1082,10 @@ function StepCleaningSchedule({
                     <button
                       key={opt.value}
                       onClick={() => onAssignPrefChange(opt.value)}
-                      className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all ${
-                        assignPreference === opt.value
+                      className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all ${assignPreference === opt.value
                           ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
                           : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
-                      }`}
+                        }`}
                     >
                       {opt.label}
                     </button>
@@ -1175,12 +1171,20 @@ function StepCleaningQuote({
           <span className="text-sm font-medium text-[var(--upwork-gray)]">Estimated hours</span>
           <span className="text-lg font-bold text-[var(--upwork-navy)]">{quote.estimatedHours}h</span>
         </div>
-        
+
         {quote.taskMinutes && (
           <div className="mb-4 p-4 bg-gray-50 rounded-xl">
             <h4 className="text-xs font-semibold text-[var(--upwork-navy)] mb-2 uppercase tracking-wide">Time Estimate Breakdown</h4>
             <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs text-[var(--upwork-gray)]">Task base time</span>
+              <div className="relative group flex items-center">
+                <span className="text-xs text-[var(--upwork-gray)] flex items-center gap-1 cursor-help">
+                  Standard time (3-bed, 2-bath house) <Info className="w-3.5 h-3.5 text-gray-400" />
+                </span>
+                <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block w-64 bg-gray-800 text-white text-xs rounded-lg p-2.5 shadow-lg z-10 leading-relaxed pointer-events-none">
+                  The raw time estimate for these tasks assuming a standard 3-bedroom, 2-bathroom property.
+                  <div className="absolute top-full left-6 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                </div>
+              </div>
               <span className="text-xs font-medium text-[var(--upwork-navy)]">{quote.taskMinutes} min</span>
             </div>
             {quote.propertyMultiplier && quote.propertyMultiplier !== 1 && (
@@ -1191,7 +1195,15 @@ function StepCleaningQuote({
             )}
             {quote.adjustedMinutes && quote.adjustedMinutes !== quote.taskMinutes && (
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-xs text-[var(--upwork-gray)]">Adjusted time</span>
+                <div className="relative group flex items-center">
+                  <span className="text-xs text-[var(--upwork-gray)] flex items-center gap-1 cursor-help">
+                    Adjusted for your home size <Info className="w-3.5 h-3.5 text-gray-400" />
+                  </span>
+                  <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block w-64 bg-gray-800 text-white text-xs rounded-lg p-2.5 shadow-lg z-10 leading-relaxed pointer-events-none">
+                    The final time estimate after adding or subtracting time based on your specific property's size and room count.
+                    <div className="absolute top-full left-6 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                  </div>
+                </div>
                 <span className="text-xs font-medium text-[var(--upwork-navy)]">{quote.adjustedMinutes} min ({(quote.adjustedMinutes / 60).toFixed(1)}h)</span>
               </div>
             )}
@@ -1220,7 +1232,7 @@ function StepCleaningQuote({
           <div>
             <p className="text-sm font-semibold text-amber-800 mb-1">Minimum Booking Applied</p>
             <p className="text-xs text-amber-700 leading-relaxed">
-              Your selected tasks total ~{quote.taskMinutes} min, but our minimum is {quote.minHours || 2}h.
+              Your selected tasks total ~{quote.adjustedMinutes || quote.taskMinutes} min, but our minimum is {quote.minHours || 2}h.
               This ensures fair compensation for your cleaner&apos;s travel and setup time.
             </p>
           </div>
@@ -1405,7 +1417,7 @@ function StepQuote({
   }
   const [pickedTime, setPickedTime] = useState(getTomorrowNineAM)
 
-  
+
   const isPickedTimeAfterHours = (isoTime: string): boolean => {
     try {
       const hour = parseInt(isoTime.split('T')[1]?.split(':')[0] ?? '12', 10)
@@ -1477,11 +1489,10 @@ function StepQuote({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
                 <button
                   onClick={() => { onSelectTier('premium'); setSelectedMorningTier(null) }}
-                  className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${
-                    selectedTier === 'premium' && !selectedMorningTier
+                  className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${selectedTier === 'premium' && !selectedMorningTier
                       ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
                       : 'border-amber-200 bg-white hover:border-[var(--upwork-green)] hover:shadow-sm'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100">
@@ -1518,11 +1529,10 @@ function StepQuote({
 
                 <button
                   onClick={() => { setSelectedMorningTier(mo.tier as SkillLevel); onSelectTier(null) }}
-                  className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${
-                    selectedMorningTier
+                  className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${selectedMorningTier
                       ? 'border-blue-500 bg-blue-50 shadow-md'
                       : 'border-blue-200 bg-white hover:border-blue-500 hover:shadow-sm'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100">
@@ -1715,11 +1725,10 @@ function StepQuote({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
               <button
                 onClick={() => { onSelectTier('premium'); setSelectedWeekdayTier(null) }}
-                className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${
-                  selectedTier === 'premium' && !isWeekdaySelected
+                className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${selectedTier === 'premium' && !isWeekdaySelected
                     ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
                     : 'border-purple-200 bg-white hover:border-[var(--upwork-green)] hover:shadow-sm'
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100">
@@ -1750,11 +1759,10 @@ function StepQuote({
 
               <button
                 onClick={() => { setSelectedWeekdayTier(wo.tier as SkillLevel); onSelectTier(null) }}
-                className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${
-                  isWeekdaySelected
+                className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${isWeekdaySelected
                     ? 'border-purple-500 bg-purple-50 shadow-md'
                     : 'border-purple-200 bg-white hover:border-purple-500 hover:shadow-sm'
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100">
@@ -1893,7 +1901,7 @@ function PaymentForm({
       confirmParams: {
         return_url: `${window.location.origin}/dashboard`,
       },
-      redirect: 'if_required', 
+      redirect: 'if_required',
     })
 
     if (error) {
@@ -1981,7 +1989,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [isGeocoding, setIsGeocoding] = useState(false)
   const [geocodeError, setGeocodeError] = useState('')
   const [preferredTime, setPreferredTime] = useState<PreferredTime | ''>('')
-  const [scheduledFor, setScheduledFor] = useState('')  
+  const [scheduledFor, setScheduledFor] = useState('')
 
   const [diagnosticQuestions, setDiagnosticQuestions] = useState<DiagnosticQuestion[]>([])
   const [diagnosticAnswers, setDiagnosticAnswers] = useState<Record<string, string>>({})
@@ -2021,7 +2029,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
   const [createdQuote, setCreatedQuote] = useState<Quote | null>(null)
 
- 
+
   useEffect(() => {
     if (currentStep !== 2 || !title || title.trim().length < 5) return
     const timer = setTimeout(async () => {
@@ -2087,10 +2095,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           } else {
             throw new Error('No quote found for this job')
           }
-          setCurrentStep(7) 
+          setCurrentStep(7)
         } catch (err) {
           setResumeError('Could not process job quote.')
-          setCurrentStep(1) 
+          setCurrentStep(1)
         } finally {
           setIsResuming(false)
         }
@@ -2117,20 +2125,20 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
 
   const handleDescriptionNext = () => {
-    setCurrentStep(3)  
+    setCurrentStep(3)
   }
 
 
   const handlePhotosNext = async () => {
-    setCurrentStep(25)   
+    setCurrentStep(25)
     setIsDiagnosticLoading(true)
-    setDiagnosticAnswers({})  
+    setDiagnosticAnswers({})
     try {
       const res = await api.post<{ questions: DiagnosticQuestion[] }>('/api/jobs/preflight-questions', {
         title,
         description,
         category: category || 'other',
-        imageUrls: images.map(img => img.url),  
+        imageUrls: images.map(img => img.url),
       })
       setDiagnosticQuestions(res.data.questions || [])
     } catch {
@@ -2201,16 +2209,16 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
     setIsSubmitting(true)
     setSubmitError('')
-    setCurrentStep(6) 
+    setCurrentStep(6)
 
     try {
       const lat = coords?.lat ?? -37.8136
       const lng = coords?.lng ?? 144.9631
 
-      
+
       const resolvedScheduledFor = scheduledForOverride ?? scheduledFor
 
-      
+
       const readableDiagnosticAnswers = Object.entries(diagnosticAnswers).reduce<Record<string, string>>(
         (acc, [qId, answer]) => {
           const question = diagnosticQuestions.find(q => q.id === qId)
@@ -2233,7 +2241,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           coordinates: { lat, lng },
         },
         preferredTime: timeValue,
-        diagnosticAnswers: readableDiagnosticAnswers,   
+        diagnosticAnswers: readableDiagnosticAnswers,
         ...(timeValue === 'scheduled' && resolvedScheduledFor
           ? { scheduledFor: new Date(resolvedScheduledFor).toISOString() }
           : {}),
@@ -2241,9 +2249,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
       setCreatedJob(res.data.job)
       setCreatedQuote(res.data.quote)
-      setCurrentStep(7) 
+      setCurrentStep(7)
     } catch (err) {
-      setCurrentStep(5) 
+      setCurrentStep(5)
       if (err instanceof ApiError) {
         setSubmitError(err.message)
       } else {
@@ -2304,7 +2312,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     router.back()
   }, [createdJob, router])
 
-  
+
 
   const handleRescheduleToScheduled = useCallback(async (isoTime: string, tier: SkillLevel | null, price: number) => {
     console.log('[Reschedule] Calling handleRescheduleToScheduled:', { isoTime, tier, price })
@@ -2321,7 +2329,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         (createdJob.location as { state?: string })?.state
       )
 
-      
+
       const acceptRes = await api.post<{ clientSecret: string }>(
         `/api/jobs/${createdJob._id}/accept-quote`,
         { tier, scheduledFor: auISO, priceOverride: price }
@@ -2330,9 +2338,9 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       if (!secret) throw new Error('No client secret returned.')
 
       setSelectedTier(tier)
-      setAcceptedPrice(price) 
+      setAcceptedPrice(price)
       setClientSecret(secret)
-      setCurrentStep(8) 
+      setCurrentStep(8)
 
     } catch (err) {
       setAcceptError(err instanceof ApiError ? err.message : 'Failed to book at standard rates. Please try again.')
@@ -2518,7 +2526,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const handleBack = () => {
     if (currentStep === 25) {
-      setCurrentStep(3)  
+      setCurrentStep(3)
     } else if (currentStep === 4) {
       if (isAgencyCategory) {
         setCurrentStep(11)
@@ -2591,7 +2599,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     try {
       const streetForGeocode = address
         .replace(/^(unit|apt|apartment|suite|lot|flat|shop|level)\s*\d+[a-z]?\s*[,/\\-]?\s*/i, '')
-        .replace(/^\d+\s*[/\\-]\s*/, '') 
+        .replace(/^\d+\s*[/\\-]\s*/, '')
         .trim()
 
       const q = encodeURIComponent(`${streetForGeocode}, ${suburb} ${postcode} ${locationState}, Australia`)
@@ -2805,15 +2813,13 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                   <button
                     key={card.id}
                     onClick={() => setSelectedSavedCard(card.id)}
-                    className={`w-full flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left ${
-                      selectedSavedCard === card.id
+                    className={`w-full flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left ${selectedSavedCard === card.id
                         ? 'border-[var(--upwork-green)] bg-green-50 ring-1 ring-[var(--upwork-green)]'
                         : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                      }`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
-                      selectedSavedCard === card.id ? 'border-[var(--upwork-green)]' : 'border-gray-300'
-                    }`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedSavedCard === card.id ? 'border-[var(--upwork-green)]' : 'border-gray-300'
+                      }`}>
                       {selectedSavedCard === card.id && (
                         <div className="w-2.5 h-2.5 rounded-full bg-[var(--upwork-green)]" />
                       )}
@@ -3044,11 +3050,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                 <button
                   key={pt.value}
                   onClick={() => setPropertyType(pt.value)}
-                  className={`px-4 py-4 rounded-xl border text-left transition-all ${
-                    propertyType === pt.value
+                  className={`px-4 py-4 rounded-xl border text-left transition-all ${propertyType === pt.value
                       ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
                       : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
-                  }`}
+                    }`}
                 >
                   <div className="text-2xl mb-2">{pt.icon}</div>
                   <div className="text-sm font-medium">{PROPERTY_TYPE_LABELS[pt.value]}</div>
@@ -3064,11 +3069,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                   <button
                     key={`bed-${n}`}
                     onClick={() => setBedrooms(n)}
-                    className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all ${
-                      bedrooms === n
+                    className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all ${bedrooms === n
                         ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
                         : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
-                    }`}
+                      }`}
                   >
                     {n === 5 ? '5+' : n}
                   </button>
@@ -3083,11 +3087,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                   <button
                     key={`bath-${n}`}
                     onClick={() => setBathrooms(n)}
-                    className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all ${
-                      bathrooms === n
+                    className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all ${bathrooms === n
                         ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
                         : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
-                    }`}
+                      }`}
                   >
                     {n === 4 ? '4+' : n}
                   </button>
