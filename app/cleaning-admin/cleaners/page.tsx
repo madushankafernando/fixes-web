@@ -52,11 +52,11 @@ export default function CleanersPage() {
               <div key={c._id} className="bg-white border border-gray-200 rounded-xl p-5">
                 <div className="flex items-center gap-3 mb-3">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold ${c.isOnline ? 'bg-green-500' : 'bg-gray-400'}`}>
-                    {c.userId.name?.charAt(0).toUpperCase()}
+                    {c.userId?.name?.charAt(0).toUpperCase() || '?'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-800 truncate">{c.userId.name}</p>
-                    <p className="text-xs text-gray-400 truncate">{c.userId.email}</p>
+                    <p className="text-sm font-semibold text-gray-800 truncate">{c.userId?.name || 'Deleted User'}</p>
+                    <p className="text-xs text-gray-400 truncate">{c.userId?.email || 'N/A'}</p>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.isOnline ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                     {c.isOnline ? 'Online' : 'Offline'}
@@ -78,7 +78,7 @@ export default function CleanersPage() {
                       {verifiedDocs}/{totalDocs} verified
                     </span>
                   </div>
-                  {c.userId.phone && (
+                  {c.userId?.phone && (
                     <div className="flex items-center justify-between">
                       <span className="text-gray-400">Phone</span>
                       <span className="font-medium text-gray-700">{c.userId.phone}</span>

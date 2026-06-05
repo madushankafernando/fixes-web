@@ -150,12 +150,14 @@ function CleanerRegisterForm() {
                   <li key={d}>• {d}</li>
                 ))}
               </ul>
-              <Link
-                href="/login"
-                className="inline-block w-full bg-teal-600 text-white font-semibold py-3 rounded-xl hover:bg-teal-700 transition-colors"
-              >
-                Go to login
-              </Link>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
+                <a href="#" target="_blank" rel="noopener noreferrer" className="inline-block transition-transform hover:scale-105">
+                  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83&releaseDate=1276560000" alt="Download on the App Store" className="h-12 w-auto" />
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.fixerau.app&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" className="inline-block transition-transform hover:scale-105">
+                  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" className="h-17 w-auto -my-2" />
+                </a>
+              </div>
             </div>
           ) : invite && meta ? (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
@@ -269,7 +271,14 @@ function CleanerRegisterForm() {
 
               <p className="text-center text-sm text-gray-500 mt-6">
                 Already have an account?{' '}
-                <Link href="/login" className="text-teal-600 hover:underline font-medium">Sign in</Link>
+                <a 
+                  href="https://play.google.com/store/apps/details?id=com.fixerau.app&pcampaignid=web_share"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-600 hover:underline font-medium"
+                >
+                  Download the Fixer app to sign in.
+                </a>
               </p>
             </div>
           ) : null}
