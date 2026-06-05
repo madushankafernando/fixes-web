@@ -202,7 +202,14 @@ export default function CleaningJobDetailPage() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-semibold text-gray-800">Quote</h3>
               {!editingQuote && (
-                <button onClick={() => setEditingQuote(true)} className="text-xs text-teal-600 hover:underline">Edit</button>
+                <button 
+                  onClick={() => setEditingQuote(true)} 
+                  disabled={['completed', 'cancelled', 'disputed'].includes(job.status)}
+                  className={`text-xs ${['completed', 'cancelled', 'disputed'].includes(job.status) ? 'text-gray-400 cursor-not-allowed' : 'text-teal-600 hover:underline'}`}
+                  title={['completed', 'cancelled', 'disputed'].includes(job.status) ? 'Cannot edit quote for closed jobs' : ''}
+                >
+                  Edit
+                </button>
               )}
             </div>
             {editingQuote ? (
