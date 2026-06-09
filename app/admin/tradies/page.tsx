@@ -106,7 +106,8 @@ function WaitlistTab() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tradies.map((tradie) => {
-          const user = tradie.userId as User
+          const user = tradie.userId as User | null
+          if (!user) return null
           const isApprovingThis = actionLoading === user._id + '_approve'
           const isRejectingThis = actionLoading === user._id + '_reject'
 
@@ -256,7 +257,8 @@ function DocumentsTab() {
       <p className="text-xs text-gray-400 mb-4">{total} pending document review</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {tradies.map((tradie) => {
-          const user = tradie.userId as User
+          const user = tradie.userId as User | null
+          if (!user) return null
           const pct = tradie.docSummary.total > 0
             ? (tradie.docSummary.verified / tradie.docSummary.total) * 100
             : 0
