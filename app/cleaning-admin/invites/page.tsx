@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Mail, Loader2, Copy, Check, XCircle, Plus } from 'lucide-react'
 import { api, ApiError } from '@/lib/api'
 import AdminActionConfirmDialog from '@/components/admin/AdminActionConfirmDialog'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface Invite {
   _id: string
@@ -42,6 +43,10 @@ export default function InvitesPage() {
   }
 
   useEffect(() => { fetchInvites() }, [])
+
+  useCleaningAdminSubscription(['invites'], () => {
+    fetchInvites()
+  })
 
   const handleCreate = () => {
     if (!formEmail.trim()) {

@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Users, Loader2, Star, MapPin, Briefcase } from 'lucide-react'
 import { api } from '@/lib/api'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface CleanerItem {
   _id: string
@@ -18,12 +19,19 @@ export default function CleanersPage() {
   const [cleaners, setCleaners] = useState<CleanerItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
+  const fetchCleaners = useCallback(() => {
+    setIsLoading(true)
     api.getPaginated<CleanerItem>('/api/cleaning-admin/cleaners?limit=100')
       .then((res) => setCleaners(res.data ?? []))
       .catch(() => setCleaners([]))
       .finally(() => setIsLoading(false))
   }, [])
+
+  useEffect(() => { fetchCleaners() }, [fetchCleaners])
+
+  useCleaningAdminSubscription(['cleaners'], () => {
+    fetchCleaners()
+  })
 
   if (isLoading) {
     return <div className="flex items-center justify-center py-20"><Loader2 className="w-6 h-6 text-teal-600 animate-spin" /></div>

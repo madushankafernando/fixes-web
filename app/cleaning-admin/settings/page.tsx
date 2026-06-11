@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Settings, Loader2, Save, AlertCircle, Info } from 'lucide-react'
 import { api, ApiError } from '@/lib/api'
 import AdminActionConfirmDialog from '@/components/admin/AdminActionConfirmDialog'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface CleaningConfigData {
   dispatchMode: 'manual' | 'auto'
@@ -24,7 +25,7 @@ export default function SettingsPage() {
   const [saveError, setSaveError] = useState('')
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
 
-  useEffect(() => {
+  const fetchConfig = useCallback(() => {
     api.get<{
       dispatchMode: 'manual' | 'auto'
       autoAssignRules?: { maxRadiusKm?: number; minRating?: number }
@@ -42,6 +43,12 @@ export default function SettingsPage() {
       .catch(() => {})
       .finally(() => setIsLoading(false))
   }, [])
+
+  useEffect(() => { fetchConfig() }, [fetchConfig])
+
+  useCleaningAdminSubscription(['settings'], () => {
+    fetchConfig()
+  })
 
   const handleSave = () => {
     setSaveError('')

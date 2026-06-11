@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Briefcase, Users, DollarSign, Clock, Loader2, TrendingUp } from 'lucide-react'
 import { api } from '@/lib/api'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface DashboardStats {
   totalJobs: number
@@ -19,7 +20,7 @@ export default function CleaningAdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
+  const fetchDashboard = useCallback(() => {
     api.get<{ stats: Omit<DashboardStats, 'revenue'> & { todayScheduled?: number }; recentJobs: unknown[] }>(
       '/api/cleaning-admin/dashboard'
     )
@@ -38,6 +39,12 @@ export default function CleaningAdminDashboard() {
       .catch(() => {})
       .finally(() => setIsLoading(false))
   }, [])
+
+  useEffect(() => { fetchDashboard() }, [fetchDashboard])
+
+  useCleaningAdminSubscription(['dashboard', 'jobs', 'cleaners', 'revenue'], () => {
+    fetchDashboard()
+  })
 
   if (isLoading) {
     return (

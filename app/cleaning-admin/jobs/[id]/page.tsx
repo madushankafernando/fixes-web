@@ -11,6 +11,7 @@ import { api, ApiError } from '@/lib/api'
 import { CLEANING_TYPE_LABELS, JOB_STATUS_LABELS, JOB_STATUS_COLORS } from '@/lib/constants'
 import type { Job } from '@/lib/types'
 import AdminActionConfirmDialog from '@/components/admin/AdminActionConfirmDialog'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface Cleaner {
   _id: string
@@ -55,6 +56,10 @@ export default function CleaningJobDetailPage() {
   }, [jobId])
 
   useEffect(() => { fetchJob() }, [fetchJob])
+
+  useCleaningAdminSubscription(['jobDetail', 'jobs'], (evt) => {
+    if (!evt.jobId || evt.jobId === jobId) fetchJob()
+  })
 
   useEffect(() => {
     if (!job || job.assignedTradieId) return

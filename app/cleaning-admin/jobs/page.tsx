@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { Briefcase, Filter, Loader2, Clock, User, MapPin } from 'lucide-react'
 import { api } from '@/lib/api'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 import { CLEANING_TYPE_LABELS, JOB_STATUS_LABELS, JOB_STATUS_COLORS } from '@/lib/constants'
 import type { Job, JobStatus, JobCategory } from '@/lib/types'
 
@@ -21,7 +22,7 @@ export default function CleaningJobsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<JobStatus | 'all'>('all')
 
-  useEffect(() => {
+  const fetchJobs = useCallback(() => {
     setIsLoading(true)
     const qs = statusFilter !== 'all' ? `?status=${statusFilter}` : ''
     api.getPaginated<Job>(`/api/cleaning-admin/jobs${qs}`)
@@ -29,6 +30,12 @@ export default function CleaningJobsPage() {
       .catch(() => setJobs([]))
       .finally(() => setIsLoading(false))
   }, [statusFilter])
+
+  useEffect(() => { fetchJobs() }, [fetchJobs])
+
+  useCleaningAdminSubscription(['jobs'], () => {
+    fetchJobs()
+  })
 
   return (
     <div>

@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { DollarSign, Loader2, Save, AlertCircle, Info } from 'lucide-react'
 import { api, ApiError } from '@/lib/api'
 import { CLEANING_TYPE_LABELS } from '@/lib/constants'
 import AdminActionConfirmDialog from '@/components/admin/AdminActionConfirmDialog'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface Rate {
   cleaningType: string
@@ -30,7 +31,7 @@ export default function RatesPage() {
   const [saveError, setSaveError] = useState('')
   const [showPasswordDialog, setShowPasswordDialog] = useState(false)
 
-  useEffect(() => {
+  const fetchRates = useCallback(() => {
     api.get<ApiRate[]>('/api/cleaning-admin/rates')
       .then((res) => {
         const existing = res.data ?? []
@@ -49,6 +50,12 @@ export default function RatesPage() {
       })
       .finally(() => setIsLoading(false))
   }, [])
+
+  useEffect(() => { fetchRates() }, [fetchRates])
+
+  useCleaningAdminSubscription(['rates'], () => {
+    fetchRates()
+  })
 
   const calculateClientRate = (cleanerRate: number, minHours: number) => {
     if (!cleanerRate) return 0;

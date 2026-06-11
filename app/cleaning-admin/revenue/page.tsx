@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { BarChart3, Loader2, Download, DollarSign, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { api, getAccessToken } from '@/lib/api'
 import { API_BASE_URL } from '@/lib/constants'
+import { useCleaningAdminSubscription } from '@/contexts/cleaning-admin-realtime-context'
 
 interface RevenueData {
   period: string
@@ -100,7 +101,7 @@ export default function RevenuePage() {
   const [period, setPeriod] = useState<'week' | 'month' | 'quarter'>('month')
   const [currentPage, setCurrentPage] = useState(1)
 
-  useEffect(() => {
+  const fetchRevenue = useCallback(() => {
     setIsLoading(true)
     const { start, end } = getDateRange(period)
     const qs = `?startDate=${start.toISOString()}&endDate=${end.toISOString()}&page=${currentPage}&limit=20`
@@ -109,6 +110,12 @@ export default function RevenuePage() {
       .catch(() => setRevenue(null))
       .finally(() => setIsLoading(false))
   }, [period, currentPage])
+
+  useEffect(() => { fetchRevenue() }, [fetchRevenue])
+
+  useCleaningAdminSubscription(['revenue'], () => {
+    fetchRevenue()
+  })
 
   const handlePeriodChange = (p: 'week' | 'month' | 'quarter') => {
     setPeriod(p)
