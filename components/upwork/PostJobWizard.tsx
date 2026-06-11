@@ -719,8 +719,8 @@ function StepCleaningType({
             key={t.value}
             onClick={() => onSelectType(t.value)}
             className={`px-4 py-4 rounded-xl border text-left transition-all ${selectedType === t.value
-                ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
-                : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
+              ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
+              : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
               }`}
           >
             <div className="text-2xl mb-2">{t.icon}</div>
@@ -1022,8 +1022,8 @@ function StepCleaningSchedule({
                     key={f}
                     onClick={() => onFrequencyChange(f)}
                     className={`py-2.5 px-4 rounded-xl border text-sm font-medium transition-all ${frequency === f
-                        ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
-                        : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
+                      ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
+                      : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
                       }`}
                   >
                     {f === 'weekly' ? 'Weekly' : 'Fortnightly'}
@@ -1083,8 +1083,8 @@ function StepCleaningSchedule({
                       key={opt.value}
                       onClick={() => onAssignPrefChange(opt.value)}
                       className={`py-2 px-3 rounded-xl border text-xs font-medium transition-all ${assignPreference === opt.value
-                          ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
-                          : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
+                        ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
+                        : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
                         }`}
                     >
                       {opt.label}
@@ -1490,8 +1490,8 @@ function StepQuote({
                 <button
                   onClick={() => { onSelectTier('premium'); setSelectedMorningTier(null) }}
                   className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${selectedTier === 'premium' && !selectedMorningTier
-                      ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
-                      : 'border-amber-200 bg-white hover:border-[var(--upwork-green)] hover:shadow-sm'
+                    ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
+                    : 'border-amber-200 bg-white hover:border-[var(--upwork-green)] hover:shadow-sm'
                     }`}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -1530,8 +1530,8 @@ function StepQuote({
                 <button
                   onClick={() => { setSelectedMorningTier(mo.tier as SkillLevel); onSelectTier(null) }}
                   className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${selectedMorningTier
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-blue-200 bg-white hover:border-blue-500 hover:shadow-sm'
+                    ? 'border-blue-500 bg-blue-50 shadow-md'
+                    : 'border-blue-200 bg-white hover:border-blue-500 hover:shadow-sm'
                     }`}
                 >
                   <div className="flex items-center justify-between mb-3">
@@ -1726,8 +1726,8 @@ function StepQuote({
               <button
                 onClick={() => { onSelectTier('premium'); setSelectedWeekdayTier(null) }}
                 className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${selectedTier === 'premium' && !isWeekdaySelected
-                    ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
-                    : 'border-purple-200 bg-white hover:border-[var(--upwork-green)] hover:shadow-sm'
+                  ? 'border-[var(--upwork-green)] bg-green-50 shadow-md'
+                  : 'border-purple-200 bg-white hover:border-[var(--upwork-green)] hover:shadow-sm'
                   }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -1760,8 +1760,8 @@ function StepQuote({
               <button
                 onClick={() => { setSelectedWeekdayTier(wo.tier as SkillLevel); onSelectTier(null) }}
                 className={`w-full text-left rounded-2xl border-2 p-5 transition-all ${isWeekdaySelected
-                    ? 'border-purple-500 bg-purple-50 shadow-md'
-                    : 'border-purple-200 bg-white hover:border-purple-500 hover:shadow-sm'
+                  ? 'border-purple-500 bg-purple-50 shadow-md'
+                  : 'border-purple-200 bg-white hover:border-purple-500 hover:shadow-sm'
                   }`}
               >
                 <div className="flex items-center justify-between mb-3">
@@ -2024,6 +2024,16 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const [isUploading, setIsUploading] = useState(false)
 
+  // Auth gate state
+  const [authGateMode, setAuthGateMode] = useState<'signup' | 'login'>('signup')
+  const [authName, setAuthName] = useState('')
+  const [authEmail, setAuthEmail] = useState('')
+  const [authPassword, setAuthPassword] = useState('')
+  const [authPhone, setAuthPhone] = useState('')
+  const [authError, setAuthError] = useState('')
+  const [isAuthLoading, setIsAuthLoading] = useState(false)
+  const { login, registerClient } = useAuth()
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [createdJob, setCreatedJob] = useState<Job | null>(null)
@@ -2109,7 +2119,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
 
   const cleaningStepMap: Record<number, number> = { 10: 2, 14: 3, 11: 4, 4: 5, 12: 6, 13: 7 }
-  const effectiveStep = isAgencyCategory ? (cleaningStepMap[currentStep] ?? currentStep) : currentStep
+  const effectiveStep = isAgencyCategory ? (cleaningStepMap[currentStep] ?? currentStep) : (currentStep === 15 ? 5 : currentStep)
   const effectiveTotalSteps = isAgencyCategory ? 7 : totalSteps
   const progress = Math.min((effectiveStep / effectiveTotalSteps) * 100, 100)
 
@@ -2151,7 +2161,13 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
 
   const handleUploadFiles = useCallback(async (files: FileList) => {
     if (!isAuthenticated) {
-      router.push('/login')
+      const previews: JobImage[] = Array.from(files).map((file, i) => ({
+        url: URL.createObjectURL(file),
+        publicId: `local-${Date.now()}-${i}`,
+        uploadedAt: new Date().toISOString(),
+        _localFile: file,
+      } as JobImage & { _localFile: File }))
+      setImages((prev) => [...prev, ...previews])
       return
     }
 
@@ -2198,7 +2214,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     } finally {
       setIsUploading(false)
     }
-  }, [isAuthenticated, router])
+  }, [])
 
 
   const handleSubmitJob = useCallback(async (timeValue: PreferredTime, scheduledForOverride?: string) => {
@@ -2243,13 +2259,15 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         preferredTime: timeValue,
         diagnosticAnswers: readableDiagnosticAnswers,
         ...(timeValue === 'scheduled' && resolvedScheduledFor
-          ? { scheduledFor: (() => {
+          ? {
+            scheduledFor: (() => {
               const parsed = new Date(resolvedScheduledFor)
               if (parsed.getTime() <= Date.now()) {
                 return new Date(Date.now() + 5 * 60_000).toISOString()
               }
               return parsed.toISOString()
-            })() }
+            })()
+          }
           : {}),
       })
 
@@ -2549,6 +2567,10 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
       setCurrentStep(14)
     } else if (currentStep === 14) {
       setCurrentStep(10)
+    } else if (currentStep === 15) {
+      setCurrentStep(4)
+    } else if (currentStep === 5) {
+      setCurrentStep(4)
     } else if (currentStep === 12) {
       setCurrentStep(4)
     } else if (currentStep === 13) {
@@ -2598,6 +2620,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     if (coords) {
       if (isAgencyCategory) {
         setCurrentStep(12)
+      } else if (!isAuthenticated) {
+        setCurrentStep(15)
       } else {
         setCurrentStep(5)
       }
@@ -2653,6 +2677,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
     }
     if (isAgencyCategory) {
       setCurrentStep(12)
+    } else if (!isAuthenticated) {
+      setCurrentStep(15)
     } else {
       setCurrentStep(5)
     }
@@ -2824,8 +2850,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                     key={card.id}
                     onClick={() => setSelectedSavedCard(card.id)}
                     className={`w-full flex items-center gap-3 p-3.5 rounded-xl border transition-all text-left ${selectedSavedCard === card.id
-                        ? 'border-[var(--upwork-green)] bg-green-50 ring-1 ring-[var(--upwork-green)]'
-                        : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-[var(--upwork-green)] bg-green-50 ring-1 ring-[var(--upwork-green)]'
+                      : 'border-gray-200 hover:border-gray-300'
                       }`}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${selectedSavedCard === card.id ? 'border-[var(--upwork-green)]' : 'border-gray-300'
@@ -2937,7 +2963,7 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
             Back
           </button>
           <span className="text-sm text-[var(--upwork-gray)]">
-            Step {currentStep === 25 ? '3.5' : effectiveStep} of {effectiveTotalSteps}
+            Step {currentStep === 25 ? '3.5' : currentStep === 15 ? 5 : effectiveStep} of {effectiveTotalSteps}
           </span>
         </div>
         <div className="h-1 bg-gray-200">
@@ -3018,6 +3044,117 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           />
         )}
 
+        {currentStep === 15 && (
+          <div className="max-w-md mx-auto">
+            <div className="text-center mb-8">
+              <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ShieldCheck className="w-7 h-7 text-(--upwork-green)" />
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-3">
+                Almost there!
+              </h1>
+              <p className="text-(--upwork-gray) text-sm">
+                {authGateMode === 'signup'
+                  ? 'Create a free account to get your AI-powered quote and connect with verified tradies.'
+                  : 'Welcome back! Log in to continue with your job.'}
+              </p>
+            </div>
+
+            {authError && (
+              <div className="flex items-start gap-2 mb-5 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                <p className="text-sm text-red-700">{authError}</p>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {authGateMode === 'signup' && (
+                <div>
+                  <label htmlFor="auth-name" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">Full Name</label>
+                  <input
+                    id="auth-name"
+                    type="text"
+                    value={authName}
+                    onChange={(e) => setAuthName(e.target.value)}
+                    placeholder="John Smith"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+                  />
+                </div>
+              )}
+              <div>
+                <label htmlFor="auth-email" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">Email</label>
+                <input
+                  id="auth-email"
+                  type="email"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label htmlFor="auth-password" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">Password</label>
+                <input
+                  id="auth-password"
+                  type="password"
+                  value={authPassword}
+                  onChange={(e) => setAuthPassword(e.target.value)}
+                  placeholder={authGateMode === 'signup' ? 'Create a password (min 6 chars)' : 'Enter your password'}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+                />
+              </div>
+              {authGateMode === 'signup' && (
+                <div>
+                  <label htmlFor="auth-phone" className="block text-sm font-medium text-(--upwork-navy) mb-1.5">Phone <span className="text-gray-400 font-normal">(optional)</span></label>
+                  <input
+                    id="auth-phone"
+                    type="tel"
+                    value={authPhone}
+                    onChange={(e) => setAuthPhone(e.target.value)}
+                    placeholder="04XX XXX XXX"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl text-(--upwork-navy) placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-(--upwork-green) focus:border-transparent"
+                  />
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={async () => {
+                setAuthError('')
+                setIsAuthLoading(true)
+                try {
+                  if (authGateMode === 'signup') {
+                    await registerClient({ name: authName, email: authEmail, password: authPassword, phone: authPhone || undefined })
+                  } else {
+                    await login(authEmail, authPassword)
+                  }
+                  setCurrentStep(5)
+                } catch (err: unknown) {
+                  setAuthError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+                } finally {
+                  setIsAuthLoading(false)
+                }
+              }}
+              disabled={isAuthLoading || !authEmail || !authPassword || (authGateMode === 'signup' && !authName)}
+              className="w-full mt-6 bg-(--upwork-green) hover:bg-(--upwork-green-dark) disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+            >
+              {isAuthLoading ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> {authGateMode === 'signup' ? 'Creating account…' : 'Logging in…'}</>
+              ) : (
+                authGateMode === 'signup' ? 'Create Account & Get Quote' : 'Log In & Continue'
+              )}
+            </button>
+
+            <p className="text-center text-sm text-(--upwork-gray) mt-4">
+              {authGateMode === 'signup' ? (
+                <>Already have an account?{' '}<button type="button" onClick={() => { setAuthGateMode('login'); setAuthError('') }} className="text-(--upwork-green) font-medium hover:underline">Log in</button></>
+              ) : (
+                <>Don&apos;t have an account?{' '}<button type="button" onClick={() => { setAuthGateMode('signup'); setAuthError('') }} className="text-(--upwork-green) font-medium hover:underline">Sign up free</button></>
+              )}
+            </p>
+          </div>
+        )}
+
         {currentStep === 5 && (
           <StepTime
             selected={preferredTime}
@@ -3061,8 +3198,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                   key={pt.value}
                   onClick={() => setPropertyType(pt.value)}
                   className={`px-4 py-4 rounded-xl border text-left transition-all ${propertyType === pt.value
-                      ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
-                      : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
+                    ? 'bg-[var(--upwork-navy)] text-white border-[var(--upwork-navy)]'
+                    : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-navy)]'
                     }`}
                 >
                   <div className="text-2xl mb-2">{pt.icon}</div>
@@ -3080,8 +3217,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                     key={`bed-${n}`}
                     onClick={() => setBedrooms(n)}
                     className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all ${bedrooms === n
-                        ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
-                        : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
+                      ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
+                      : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
                       }`}
                   >
                     {n === 5 ? '5+' : n}
@@ -3098,8 +3235,8 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
                     key={`bath-${n}`}
                     onClick={() => setBathrooms(n)}
                     className={`px-5 py-2.5 rounded-full text-sm font-semibold border transition-all ${bathrooms === n
-                        ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
-                        : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
+                      ? 'bg-[var(--upwork-green)] text-white border-[var(--upwork-green)]'
+                      : 'bg-white text-[var(--upwork-navy)] border-gray-300 hover:border-[var(--upwork-green)]'
                       }`}
                   >
                     {n === 4 ? '4+' : n}
