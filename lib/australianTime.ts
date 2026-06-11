@@ -1,4 +1,3 @@
-/** Australian state → IANA timezone (job location wall clock). */
 export const STATE_TZ: Record<string, string> = {
   NSW: 'Australia/Sydney',
   ACT: 'Australia/Sydney',
@@ -38,19 +37,16 @@ function getPartsInTimezone(date: Date, timeZone: string) {
   }
 }
 
-/** Calendar date YYYY-MM-DD in the given state's timezone. */
 export function getDateStringInState(date: Date, state?: string | null): string {
   const { year, month, day } = getPartsInTimezone(date, getStateTimezone(state))
   return `${year}-${month}-${day}`
 }
 
-/** datetime-local string (wall clock in state TZ, not browser TZ). */
 export function formatDatetimeLocalInState(date: Date, state?: string | null): string {
   const { year, month, day, hour, minute } = getPartsInTimezone(date, getStateTimezone(state))
   return `${year}-${month}-${day}T${hour}:${minute}`
 }
 
-/** Interpret datetime-local digits as wall time in state TZ → UTC ISO. */
 export function datetimeLocalInStateToISO(localStr: string, state?: string | null): string {
   const tz = getStateTimezone(state)
   const provisional = new Date(localStr + 'Z')
@@ -79,7 +75,6 @@ export function isTodayInState(localStr: string, state?: string | null): boolean
   return datePart === getDateStringInState(new Date(), state)
 }
 
-/** When user picks today, snap to current state time (with optional lead). */
 export function snapTodayToStateNow(
   localStr: string,
   state?: string | null,
@@ -95,14 +90,18 @@ export function snapTodayToStateNow(
   return `${today}T${timePart}`
 }
 
+
 export function applyStateScheduleChange(
   value: string,
   state?: string | null,
-  leadMinutes = 60
+  leadMinutes = 0
 ): string {
   if (!value) return ''
   if (isTodayInState(value, state)) {
-    return snapTodayToStateNow(value, state, leadMinutes)
+    const minAllowed = getMinScheduledDatetimeLocal(state, leadMinutes)
+    if (value < minAllowed) {
+      return minAllowed
+    }
   }
   return value
 }
@@ -118,7 +117,6 @@ export function getMaxScheduledDatetimeLocal(state?: string | null, daysAhead = 
   )
 }
 
-/** Short label for UI, e.g. "NSW (Australia/Sydney)". */
 export function getStateTimeLabel(state?: string | null): string {
   const key = state?.trim().toUpperCase()
   if (key && STATE_TZ[key]) return `${key} time`

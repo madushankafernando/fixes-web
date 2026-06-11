@@ -954,7 +954,7 @@ function StepCleaningSchedule({
   }
 
   const handleUseNowInState = () => {
-    onScheduledForChange(snapTodayToStateNow('', locationState, 0))
+    onScheduledForChange(snapTodayToStateNow('', locationState, 5))
   }
 
   const canProceed = scheduledFor.length > 0
@@ -2243,7 +2243,13 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
         preferredTime: timeValue,
         diagnosticAnswers: readableDiagnosticAnswers,
         ...(timeValue === 'scheduled' && resolvedScheduledFor
-          ? { scheduledFor: new Date(resolvedScheduledFor).toISOString() }
+          ? { scheduledFor: (() => {
+              const parsed = new Date(resolvedScheduledFor)
+              if (parsed.getTime() <= Date.now()) {
+                return new Date(Date.now() + 5 * 60_000).toISOString()
+              }
+              return parsed.toISOString()
+            })() }
           : {}),
       })
 
@@ -2474,7 +2480,11 @@ export function PostJobWizard({ searchQuery, preselectedCategory, existingJobId 
           coordinates: { lat, lng },
         },
         preferredTime: 'scheduled',
-        scheduledFor: datetimeLocalInStateToISO(cleaningScheduledFor, locationState),
+        scheduledFor: (() => {
+          const freshMin = getMinScheduledDatetimeLocal(locationState, 5)
+          const safeLocal = cleaningScheduledFor < freshMin ? freshMin : cleaningScheduledFor
+          return datetimeLocalInStateToISO(safeLocal, locationState)
+        })(),
         isAgencyManaged: true,
         propertyDetails: { propertyType, bedrooms, bathrooms },
       }
