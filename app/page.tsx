@@ -9,6 +9,7 @@ import {
   PricingPlans,
   Testimonials,
   TrustedBy,
+  BrandManifesto,
   Footer,
 } from "@/components/upwork"
 
@@ -22,6 +23,7 @@ export default function Home() {
       <PricingPlans />
       <Testimonials />
       <TrustedBy />
+      <BrandManifesto />
       <Footer />
     </main>
   )
