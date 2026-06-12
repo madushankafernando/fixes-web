@@ -2,13 +2,22 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { ApiError } from '@/lib/api'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -22,6 +31,16 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showBusinessDialog, setShowBusinessDialog] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('plan') === 'business') {
+        setShowBusinessDialog(true)
+      }
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -65,6 +84,21 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-white via-[#f2f7f2] to-white flex flex-col">
+      <Dialog open={showBusinessDialog} onOpenChange={setShowBusinessDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Under Development</DialogTitle>
+            <DialogDescription>
+              The Business plan is currently under development. In the meantime, you can sign up with our free Home Owner plan to get started.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-start">
+            <Button onClick={() => setShowBusinessDialog(false)} className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white w-full">
+              Sign up for free
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-4">
           <Link href="/" className="inline-block">
