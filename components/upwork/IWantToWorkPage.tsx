@@ -3,84 +3,39 @@
 import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronLeft, ChevronRight, ArrowRight, CheckCircle2 } from "lucide-react"
+import { ChevronLeft, ChevronRight, ArrowRight, CheckCircle2, Zap, ShieldCheck, Banknote, Navigation } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Header } from "./Header"
+import { Footer } from "./Footer"
 
-const trustedByLogos = [
-  { name: "Bunnings", text: "Bunnings" },
-  { name: "Mitre 10", text: "Mitre 10" },
-  { name: "Reece", text: "Reece" },
-  { name: "Total Tools", text: "Total Tools" },
-]
-
-const partnershipTypes = [
+const fixesBenefits = [
   {
-    id: "managed",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="8" width="32" height="32" rx="4" stroke="#14a800" strokeWidth="2" />
-        <path d="M16 24L22 30L32 18" stroke="#14a800" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    title: "Get matched with quality jobs on demand",
-    description: "We connect you directly with clients looking for skilled tradies. Our platform handles the matching process, ensuring you get jobs that fit your expertise and availability.",
-    cta1: "Browse available jobs",
-    cta2: "Join as a tradie",
+    id: "ai-quoting",
+    icon: <Zap className="w-10 h-10 text-(--upwork-green)" />,
+    title: "Instant AI Quoting",
+    description: "Stop wasting your evenings driving around doing free quotes. Our AI engine generates upfront, accurate pricing based on client photos before you even see the job.",
+    cta: "Download the App",
   },
   {
-    id: "experts",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-        <circle cx="24" cy="16" r="8" stroke="#14a800" strokeWidth="2" />
-        <path d="M12 40c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke="#14a800" strokeWidth="2" strokeLinecap="round" />
-        <circle cx="36" cy="12" r="4" fill="#14a800" />
-      </svg>
-    ),
-    title: "Showcase your expertise and build your reputation",
-    description: "Create a professional profile that highlights your skills, certifications, and past work. Build trust with clients through verified reviews and ratings.",
-    cta1: "Create your profile",
-    cta2: "Join as a tradie",
+    id: "dispatch",
+    icon: <Navigation className="w-10 h-10 text-(--upwork-green)" />,
+    title: "Smart Dispatching",
+    description: "Go online when you want to work. Jobs within your specified radius are dispatched directly to your phone. The first tradie to accept secures the job—no bidding wars.",
+    cta: "Download the App",
   },
   {
-    id: "tools",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-        <rect x="6" y="22" width="16" height="20" rx="2" stroke="#14a800" strokeWidth="2" />
-        <rect x="26" y="14" width="16" height="28" rx="2" stroke="#14a800" strokeWidth="2" />
-        <path d="M10 28h8M30 20h8M30 26h8" stroke="#14a800" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-    title: "Access tools to grow your trade business",
-    description: "Get access to invoicing, scheduling, and client management tools. Everything you need to run your trade business efficiently in one place.",
-    cta1: "Explore business tools",
-    cta2: "Join as a tradie",
+    id: "escrow",
+    icon: <ShieldCheck className="w-10 h-10 text-(--upwork-green)" />,
+    title: "Guaranteed Escrow Payments",
+    description: "Clients pre-authorise payment when they request the job. The funds are held securely in escrow by Stripe and released automatically when you mark the job as complete.",
+    cta: "Download the App",
   },
   {
-    id: "rewards",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-        <path d="M24 4l6 12h12l-9 9 3 13-12-7-12 7 3-13-9-9h12l6-12z" stroke="#14a800" strokeWidth="2" fill="none" />
-      </svg>
-    ),
-    title: "Earn rewards and unlock premium benefits",
-    description: "Top-rated tradies get access to premium job listings, priority support, and exclusive partner discounts on tools and materials.",
-    cta1: "See rewards program",
-    cta2: "Join as a tradie",
-  },
-  {
-    id: "enterprise",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none">
-        <rect x="8" y="20" width="12" height="20" stroke="#14a800" strokeWidth="2" />
-        <rect x="18" y="12" width="12" height="28" stroke="#14a800" strokeWidth="2" />
-        <rect x="28" y="16" width="12" height="24" stroke="#14a800" strokeWidth="2" />
-        <path d="M14 8v8M24 4v8M34 8v8" stroke="#14a800" strokeWidth="2" strokeLinecap="round" />
-      </svg>
-    ),
-    title: "Partner with commercial and enterprise clients",
-    description: "Access larger commercial projects and ongoing contracts. We connect experienced tradies with property managers, builders, and enterprise clients.",
-    cta1: "View enterprise opportunities",
-    cta2: "Join as a tradie",
+    id: "zero-fees",
+    icon: <Banknote className="w-10 h-10 text-(--upwork-green)" />,
+    title: "Zero Lead Fees",
+    description: "We don't charge you to look at leads. There are no monthly subscriptions. We only make a commission when you successfully complete a job and get paid.",
+    cta: "Download the App",
   },
 ]
 
@@ -88,21 +43,21 @@ const testimonials = [
   {
     logo: "MT",
     logoColor: "bg-orange-500",
-    quote: "Finding consistent work used to be my biggest challenge. Now I have more quality jobs than I can handle, and the platform makes everything from quoting to getting paid seamless.",
+    quote: "I used to spend my weekends doing quotes that went nowhere. Now, I just turn on the Fixes app, accept a job that's already priced, and the money is guaranteed.",
     author: "Mike Thompson",
     role: "Licensed Electrician, Melbourne",
   },
   {
     logo: "SB",
     logoColor: "bg-blue-500",
-    quote: "The quality of clients on this platform is excellent. They understand the value of skilled trade work and are willing to pay fair rates for quality craftsmanship.",
+    quote: "The scope change feature is brilliant. If a job is bigger than expected, I add it in the app, the client approves the extra funds instantly, and I keep working.",
     author: "Sarah Blake",
     role: "Plumber & Gas Fitter, Sydney",
   },
   {
     logo: "JW",
-    logoColor: "bg-green-600",
-    quote: "As a sole trader, having access to business tools and a steady stream of jobs has transformed my business. My income has grown 40% since joining.",
+    logoColor: "bg-(--upwork-green)",
+    quote: "No bidding wars, no lead fees. If the notification pops up and I want it, I just tap accept. It's totally transformed how I run my week.",
     author: "James Wilson",
     role: "Carpenter, Brisbane",
   },
@@ -120,49 +75,26 @@ export function IWantToWorkPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="sticky top-0 z-50 bg-[#FFFCE9] border-b border-(--upwork-border)">
-        <div className="max-w-7xl mx-auto px-4 lg:px-6">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/logo.svg"
-                alt="Logo"
-                width={120}
-                height={40}
-                className="h-8 w-auto"
-                priority
-              />
-            </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/login" className="text-sm font-medium text-(--upwork-navy) hover:underline">
-                Log in
-              </Link>
-              <Button asChild className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-6">
-                <Link href="/register/tradie">Sign up</Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white flex flex-col">
+      <Header />
 
       <section className="py-12 md:py-16 lg:py-20 px-4 lg:px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-12">
             <div className="flex-1 lg:max-w-120 pt-4 lg:pt-8">
               <h1 className="text-4xl md:text-5xl lg:text-[52px] font-bold text-(--upwork-navy) leading-[1.08] mb-5">
-                Join Australia&apos;s largest tradie marketplace
+                The smart way to run your trade business
               </h1>
               <p className="text-base md:text-lg text-(--upwork-gray) mb-8 leading-relaxed max-w-md">
-                Empower your trade career with tailored job matching, business tools, and opportunities from Australia&apos;s largest tradie marketplace.
+                Stop chasing leads and doing free quotes. Let our AI handle the pricing, and our smart dispatch system bring guaranteed work directly to your phone.
               </p>
-              <Button asChild className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-7 py-3 text-sm font-medium h-auto">
-                <Link href="/register/tradie">Partner with us</Link>
+              <Button asChild className="bg-[#A4FF43] hover:opacity-90 text-(--upwork-navy) font-extrabold rounded-full px-8 py-6 text-base h-auto transition-opacity shadow-lg">
+                <Link href="/app/fixer">Download the Fixer App</Link>
               </Button>
             </div>
 
             <div className="flex-1 w-full lg:w-auto lg:max-w-[55%]">
-              <div className="relative w-full aspect-4/3 rounded-xl overflow-hidden">
+              <div className="relative w-full aspect-4/3 rounded-2xl overflow-hidden shadow-2xl">
                 <Image
                   src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80"
                   alt="Professional tradie working"
@@ -179,30 +111,27 @@ export function IWantToWorkPage() {
 
       <section className="py-20 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
-          {partnershipTypes.map((type, index) => (
+          {fixesBenefits.map((benefit, index) => (
             <div
-              key={type.id}
+              key={benefit.id}
               className={`flex flex-col lg:flex-row items-center gap-10 lg:gap-16 py-16 ${
-                index !== partnershipTypes.length - 1 ? "border-b border-gray-200" : ""
+                index !== fixesBenefits.length - 1 ? "border-b border-gray-200" : ""
               } ${index % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
             >
-              <div className="shrink-0 w-24 h-24 bg-(--upwork-light-gray) rounded-2xl flex items-center justify-center">
-                {type.icon}
+              <div className="shrink-0 w-24 h-24 bg-[#f0fdf4] rounded-3xl flex items-center justify-center shadow-inner">
+                {benefit.icon}
               </div>
 
               <div className="flex-1 text-center lg:text-left">
-                <h2 className="text-2xl md:text-3xl font-bold text-(--upwork-navy) mb-4">
-                  {type.title}
+                <h2 className="text-2xl md:text-3xl font-extrabold text-(--upwork-navy) mb-4">
+                  {benefit.title}
                 </h2>
-                <p className="text-(--upwork-gray) mb-6 max-w-xl">
-                  {type.description}
+                <p className="text-(--upwork-gray) mb-8 max-w-xl text-lg leading-relaxed">
+                  {benefit.description}
                 </p>
                 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                  <Button variant="outline" className="rounded-full px-6 border-(--upwork-green) text-(--upwork-green) hover:bg-(--upwork-green) hover:text-white">
-                    {type.cta1}
-                  </Button>
-                  <Button asChild className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-6">
-                    <Link href="/register/tradie">{type.cta2}</Link>
+                  <Button asChild className="bg-(--upwork-navy) hover:bg-gray-800 text-white rounded-full px-8 py-5">
+                    <Link href="/app/fixer">{benefit.cta}</Link>
                   </Button>
                 </div>
               </div>
@@ -211,51 +140,51 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      <section className="bg-[#f2f7f2] py-20 px-4 lg:px-6">
+      <section className="bg-[#f6f6f6] py-20 px-4 lg:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <button
               onClick={prevTestimonial}
-              className="p-2 rounded-full border border-gray-300 hover:border-gray-400 transition-colors"
+              className="p-3 rounded-full bg-white shadow-sm border border-gray-200 hover:border-gray-400 transition-colors"
               aria-label="Previous testimonial"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600" />
+              <ChevronLeft className="w-5 h-5 text-gray-800" />
             </button>
             <button
               onClick={nextTestimonial}
-              className="p-2 rounded-full border border-gray-300 hover:border-gray-400 transition-colors"
+              className="p-3 rounded-full bg-white shadow-sm border border-gray-200 hover:border-gray-400 transition-colors"
               aria-label="Next testimonial"
             >
-              <ChevronRight className="w-5 h-5 text-gray-600" />
+              <ChevronRight className="w-5 h-5 text-gray-800" />
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl p-8 md:p-12 shadow-sm">
-            <div className={`w-12 h-12 ${testimonials[currentTestimonial].logoColor} rounded-lg flex items-center justify-center text-white font-bold text-lg mb-6`}>
+          <div className="bg-white rounded-3xl p-8 md:p-14 shadow-lg border border-gray-100">
+            <div className={`w-14 h-14 ${testimonials[currentTestimonial].logoColor} rounded-xl flex items-center justify-center text-white font-bold text-xl mb-8`}>
               {testimonials[currentTestimonial].logo}
             </div>
 
-            <blockquote className="text-lg md:text-xl text-(--upwork-navy) mb-6 leading-relaxed">
+            <blockquote className="text-xl md:text-2xl text-(--upwork-navy) mb-8 leading-relaxed font-medium">
               &ldquo;{testimonials[currentTestimonial].quote}&rdquo;
             </blockquote>
 
             <div>
-              <p className="font-semibold text-(--upwork-navy)">
-                - {testimonials[currentTestimonial].author}
+              <p className="font-bold text-(--upwork-navy) text-lg">
+                {testimonials[currentTestimonial].author}
               </p>
-              <p className="text-sm text-(--upwork-gray)">
+              <p className="text-sm text-(--upwork-gray) mt-1">
                 {testimonials[currentTestimonial].role}
               </p>
             </div>
           </div>
 
-          <div className="flex justify-center gap-2 mt-6">
+          <div className="flex justify-center gap-3 mt-8">
             {testimonials.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentTestimonial(index)}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentTestimonial ? "bg-(--upwork-green)" : "bg-gray-300"
+                className={`w-2.5 h-2.5 rounded-full transition-all ${
+                  index === currentTestimonial ? "bg-(--upwork-green) w-6" : "bg-gray-300"
                 }`}
                 aria-label={`Go to testimonial ${index + 1}`}
               />
@@ -264,57 +193,43 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      <section className="py-20 px-4 lg:px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-(--upwork-navy) mb-4">
-            Ready to grow your trade business?
-          </h2>
-          <p className="text-(--upwork-gray) mb-8 max-w-xl mx-auto">
-            Join thousands of tradies who are already finding quality work and growing their businesses on our platform.
-          </p>
-          <Button asChild className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-8 py-6 text-lg font-semibold">
-            <Link href="/register/tradie">Join as a tradie</Link>
-          </Button>
-        </div>
-      </section>
-
-      <section className="bg-(--upwork-navy) text-white py-20 px-4 lg:px-6">
+      <section className="bg-(--upwork-navy) text-white py-24 px-4 lg:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-            Why tradies choose us
+          <h2 className="text-3xl md:text-5xl font-extrabold text-center mb-16">
+            Why Tradies Choose Fixes
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[
               {
-                title: "Verified clients",
-                description: "All clients are verified before they can post jobs, ensuring you work with serious customers.",
+                title: "Zero Lead Fees",
+                description: "Stop paying for leads that don't convert. We only make money when you complete a job.",
               },
               {
-                title: "Fair pay guarantee",
-                description: "Our secure payment system ensures you get paid on time for every completed job.",
+                title: "Stripe Escrow",
+                description: "Funds are locked in escrow before you even start the engine. Guaranteed payments.",
               },
               {
-                title: "Flexible schedule",
-                description: "Choose the jobs that fit your schedule. Work when you want, where you want.",
+                title: "In-App Scope Changes",
+                description: "Job bigger than expected? Add extra charges in the app for instant client approval.",
               },
               {
-                title: "Business tools",
-                description: "Access invoicing, scheduling, and client management tools at no extra cost.",
+                title: "Smart Routing",
+                description: "Integrated maps navigate you directly to the job site using the fastest route.",
               },
               {
-                title: "Insurance support",
-                description: "We help you stay compliant with insurance and licensing requirements.",
+                title: "Automated Invoicing",
+                description: "Tax-compliant invoices are generated and sent automatically upon completion.",
               },
               {
-                title: "24/7 support",
-                description: "Our support team is always available to help you resolve any issues.",
+                title: "Local Support",
+                description: "Our dedicated support team in Australia is always available to resolve disputes.",
               },
             ].map((benefit, index) => (
               <div key={index} className="flex gap-4">
-                <CheckCircle2 className="w-6 h-6 text-(--upwork-green) shrink-0 mt-1" />
+                <CheckCircle2 className="w-8 h-8 text-[#A4FF43] shrink-0 mt-1" />
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
-                  <p className="text-white/70 text-sm">{benefit.description}</p>
+                  <h3 className="font-bold text-xl mb-2">{benefit.title}</h3>
+                  <p className="text-white/70 text-sm leading-relaxed">{benefit.description}</p>
                 </div>
               </div>
             ))}
@@ -322,56 +237,32 @@ export function IWantToWorkPage() {
         </div>
       </section>
 
-      <section className="py-20 px-4 lg:px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-(--upwork-light-gray) rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-(--upwork-navy) mb-3">
-                Ready to find work?
-              </h3>
-              <p className="text-(--upwork-gray) mb-6">
-                Create your profile and start receiving job matches tailored to your skills and location.
-              </p>
-              <Button asChild className="bg-(--upwork-green) hover:bg-(--upwork-green-dark) text-white rounded-full px-6">
-                <Link href="/register/tradie">
-                  Join as a tradie
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className="bg-(--upwork-light-gray) rounded-2xl p-8">
-              <h3 className="text-xl font-bold text-(--upwork-navy) mb-3">
-                Already a top tradie?
-              </h3>
-              <p className="text-(--upwork-gray) mb-6">
-                Apply for our verified expert program to unlock premium jobs and exclusive benefits.
-              </p>
-              <Button asChild variant="outline" className="rounded-full px-6 border-(--upwork-green) text-(--upwork-green) hover:bg-(--upwork-green) hover:text-white">
-                <Link href="/register/tradie">
-                  Apply for expert status
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
+      <section className="py-24 px-4 lg:px-6 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-(--upwork-navy) mb-6">
+            Ready to revolutionise your week?
+          </h2>
+          <p className="text-(--upwork-gray) mb-10 max-w-xl mx-auto text-lg leading-relaxed">
+            Download the Fixer app, submit your compliance documents, and start receiving AI-quoted jobs in your area.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <Button asChild className="bg-[#A4FF43] hover:opacity-90 text-(--upwork-navy) rounded-full px-10 py-7 text-lg font-extrabold shadow-lg">
+              <Link href="/app/fixer">
+                Download for iOS
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </Button>
+            <Button asChild className="bg-(--upwork-navy) hover:bg-gray-800 text-white rounded-full px-10 py-7 text-lg font-extrabold shadow-lg">
+              <Link href="/app/fixer">
+                Download for Android
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-gray-200 py-8 px-4 lg:px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <Image
-            src="/logo.svg"
-            alt="Logo"
-            width={100}
-            height={32}
-            className="h-6 w-auto"
-          />
-          <p className="text-sm text-(--upwork-gray)">
-            &copy; 2024 All rights reserved.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
