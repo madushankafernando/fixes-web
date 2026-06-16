@@ -199,7 +199,7 @@ export function Footer() {
                 height={28}
                 className="h-5 w-auto brightness-0 invert"
               />
-              <span className="text-sm text-gray-400">© 2015 - 2026 All rights reserved.</span>
+              <span className="text-sm text-gray-400">© 2026 All rights reserved.</span>
             </div>
             <div className="flex flex-wrap items-center gap-4">
               {bottomLinks.map((link) => (
